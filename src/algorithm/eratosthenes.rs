@@ -22,6 +22,11 @@ mod tests {
 
         assert_eq!(e.count(), 0);
     }
+
+    #[test]
+    fn test_sieve() {
+        assert_eq!(sieve(1_000_000).len(), 78_498);
+    }
 }
 
 /// エラトステネスの篩
