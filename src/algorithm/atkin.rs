@@ -44,7 +44,7 @@ pub fn sieve_of_atkin(n: u64) -> Vec<bool> {
 
 #[test]
 fn aaa() {
-    let prime = sieve_of_atkin(1000000);
+    let prime = sieve_of_atkin(1_000_000);
 
     let count: Vec<_> = prime
         .iter()
