@@ -1,5 +1,8 @@
 # competitive-library
-競技プログラミングで使うやつです
+[![library-test](https://github.com/uesugi6111/competitive-library/actions/workflows/rust.yml/badge.svg)](https://github.com/uesugi6111/competitive-library/actions/workflows/rust.yml)  
+
+競技プログラミングで使うやつです  
+
 
 ## index
 
