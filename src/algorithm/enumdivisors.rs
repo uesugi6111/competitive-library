@@ -18,7 +18,6 @@ mod tests {
     use super::*;
     use std::collections::HashMap;
 
-    use itertools::*;
     #[test]
     fn test_enum_divisors() {
         let map = {
@@ -45,7 +44,9 @@ mod tests {
         };
 
         for (k, v) in map {
-            assert_eq!(enum_divisors(k).into_iter().sorted().collect::<Vec<_>>(), v);
+            let mut a = enum_divisors(k);
+            a.sort();
+            assert_eq!(a, v);
         }
     }
 }
