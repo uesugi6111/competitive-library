@@ -1,23 +1,24 @@
+//const BASE: u128 = 2_305_843_009_213_693_951; // 2^61-1
+const BASE: u128 = 1000000007;
 pub fn rolling_hash(s: &[char], t: &[char]) -> bool {
-    let base: u128 = 2u128.pow(61) - 1;
     let l = s.len();
 
-    let pow_b = base.wrapping_pow(l as u32);
+    let pow_b = BASE.wrapping_pow(l as u32);
 
     let mut target_hash: u128 = 0;
     let mut base_hash: u128 = 0;
     for k in 0..l {
-        base_hash = base_hash.wrapping_mul(base) + s[k] as u128;
-        target_hash = target_hash.wrapping_mul(base) + t[k] as u128;
+        base_hash = base_hash.wrapping_mul(BASE) + unsafe { *s.get_unchecked(k) } as u128;
+        target_hash = target_hash.wrapping_mul(BASE) + unsafe { *t.get_unchecked(k) } as u128;
     }
     if target_hash == base_hash {
         return true;
     }
     for k in 0..t.len() - l {
         target_hash = target_hash
-            .wrapping_mul(base)
-            .wrapping_add(t[l + k] as u128)
-            .wrapping_sub((t[k] as u128).wrapping_mul(pow_b));
+            .wrapping_mul(BASE)
+            .wrapping_add(unsafe { *t.get_unchecked(l + k) } as u128)
+            .wrapping_sub((unsafe { *t.get_unchecked(k) } as u128).wrapping_mul(pow_b));
         if target_hash == base_hash {
             return true;
         }
