@@ -2,7 +2,7 @@
 [![library-test](https://github.com/uesugi6111/competitive-library/actions/workflows/rust.yml/badge.svg)](https://github.com/uesugi6111/competitive-library/actions/workflows/rust.yml)  
 
 競技プログラミングで使うやつです  
-
+外部 crate に依存しません
 
 ## index
 
