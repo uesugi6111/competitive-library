@@ -17,8 +17,7 @@ where
         Self { array: v }
     }
     pub fn add(&mut self, mut i: usize, x: T) {
-        let n = self.array.len();
-        while i <= n {
+        while i < self.array.len() {
             self.array[i] += x;
             i += i & i.wrapping_neg();
         }
