@@ -1,4 +1,5 @@
 pub mod atkin;
+pub mod cumsum;
 pub mod enumdivisors;
 pub mod eratosthenes;
 pub mod inversionnumber;
