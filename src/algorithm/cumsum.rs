@@ -4,7 +4,7 @@ pub fn cumsum(v: &[i64]) -> Vec<i64> {
             *c += x;
             Some(*c)
         }))
-        .collect::<Vec<_>>()
+        .collect()
 }
 
 #[test]
