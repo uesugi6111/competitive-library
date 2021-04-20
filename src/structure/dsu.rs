@@ -86,6 +86,6 @@ mod tests {
         assert_eq!(d.is_same(0, 2), true);
         assert_eq!(d.size(0), 3);
         assert_eq!(d.is_same(0, 3), false);
-        // assert_eq!(d.groups(), vec![vec![0, 1, 2], vec![3]]);
+        // assert_eq!(d.get_all_groups(), vec![vec![0, 1, 2], vec![3]]);
     }
 }
