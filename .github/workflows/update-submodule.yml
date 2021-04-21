@@ -2,7 +2,7 @@ name: Dispatch
 on:
   workflow_run:
     workflows: ["library-test"]
-    branches: [main]
+    branches: [master]
     types: 
       - completed
 
