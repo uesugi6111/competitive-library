@@ -9,6 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - run: |
           curl -X POST -H "Authorization: token ${{ secrets.AUTO_PR_TOKEN }}" -H "Accept: application/vnd.github.everest-preview+json" -d '{"event_type": "update-submodule"}' -i  https://api.github.com/repos/uesugi6111/AtCoder-archives-Rust/dispatches
