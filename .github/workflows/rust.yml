@@ -1,10 +1,12 @@
 name: library-test
 
 on:
+  schedule:
+    - cron: '0 0 * * 6'
   push:
-    branches: [ master ]
+    branches:
+      - '*'
   pull_request:
-    branches: [ master ]
 
 env:
   CARGO_TERM_COLOR: always
@@ -52,8 +54,8 @@ jobs:
 
       - name: Run tests
         uses: actions-rs/cargo@v1
-          with:
-            command: test
-            args: --workspace --no-fail-fast --verbose
-          env:
-            RUST_BACKTRACE: full
+        with:
+          command: test
+          args: --workspace --no-fail-fast --verbose
+        env:
+          RUST_BACKTRACE: full
