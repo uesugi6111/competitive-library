@@ -1,3 +1,4 @@
+//! 累積和
 pub fn cumsum(v: &[i64]) -> Vec<i64> {
     (0..1)
         .chain(v.iter().scan(0, |c, &x| {

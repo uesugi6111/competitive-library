@@ -1,3 +1,4 @@
+//! エラトステネス
 #[cfg(test)]
 mod tests {
 

@@ -1,3 +1,5 @@
+//! アルゴリズムっぽいものが置いてあります
+
 pub mod atkin;
 pub mod cumsum;
 pub mod enumdivisors;

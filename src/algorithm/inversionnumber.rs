@@ -1,3 +1,4 @@
+//! 転倒数
 pub fn inversion_number(array: &[i64]) -> i64 {
     count_merge(
         &mut array.iter().copied().collect::<Vec<_>>(),

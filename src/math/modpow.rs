@@ -1,3 +1,4 @@
+//! 累乗剰余
 pub fn modpow(base: i64, exp: i64, n: i64) -> i64 {
     let (mut base, mut exp, n) = (base, exp, n);
 

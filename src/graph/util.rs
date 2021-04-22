@@ -1,3 +1,4 @@
+//! 隣接行列 ←→ 隣接リスト
 pub fn to_adjacency_matrix(g: &[Vec<i64>]) -> Vec<Vec<Option<i64>>> {
     let mut v = vec![vec![None; g.len()]; g.len()];
     g.iter()

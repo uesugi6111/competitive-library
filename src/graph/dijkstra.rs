@@ -1,3 +1,4 @@
+//! ダイクストラ
 #[derive(Debug, Clone, Eq)]
 struct Node {
     pos: usize,

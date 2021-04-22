@@ -1,4 +1,4 @@
-/// 約数列挙
+//!  約数列挙
 pub fn enum_divisors(n: i64) -> Vec<i64> {
     let mut res = vec![];
     for i in 1..=(n as f64).sqrt() as i64 {

@@ -1,4 +1,4 @@
-///試割
+//! 試割
 pub fn trial_division(mut n: i64) -> std::collections::HashMap<i64, i64> {
     let mut primes = std::collections::HashMap::new();
     let mut i = 2;
