@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["rollinghash",""]]});
+initSidebarItems({"mod":[["rollinghash","ロリハ"]]});
