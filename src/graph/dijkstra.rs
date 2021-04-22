@@ -1,18 +1,27 @@
-#[derive(Debug, Clone, PartialEq, Eq, Ord)]
+#[derive(Debug, Clone, Eq)]
 struct Node {
     pos: usize,
     cost: i64,
 }
-
+impl PartialEq for Node {
+    fn eq(&self, other: &Node) -> bool {
+        self.cost.eq(&other.cost)
+    }
+}
 impl PartialOrd for Node {
     fn partial_cmp(&self, other: &Node) -> Option<std::cmp::Ordering> {
         Some(other.cost.cmp(&(self.cost)))
     }
 }
+impl Ord for Node {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.cost.cmp(&(other.cost))
+    }
+}
 
 pub fn dijkstra(edge: &[Vec<(usize, i64)>], start: usize, end: usize) -> Option<i64> {
     let mut dist = vec![std::i64::MAX; edge.len()];
-    let mut pq = std::collections::BinaryHeap::<Node>::new();
+    let mut pq = std::collections::BinaryHeap::new();
 
     pq.push(Node {
         pos: start,
