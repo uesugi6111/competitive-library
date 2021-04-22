@@ -19,10 +19,7 @@ pub fn compress(s: &str) -> Vec<(char, usize)> {
 
 #[test]
 fn test_run_length() {
-    let mut v = vec![];
-    v.push(('a', 5usize));
-    v.push(('b', 3));
-    v.push(('c', 1));
+    let v = vec![('a', 5usize), ('b', 3), ('c', 1)];
 
     assert_eq!(compress(&"aaaaabbbc"), v);
 }
