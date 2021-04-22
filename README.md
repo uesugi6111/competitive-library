@@ -4,6 +4,8 @@
 競技プログラミングで使うやつです  
 外部 crate に依存しません
 
+[doc](https://github.uesugi.app/competitive-library/doc/competitive_library/)
+
 ## index
 
 - algorithm
