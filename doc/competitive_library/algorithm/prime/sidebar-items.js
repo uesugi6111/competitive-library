@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["trial_division","試割"]]});
+initSidebarItems({"fn":[["trial_division",""]]});

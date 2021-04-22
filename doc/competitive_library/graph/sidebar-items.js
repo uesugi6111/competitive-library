@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["dijkstra",""],["floydwarshall",""],["util",""]]});
+initSidebarItems({"mod":[["dijkstra","ダイクストラ"],["floydwarshall","ワーシャルフロイト"],["util","隣接行列 ←→ 隣接リスト"]]});

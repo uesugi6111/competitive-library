@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["atkin",""],["cumsum",""],["enumdivisors",""],["eratosthenes",""],["inversionnumber",""],["largestrectangle",""],["prime",""],["run_length",""]]});
+initSidebarItems({"mod":[["atkin","アトキンの篩"],["cumsum","累積和"],["enumdivisors","約数列挙"],["eratosthenes","エラトステネス"],["inversionnumber","転倒数"],["largestrectangle","最大長方形"],["prime","試割"],["run_length","ランレングス"]]});

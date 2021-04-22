@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["enum_divisors","約数列挙"]]});
+initSidebarItems({"fn":[["enum_divisors",""]]});

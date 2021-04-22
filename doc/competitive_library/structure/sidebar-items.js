@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["cumsum2d",""],["dsu",""],["fenwicktree",""],["segmenttree",""],["sparsetable",""]]});
+initSidebarItems({"mod":[["cumsum2d","二次元累積和"],["dsu","Union find"],["fenwicktree","BIT"],["segmenttree","セグメントツリー"],["sparsetable","SparseTable"]]});
