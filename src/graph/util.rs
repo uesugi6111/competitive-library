@@ -1,4 +1,4 @@
-fn to_adjacency_matrix(g: &[Vec<i64>]) -> Vec<Vec<Option<i64>>> {
+pub fn to_adjacency_matrix(g: &[Vec<i64>]) -> Vec<Vec<Option<i64>>> {
     let mut v = vec![vec![None; g.len()]; g.len()];
     g.iter()
         .enumerate()
@@ -6,7 +6,7 @@ fn to_adjacency_matrix(g: &[Vec<i64>]) -> Vec<Vec<Option<i64>>> {
     v
 }
 
-fn adjacency_list(matrix: &[Vec<i64>]) -> Vec<Vec<i64>> {
+pub fn adjacency_list(matrix: &[Vec<i64>]) -> Vec<Vec<i64>> {
     matrix
         .iter()
         .map(|v| {
