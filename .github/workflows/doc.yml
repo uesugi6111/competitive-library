@@ -1,0 +1,26 @@
+name: Update submodule Pull Request
+
+on: [ workflow_dispatch ]
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@master 
+
+      - run: cargo doc 
+      - run: mv ./target/doc ./ 
+
+      - name: Create Pull Request 
+        id: cpr
+        uses: peter-evans/create-pull-request@v3
+        with:
+          title: Update doc
+          labels: Auto PR
+          branch: auto-pr/update-doc 
+          branch-suffix : timestamp 
+          commit-message: update doc
+          delete-branch: true
+          token: ${{ secrets.AUTO_PR_TOKEN }}
