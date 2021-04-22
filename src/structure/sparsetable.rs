@@ -1,3 +1,4 @@
+//! SparseTable
 pub struct SparseTable {
     v: Vec<i64>,
     log_table: Vec<usize>,

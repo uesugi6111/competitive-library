@@ -1,3 +1,4 @@
+//! Union find
 use std::collections::{HashMap, HashSet};
 #[derive(Debug, Clone)]
 enum Node {

@@ -1,3 +1,4 @@
+//! BIT
 use std::clone::Clone;
 use std::convert::From;
 use std::ops::{Add, AddAssign, Sub};

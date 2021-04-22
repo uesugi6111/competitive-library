@@ -1,3 +1,4 @@
+//! 二次元累積和
 #[derive(Clone, Debug)]
 pub struct CumSum2D {
     v: Vec<Vec<i64>>,

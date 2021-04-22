@@ -1,3 +1,4 @@
+//! ロリハ
 //const BASE: u128 = 2_305_843_009_213_693_951; // 2^61-1
 const BASE: u128 = 1_000_000_007;
 pub fn rolling_hash(s: &[char], t: &[char]) -> bool {

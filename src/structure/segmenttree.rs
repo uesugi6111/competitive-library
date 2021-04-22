@@ -1,3 +1,4 @@
+//! セグメントツリー
 use std::cmp::max;
 use std::cmp::min;
 

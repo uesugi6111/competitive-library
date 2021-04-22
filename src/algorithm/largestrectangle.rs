@@ -1,3 +1,4 @@
+//! 最大長方形
 pub fn largest_rectangle(arg: &[i64]) -> i64 {
     let mut histogram: Vec<_> = arg.iter().collect();
     histogram.push(&0);

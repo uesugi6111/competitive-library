@@ -1,3 +1,4 @@
+//! アトキンの篩
 pub fn sieve_of_atkin(n: u64) -> Vec<bool> {
     let mut is_prime = vec![false; n as usize + 1];
     let sqrt_n = (n as f64).sqrt() as u64 + 1;

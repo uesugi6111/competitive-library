@@ -1,3 +1,4 @@
+//! ランレングス
 pub fn compress(s: &str) -> Vec<(char, usize)> {
     let vs: Vec<char> = s.chars().collect();
 

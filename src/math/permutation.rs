@@ -1,3 +1,4 @@
+//! 順列生成
 #[test]
 fn test_prm() {
     let n = 4;
