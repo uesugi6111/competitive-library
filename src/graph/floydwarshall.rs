@@ -1,4 +1,4 @@
-fn floyd_warshall(matrix: &[Vec<Option<i64>>]) -> Vec<Vec<Option<i64>>> {
+pub fn floyd_warshall(matrix: &[Vec<Option<i64>>]) -> Vec<Vec<Option<i64>>> {
     let mut m: Vec<_> = matrix.to_vec();
     let n = m.len();
     (0..n).for_each(|i| {
