@@ -45,7 +45,7 @@ mod tests {
 
         for (k, v) in map {
             let mut a = enum_divisors(k);
-            a.sort();
+            a.sort_unstable();
             assert_eq!(a, v);
         }
     }
