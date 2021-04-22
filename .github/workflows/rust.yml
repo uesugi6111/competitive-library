@@ -10,13 +10,50 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
+  rustfmt:
+    name: Rustfmt
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Format
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+  Test:
+    strategy:
+        fail-fast: false
+        matrix:
+          toolchain:
+            - 1.42.0-x86_64-unknown-linux-gnu
+            - 1.49.0-x86_64-unknown-linux-gnu
+
+    name: Test (${{ matrix.toolchain }})
 
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Build
-      run: cargo build --verbose
-    - name: Run tests
-      run: cargo test --verbose
+      - uses: actions/checkout@v2
+
+      - name: Clippy
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --workspace --all-targets -- -D warnings
+
+      - name: Build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --workspace --all-targets
+
+      - name: Run tests
+        uses: actions-rs/cargo@v1
+          with:
+            command: test
+            args: --workspace --no-fail-fast --verbose
+          env:
+            RUST_BACKTRACE: full
