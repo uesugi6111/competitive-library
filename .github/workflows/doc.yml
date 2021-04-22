@@ -1,4 +1,4 @@
-name: Update submodule Pull Request
+name: Update doc
 
 on: [ workflow_dispatch ]
 
@@ -10,8 +10,13 @@ jobs:
 
       - uses: actions/checkout@master 
 
-      - run: cargo doc 
-      - run: mv ./target/doc ./ 
+      - name: Create doc
+        run: cargo doc 
+
+      - name: Move doc
+        run: |
+          rm ./doc
+          mv ./target/doc ./
 
       - name: Create Pull Request 
         id: cpr
@@ -24,3 +29,9 @@ jobs:
           commit-message: update doc
           delete-branch: true
           token: ${{ secrets.AUTO_PR_TOKEN }}
+
+      - name: Check outputs
+        run: |
+          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
+          
