@@ -66,8 +66,7 @@ pub fn dijkstra(
 
 fn restore_path(end: usize, previous: &[Option<usize>]) -> Vec<usize> {
     let mut buff = end;
-    let mut v = vec![];
-    v.push(buff);
+    let mut v = vec![buff];
 
     while let Some(i) = previous[buff] {
         buff = i;
