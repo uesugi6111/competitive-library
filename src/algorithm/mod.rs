@@ -1,6 +1,7 @@
 //! アルゴリズムっぽいものが置いてあります
 
 pub mod atkin;
+pub mod convexhulltrick;
 pub mod cumsum;
 pub mod enumdivisors;
 pub mod eratosthenes;
