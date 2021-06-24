@@ -1,8 +1,21 @@
 //! ダイクストラ
+use std::{cmp::Ordering, collections::BinaryHeap};
+
 #[derive(Debug, Clone, Eq)]
-struct Node {
-    pos: usize,
+pub struct Node {
+    position: usize,
     cost: i64,
+    from: Option<usize>,
+}
+impl Node {
+    #[inline]
+    pub fn new(position: usize, cost: i64, from: Option<usize>) -> Self {
+        Node {
+            position,
+            cost,
+            from,
+        }
+    }
 }
 impl PartialEq for Node {
     fn eq(&self, other: &Node) -> bool {
@@ -10,12 +23,12 @@ impl PartialEq for Node {
     }
 }
 impl PartialOrd for Node {
-    fn partial_cmp(&self, other: &Node) -> Option<std::cmp::Ordering> {
+    fn partial_cmp(&self, other: &Node) -> Option<Ordering> {
         Some(other.cost.cmp(&(self.cost)))
     }
 }
 impl Ord for Node {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+    fn cmp(&self, other: &Self) -> Ordering {
         self.cost.cmp(&(other.cost))
     }
 }
@@ -26,39 +39,35 @@ pub fn dijkstra(
     end: usize,
     vertex: usize,
 ) -> Option<(i64, Vec<usize>)> {
-    let mut dist = vec![std::i64::MAX; edge.len()];
-    let mut pq = std::collections::BinaryHeap::new();
+    let mut costs = vec![None; edge.len()];
+    let mut nodes = BinaryHeap::new();
     let mut previous = vec![None; vertex];
+    nodes.push(Node::new(start, 0, None));
 
-    pq.push(Node {
-        pos: start,
-        cost: 0,
-    });
-    dist[start] = 0;
-
-    let mut ret = start == end;
-
-    while let Some(Node { pos, cost }) = pq.pop() {
-        if cost > dist[pos] {
+    while let Some(Node {
+        position,
+        cost,
+        from,
+    }) = nodes.pop()
+    {
+        if costs[position].filter(|&d| d < cost).is_some() {
             continue;
         }
-        if ret {
-            ret = false;
-            dist[start] = std::i64::MAX;
-        } else if end == pos {
+
+        previous[position] = from;
+
+        if position == end {
             return Some((cost, restore_path(end, &previous)));
         }
-        for (t, c) in &edge[pos] {
-            let total_cost = cost + *c;
-            if dist[*t] <= total_cost {
+
+        for &(to, c) in &edge[position] {
+            let total_cost = cost + c;
+            if costs[to].filter(|&d| d <= total_cost).is_some() {
                 continue;
             }
-            previous[*t] = Some(pos);
-            dist[*t] = total_cost;
-            pq.push(Node {
-                pos: *t,
-                cost: total_cost,
-            });
+            costs[to] = Some(total_cost);
+
+            nodes.push(Node::new(to, total_cost, Some(position)));
         }
     }
     None
@@ -67,6 +76,7 @@ pub fn dijkstra(
 fn restore_path(end: usize, previous: &[Option<usize>]) -> Vec<usize> {
     let mut buff = end;
     let mut v = vec![buff];
+    dbg!(&previous);
 
     while let Some(i) = previous[buff] {
         buff = i;
