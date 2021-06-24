@@ -41,5 +41,5 @@ fn test_rolling_hash() {
             break;
         }
     }
-    assert_eq!(mached, true);
+    assert!(mached);
 }
