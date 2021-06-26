@@ -45,6 +45,25 @@ impl LinearSieve {
         map
     }
 
+    // 約数列挙
+    pub fn divisors(&self, n: i64) -> Vec<i64> {
+        assert_ne!(n, 0);
+
+        let mut ret = vec![1];
+        let factor = self.factorize(n);
+
+        for (k, exp) in factor {
+            for i in 0..ret.len() {
+                let mut v = 1;
+                for _ in 0..exp {
+                    v *= k;
+                    ret.push(ret[i] * v);
+                }
+            }
+        }
+        ret
+    }
+
     pub fn is_prime(&self, n: i64) -> bool {
         assert!(self.n as i64 >= n);
         self.table[n as usize] == n
@@ -77,6 +96,38 @@ mod tests {
                 n *= k.pow(value as u32);
             }
             assert_eq!(v, n);
+        }
+    }
+
+    use std::collections::HashMap;
+    #[test]
+    fn test_divide() {
+        let ls = LinearSieve::new(1_000_000);
+        let map = {
+            let mut ret = HashMap::new();
+            ret.insert(1, vec![1]);
+            ret.insert(2, vec![1, 2]);
+            ret.insert(3, vec![1, 3]);
+            ret.insert(4, vec![1, 2, 4]);
+            ret.insert(6, vec![1, 2, 3, 6]);
+            ret.insert(20, vec![1, 2, 4, 5, 10, 20]);
+            ret.insert(25, vec![1, 5, 25]);
+            ret.insert(30, vec![1, 2, 3, 5, 6, 10, 15, 30]);
+            ret.insert(
+                2520,
+                vec![
+                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 15, 18, 20, 21, 24, 28, 30, 35, 36, 40,
+                    42, 45, 56, 60, 63, 70, 72, 84, 90, 105, 120, 126, 140, 168, 180, 210, 252,
+                    280, 315, 360, 420, 504, 630, 840, 1260, 2520,
+                ],
+            );
+            ret
+        };
+
+        for (k, v) in map {
+            let mut a = ls.divisors(k);
+            a.sort_unstable();
+            assert_eq!(a, v);
         }
     }
 }
