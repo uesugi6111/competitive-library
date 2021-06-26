@@ -50,25 +50,22 @@ pub fn dijkstra(
         from,
     }) = nodes.pop()
     {
-        if costs[position].filter(|&d| d < cost).is_some() {
+        if costs[position].is_some() {
             continue;
         }
 
         previous[position] = from;
-
+        costs[position] = Some(cost);
         if position == end {
             return Some((cost, restore_path(end, &previous)));
         }
 
-        for &(to, c) in &edge[position] {
-            let total_cost = cost + c;
-            if costs[to].filter(|&d| d <= total_cost).is_some() {
-                continue;
-            }
-            costs[to] = Some(total_cost);
-
-            nodes.push(Node::new(to, total_cost, Some(position)));
-        }
+        edge[position]
+            .iter()
+            .filter(|(to, c)| costs[*to].filter(|&d| d <= cost + c).is_none())
+            .for_each(|&(to, c)| {
+                nodes.push(Node::new(to, cost + c, Some(position)));
+            });
     }
     None
 }
@@ -76,7 +73,6 @@ pub fn dijkstra(
 fn restore_path(end: usize, previous: &[Option<usize>]) -> Vec<usize> {
     let mut buff = end;
     let mut v = vec![buff];
-    dbg!(&previous);
 
     while let Some(i) = previous[buff] {
         buff = i;
