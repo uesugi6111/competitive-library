@@ -44,14 +44,12 @@ pub fn dijkstra(edge: &[Vec<(usize, i64)>], start: usize, end: usize) -> Option<
         }
         costs[position] = Some(cost);
 
-        for &(to, c) in &edge[position] {
-            let total_cost = cost + c;
-            if costs[to].filter(|&d| d <= total_cost).is_some() {
-                continue;
-            }
-
-            nodes.push(Node::new(to, total_cost));
-        }
+        edge[position]
+            .iter()
+            .filter(|(to, c)| costs[*to].filter(|&d| d <= cost + c).is_none())
+            .for_each(|&(to, c)| {
+                nodes.push(Node::new(to, cost + c));
+            });
     }
     None
 }
