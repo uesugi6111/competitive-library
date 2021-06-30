@@ -1,10 +1,6 @@
 name: Dispatch
-on:
-  workflow_run:
-    workflows: ["library-test"]
-    branches: [master]
-    types: 
-      - completed
+
+on: [ workflow_dispatch ]
 
 jobs:
   build:
