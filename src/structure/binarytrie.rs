@@ -52,6 +52,20 @@ impl BinaryTrie {
         });
         true
     }
+
+    pub fn xor_min(&self, n: u32) -> u32 {
+        let mut x = n;
+        let mut i = 0;
+        for j in (0..32).rev() {
+            let mut f = (x >> j & 1) as usize;
+            if self.v[i].lr[f].is_none() {
+                f ^= 1;
+            }
+            x ^= (f as u32) << j;
+            i = self.v[i].lr[f].unwrap() as usize;
+        }
+        x
+    }
 }
 
 #[test]
