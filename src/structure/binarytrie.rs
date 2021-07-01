@@ -36,4 +36,35 @@ impl BinaryTrie {
         }
     }
 
+    pub fn remove(&mut self, x: u32) -> bool {
+        let mut path = vec![0; 32];
+        let mut i = 0;
+        for j in (0..32).rev() {
+            path[j] = i;
+            let f = (x >> j & 1) as usize;
+            if self.v[i].lr[f].is_none() {
+                return false;
+            }
+            i = self.v[i].lr[f].unwrap() as usize;
+        }
+        path.iter().for_each(|&i| {
+            self.v[i].count -= 1;
+        });
+        true
+    }
+}
+
+#[test]
+fn a() {
+    let mut b = BinaryTrie::new();
+    b.add(1);
+    let a = b.clone();
+    dbg!(&b);
+    b.add(1);
+    dbg!(&b);
+    b.remove(1);
+    dbg!(&b);
+    assert_eq!(a.v, b.v);
+    println!("{}", !0usize);
+    println!("{}", 8 * std::mem::size_of::<u32>());
 }
