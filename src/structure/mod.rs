@@ -1,4 +1,5 @@
 //! データ構造っぽいもの
+pub mod binarytrie;
 pub mod cumsum2d;
 pub mod dsu;
 pub mod fenwicktree;
