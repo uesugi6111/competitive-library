@@ -24,40 +24,40 @@ impl BinaryTrie {
         if self.nodes.is_none() {
             self.nodes = Some(Node::new(0));
         }
-        let mut i = self.nodes.as_mut().unwrap();
-        for j in (0..32).rev() {
-            i.count += 1;
-            let f = (x >> j & 1) as usize;
-            if i.children[f].is_none() {
-                i.children[f] = Some(Node::new(0));
+        let mut node = self.nodes.as_mut().unwrap();
+        for i in (0..32).rev() {
+            node.count += 1;
+            let f = (x >> i & 1) as usize;
+            if node.children[f].is_none() {
+                node.children[f] = Some(Node::new(0));
             }
-            i = i.children[f].as_mut().unwrap();
+            node = node.children[f].as_mut().unwrap();
         }
-        i.count += 1;
+        node.count += 1;
     }
 
     pub fn erase(&mut self, x: u32) -> Option<()> {
-        let mut i = &self.nodes;
+        let mut node = &self.nodes;
 
-        for j in (0..32).rev() {
-            let f = (x >> j & 1) as usize;
-            if i.as_ref()?.count == 1 {
-                return None;
-            }
-            i = &i.as_ref()?.children[f];
+        for i in (0..32).rev() {
+            node = &node.as_ref()?.children[(x >> i & 1) as usize];
         }
+        node.as_ref()?;
 
-        let mut i = &mut self.nodes;
-        for j in (0..32).rev() {
-            let f = (x >> j & 1) as usize;
-            if i.as_ref()?.count == 1 {
-                *i = None;
+        let mut node = &mut self.nodes;
+        for i in (0..32).rev() {
+            if node.as_ref()?.count == 1 {
+                *node = None;
                 return Some(());
             } else {
-                i.as_mut()?.count -= 1;
+                node.as_mut()?.count -= 1;
             }
-
-            i = &mut i.as_mut()?.children[f];
+            node = &mut node.as_mut()?.children[(x >> i & 1) as usize];
+        }
+        if node.as_ref()?.count == 1 {
+            *node = None;
+        } else {
+            node.as_mut()?.count -= 1;
         }
 
         Some(())
@@ -65,41 +65,41 @@ impl BinaryTrie {
 
     pub fn xor_min(&self, x: u32) -> Option<u32> {
         let mut ans = 0;
-        let mut i = self.nodes.as_ref()?;
-        for j in (0..32).rev() {
-            let mut f = (x >> j & 1) as usize;
-            if i.children[f].is_none() {
+        let mut node = self.nodes.as_ref()?;
+        for i in (0..32).rev() {
+            let mut f = (x >> i & 1) as usize;
+            if node.children[f].is_none() {
                 f ^= 1;
             }
-            ans ^= (f as u32) << j;
-            i = i.children[f].as_ref().unwrap();
+            ans ^= (f as u32) << i;
+            node = node.children[f].as_ref().unwrap();
         }
         Some(ans ^ x)
     }
 
     pub fn min(&self) -> Option<u32> {
         let mut ans = 0;
-        let mut i = self.nodes.as_ref()?;
-        for j in (0..32).rev() {
+        let mut node = self.nodes.as_ref()?;
+        for i in (0..32).rev() {
             let mut f = 0;
-            if i.children[f].is_none() {
+            if node.children[f].is_none() {
                 f ^= 1;
             }
-            ans ^= (f as u32) << j;
-            i = i.children[f].as_ref().unwrap();
+            ans ^= (f as u32) << i;
+            node = node.children[f].as_ref().unwrap();
         }
         Some(ans)
     }
     pub fn max(&self) -> Option<u32> {
         let mut ans = 0;
-        let mut i = self.nodes.as_ref()?;
-        for j in (0..32).rev() {
+        let mut node = self.nodes.as_ref()?;
+        for i in (0..32).rev() {
             let mut f = 1;
-            if i.children[f].is_none() {
+            if node.children[f].is_none() {
                 f ^= 1;
             }
-            ans ^= (f as u32) << j;
-            i = i.children[f].as_ref().unwrap();
+            ans ^= (f as u32) << i;
+            node = node.children[f].as_ref().unwrap();
         }
         Some(ans)
     }
@@ -112,18 +112,28 @@ mod test {
     #[test]
     fn bt() {
         let mut b = BinaryTrie::new();
-        b.insert(1);
+        b.insert(6);
 
-        dbg!(&b);
         let a = b.clone();
-        b.insert(1);
-        b.erase(1);
+        b.insert(7);
+        b.insert(7);
+        b.erase(7);
+        b.erase(7);
+        b.erase(10);
         assert_eq!(a.nodes, b.nodes);
     }
     #[test]
     fn btt() {
         let mut b = BinaryTrie::new();
-        b.erase(10);
+        let n = 2u32.pow(30);
+        b.insert(n + 100);
+        for i in 0..100 {
+            b.insert(n + i);
+        }
+        for i in 0..99 {
+            b.erase(n + i);
+            assert_eq!(b.min().unwrap(), n + i + 1);
+        }
     }
 
     #[test]
