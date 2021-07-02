@@ -1,12 +1,12 @@
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 struct Node {
-    lr: Vec<Option<u32>>,
+    children: Vec<Option<u32>>,
     count: u32,
 }
 impl Node {
     fn new(n: u32) -> Self {
         Self {
-            lr: vec![None; 2],
+            children: vec![None; 2],
             count: n,
         }
     }
@@ -14,25 +14,25 @@ impl Node {
 
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct BinaryTrie {
-    v: Vec<Node>,
+    nodes: Vec<Node>,
 }
 impl BinaryTrie {
     pub fn new() -> Self {
         Self {
-            v: vec![Node::new(0); 1],
+            nodes: vec![Node::new(0); 1],
         }
     }
     pub fn add(&mut self, x: u32) {
         let mut i = 0;
         for j in (0..32).rev() {
             let f = (x >> j & 1) as usize;
-            if self.v[i].lr[f].is_none() {
-                self.v.push(Node::new(1));
-                self.v[i].lr[f] = Some(self.v.len() as u32 - 1);
+            if self.nodes[i].children[f].is_none() {
+                self.nodes.push(Node::new(1));
+                self.nodes[i].children[f] = Some(self.nodes.len() as u32 - 1);
             } else {
-                self.v[i].count += 1;
+                self.nodes[i].count += 1;
             }
-            i = self.v[i].lr[f].unwrap() as usize;
+            i = self.nodes[i].children[f].unwrap() as usize;
         }
     }
 
@@ -42,14 +42,12 @@ impl BinaryTrie {
         for j in (0..32).rev() {
             path[j] = i;
             let f = (x >> j & 1) as usize;
-            if self.v[i].lr[f].is_none() {
+            if self.nodes[i].children[f].is_none() {
                 return false;
             }
-            i = self.v[i].lr[f].unwrap() as usize;
+            i = self.nodes[i].children[f].unwrap() as usize;
         }
-        path.iter().for_each(|&i| {
-            self.v[i].count -= 1;
-        });
+        path.iter().for_each(|&i| self.nodes[i].count -= 1);
         true
     }
 
@@ -58,11 +56,11 @@ impl BinaryTrie {
         let mut i = 0;
         for j in (0..32).rev() {
             let mut f = (x >> j & 1) as usize;
-            if self.v[i].lr[f].is_none() {
+            if self.nodes[i].children[f].is_none() {
                 f ^= 1;
             }
             x ^= (f as u32) << j;
-            i = self.v[i].lr[f].unwrap() as usize;
+            i = self.nodes[i].children[f].unwrap() as usize;
         }
         x
     }
@@ -78,7 +76,7 @@ fn a() {
     dbg!(&b);
     b.remove(1);
     dbg!(&b);
-    assert_eq!(a.v, b.v);
+    assert_eq!(a.nodes, b.nodes);
     println!("{}", !0usize);
     println!("{}", 8 * std::mem::size_of::<u32>());
 }
