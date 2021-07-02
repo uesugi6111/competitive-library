@@ -146,7 +146,7 @@ mod test {
             1 => {
                 b.erase(x);
             }
-            _ => ans.push(b.xor_min(x).unwrap_or_else(|| panic!(x.to_string()))),
+            _ => ans.push(b.xor_min(x).unwrap_or_else(|| panic!("{}", x.to_string()))),
         });
 
         assert_eq!(vec![2, 1], ans);
