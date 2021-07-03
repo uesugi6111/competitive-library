@@ -115,9 +115,7 @@ impl BinaryTrie {
                 buff
             };
             ans ^= (bit as u32) << i;
-            node = unsafe { node.children.get_unchecked(bit) }
-                .as_ref()
-                .unwrap();
+            node = unsafe { node.children.get_unchecked(bit) }.as_ref()?;
         }
         Some(ans ^ x)
     }
@@ -130,9 +128,7 @@ impl BinaryTrie {
         for i in (0..32).rev() {
             let bit = if node.children[0].is_none() { 1 } else { 0 };
             ans ^= (bit as u32) << i;
-            node = unsafe { node.children.get_unchecked(bit) }
-                .as_ref()
-                .unwrap();
+            node = unsafe { node.children.get_unchecked(bit) }.as_ref()?;
         }
         Some(ans)
     }
@@ -145,9 +141,7 @@ impl BinaryTrie {
         for i in (0..32).rev() {
             let bit = if node.children[1].is_none() { 0 } else { 1 };
             ans ^= (bit as u32) << i;
-            node = unsafe { node.children.get_unchecked(bit) }
-                .as_ref()
-                .unwrap();
+            node = unsafe { node.children.get_unchecked(bit) }.as_ref()?;
         }
         Some(ans)
     }
