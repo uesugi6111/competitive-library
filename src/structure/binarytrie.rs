@@ -26,22 +26,21 @@ impl BinaryTrie {
 
     /// 値の挿入
     #[inline]
-    pub fn insert(&mut self, x: u32) {
+    pub fn insert(&mut self, x: u32) -> Option<()> {
         if self.nodes.is_none() {
             self.nodes = Some(Node::new());
         }
-        let mut node = self.nodes.as_mut().unwrap();
+        let mut node = self.nodes.as_mut()?;
         for i in (0..32).rev() {
             node.count += 1;
             let bit = (x >> i & 1) as usize;
             if unsafe { node.children.get_unchecked(bit) }.is_none() {
                 *unsafe { node.children.get_unchecked_mut(bit) } = Some(Node::new());
             }
-            node = unsafe { node.children.get_unchecked_mut(bit) }
-                .as_mut()
-                .unwrap();
+            node = unsafe { node.children.get_unchecked_mut(bit) }.as_mut()?;
         }
         node.count += 1;
+        Some(())
     }
 
     /// 値のカウント
@@ -59,20 +58,14 @@ impl BinaryTrie {
     #[inline]
     pub fn erase(&mut self, x: u32) -> Option<()> {
         self.count(x)?;
-
-        self.erase_inner(x, 1)?;
-
-        Some(())
+        self.erase_inner(x, 1)
     }
 
     /// 値をすべて削除
     #[inline]
     pub fn erase_all(&mut self, x: u32) -> Option<()> {
         let erase_count = self.count(x)?;
-
-        self.erase_inner(x, erase_count)?;
-
-        Some(())
+        self.erase_inner(x, erase_count)
     }
 
     /// 値を削除
@@ -183,7 +176,9 @@ mod test {
         let query = vec![(0, 6), (0, 7), (2, 5), (1, 7), (1, 10), (2, 7)];
         let mut ans = vec![];
         query.iter().for_each(|&(p, x)| match p {
-            0 => b.insert(x),
+            0 => {
+                b.insert(x);
+            }
             1 => {
                 b.erase_all(x);
             }
