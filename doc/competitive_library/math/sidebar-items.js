@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["euclid","ユークリッドさんありがとう"],["modpow","累乗剰余"],["permutation","順列生成"]]});

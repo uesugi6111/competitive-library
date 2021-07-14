@@ -1,3 +1,0 @@
-var N = null;var sourcesIndex = {};
-sourcesIndex["competitive_library"] = {"name":"","dirs":[{"name":"algorithm","files":["atkin.rs","cumsum.rs","enumdivisors.rs","eratosthenes.rs","inversionnumber.rs","largestrectangle.rs","mod.rs","prime.rs","run_length.rs"]},{"name":"graph","files":["dijkstra.rs","floydwarshall.rs","mod.rs","util.rs"]},{"name":"math","files":["euclid.rs","mod.rs","modpow.rs","permutation.rs"]},{"name":"string","files":["mod.rs","rollinghash.rs"]},{"name":"structure","files":["cumsum2d.rs","dsu.rs","fenwicktree.rs","mod.rs","segmenttree.rs","sparsetable.rs"]}],"files":["lib.rs"]};
-createSourceSidebar();
