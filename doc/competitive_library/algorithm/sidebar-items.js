@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["atkin","アトキンの篩"],["cumsum","累積和"],["enumdivisors","約数列挙"],["eratosthenes","エラトステネス"],["inversionnumber","転倒数"],["largestrectangle","最大長方形"],["prime","試割"],["run_length","ランレングス"]]});
+initSidebarItems({"mod":[["atkin","アトキンの篩"],["convex_hull_trick",""],["cumsum","累積和"],["enum_divisors","約数列挙"],["eratosthenes","エラトステネス"],["fast_eratosthenes","エラトステネス"],["inversion_number","転倒数"],["largest_rectangle","最大長方形"],["prime","試割"],["run_length","ランレングス"]]});
