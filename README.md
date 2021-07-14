@@ -1,8 +1,11 @@
 # competitive-library
 [![library-test](https://github.com/uesugi6111/competitive-library/actions/workflows/rust.yml/badge.svg)](https://github.com/uesugi6111/competitive-library/actions/workflows/rust.yml)  
 
-競技プログラミングで使うやつです  
-外部 crate に依存しません
+Library of algorithms and data structures for competitive programming written in Rust
+
+This library does not depend on external crates.
+
+
 
 [doc](https://github.uesugi.app/competitive-library/doc/competitive_library/)
 
@@ -27,7 +30,6 @@ src
 │      dijkstra.rs
 │      dijkstra_restorepath.rs
 │      floyd_warshall.rs
-│      lowest_common_ancestor.rs
 │      util.rs
 │
 ├─math
