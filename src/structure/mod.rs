@@ -1,7 +1,7 @@
 //! データ構造っぽいもの
-pub mod binarytrie;
-pub mod cumsum2d;
+pub mod binary_trie;
+pub mod cumsum_2d;
 pub mod dsu;
-pub mod fenwicktree;
-pub mod segmenttree;
-pub mod sparsetable;
+pub mod fenwick_tree;
+pub mod segment_tree;
+pub mod sparse_table;
