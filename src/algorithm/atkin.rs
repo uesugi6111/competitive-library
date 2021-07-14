@@ -43,15 +43,19 @@ pub fn sieve_of_atkin(n: u64) -> Vec<bool> {
     is_prime
 }
 
-#[test]
-fn aaa() {
-    let prime = sieve_of_atkin(1_000_000);
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_atkin() {
+        let prime = sieve_of_atkin(1_000_000);
 
-    let count: Vec<_> = prime
-        .iter()
-        .enumerate()
-        .filter(|x| *x.1)
-        .map(|x| x.0)
-        .collect();
-    assert_eq!(count.len(), 78498);
+        let count: Vec<_> = prime
+            .iter()
+            .enumerate()
+            .filter(|x| *x.1)
+            .map(|x| x.0)
+            .collect();
+        assert_eq!(count.len(), 78498);
+    }
 }

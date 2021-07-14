@@ -28,17 +28,21 @@ pub fn z_algorithm(s: &[char]) -> Vec<usize> {
     z_array
 }
 
-#[test]
-fn test() {
-    let case = vec![
-        ("abcbcba", vec![7, 0, 0, 0, 0, 0, 1]),
-        ("mississippi", vec![11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
-        ("ababacaca", vec![9, 0, 3, 0, 1, 0, 1, 0, 1]),
-        ("aaaaa", vec![5, 4, 3, 2, 1]),
-    ];
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test() {
+        let case = vec![
+            ("abcbcba", vec![7, 0, 0, 0, 0, 0, 1]),
+            ("mississippi", vec![11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+            ("ababacaca", vec![9, 0, 3, 0, 1, 0, 1, 0, 1]),
+            ("aaaaa", vec![5, 4, 3, 2, 1]),
+        ];
 
-    for (s, ans) in case {
-        let z = z_algorithm(&s.to_string().chars().collect::<Vec<_>>());
-        assert_eq!(z, ans);
+        for (s, ans) in case {
+            let z = z_algorithm(&s.to_string().chars().collect::<Vec<_>>());
+            assert_eq!(z, ans);
+        }
     }
 }

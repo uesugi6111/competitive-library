@@ -82,29 +82,33 @@ fn restore_path(end: usize, previous: &[Option<usize>]) -> Vec<usize> {
     v
 }
 
-#[test]
-fn test_dijkstra() {
-    let graph = vec![
-        vec![(2, 10), (1, 1)],
-        vec![(3, 2)],
-        vec![(1, 1), (3, 3), (4, 1)],
-        vec![(0, 7), (4, 2)],
-        vec![],
-    ];
-    let l = graph.len();
-    for (start, end, ans) in &[
-        (0, 1, Some((1, vec![0, 1]))),
-        (0, 3, Some((3, vec![0, 1, 3]))),
-        (3, 0, Some((7, vec![3, 0]))),
-        (0, 4, Some((5, vec![0, 1, 3, 4]))),
-        (4, 0, None),
-    ] {
-        match dijkstra(&graph, *start, *end, l) {
-            Some((a, b)) => {
-                assert_eq!(a, ans.as_ref().unwrap().0);
-                assert_eq!(b, ans.as_ref().unwrap().1);
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_dijkstra() {
+        let graph = vec![
+            vec![(2, 10), (1, 1)],
+            vec![(3, 2)],
+            vec![(1, 1), (3, 3), (4, 1)],
+            vec![(0, 7), (4, 2)],
+            vec![],
+        ];
+        let l = graph.len();
+        for (start, end, ans) in &[
+            (0, 1, Some((1, vec![0, 1]))),
+            (0, 3, Some((3, vec![0, 1, 3]))),
+            (3, 0, Some((7, vec![3, 0]))),
+            (0, 4, Some((5, vec![0, 1, 3, 4]))),
+            (4, 0, None),
+        ] {
+            match dijkstra(&graph, *start, *end, l) {
+                Some((a, b)) => {
+                    assert_eq!(a, ans.as_ref().unwrap().0);
+                    assert_eq!(b, ans.as_ref().unwrap().1);
+                }
+                None => assert!(ans.is_none()),
             }
-            None => assert!(ans.is_none()),
         }
     }
 }

@@ -18,9 +18,13 @@ pub fn compress(s: &str) -> Vec<(char, usize)> {
     v
 }
 
-#[test]
-fn test_run_length() {
-    let v = vec![('a', 5usize), ('b', 3), ('c', 1)];
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_run_length() {
+        let v = vec![('a', 5usize), ('b', 3), ('c', 1)];
 
-    assert_eq!(compress(&"aaaaabbbc"), v);
+        assert_eq!(compress(&"aaaaabbbc"), v);
+    }
 }

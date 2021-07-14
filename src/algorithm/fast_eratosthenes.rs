@@ -117,13 +117,13 @@ mod tests {
     use super::*;
 
     #[test]
-    fn aaa() {
+    fn test_era_1e9() {
         let mut e = Eratosthenes::new(100_000_000);
 
         assert_eq!(e.count(), 5_761_455);
     }
     #[test]
-    fn a2() {
+    fn test_era_zero() {
         let mut e = Eratosthenes::new(1);
 
         assert_eq!(e.count(), 0);

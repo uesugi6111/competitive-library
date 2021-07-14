@@ -141,50 +141,54 @@ impl BinaryTrie {
 }
 
 #[cfg(test)]
-mod test {
-
+mod tests {
     use super::*;
-    #[test]
-    fn bt() {
-        let mut b = BinaryTrie::new();
-        b.insert(6);
+    #[cfg(test)]
+    mod test {
 
-        let a = b.clone();
-        b.insert(7);
-        b.insert(7);
-        b.erase(7);
-        b.erase(7);
-        b.erase(10);
-        assert_eq!(a.nodes, b.nodes);
-    }
-    #[test]
-    fn btt() {
-        let mut b = BinaryTrie::new();
-        let n = 2u32.pow(30);
-        for i in 0..100 {
-            b.insert(n + i);
+        use super::*;
+        #[test]
+        fn bt() {
+            let mut b = BinaryTrie::new();
+            b.insert(6);
+
+            let a = b.clone();
+            b.insert(7);
+            b.insert(7);
+            b.erase(7);
+            b.erase(7);
+            b.erase(10);
+            assert_eq!(a.nodes, b.nodes);
         }
-        for i in 0..99 {
-            b.erase(n + i);
-            assert_eq!(b.min().unwrap(), n + i + 1);
+        #[test]
+        fn btt() {
+            let mut b = BinaryTrie::new();
+            let n = 2u32.pow(30);
+            for i in 0..100 {
+                b.insert(n + i);
+            }
+            for i in 0..99 {
+                b.erase(n + i);
+                assert_eq!(b.min().unwrap(), n + i + 1);
+            }
         }
-    }
 
-    #[test]
-    fn library_checker() {
-        let mut b = BinaryTrie::new();
-        let query = vec![(0, 6), (0, 7), (2, 5), (1, 7), (1, 10), (2, 7)];
-        let mut ans = vec![];
-        query.iter().for_each(|&(p, x)| match p {
-            0 => {
-                b.insert(x);
-            }
-            1 => {
-                b.erase_all(x);
-            }
-            _ => ans.push(b.xor_min(x).unwrap_or_else(|| panic!("{}", x.to_string()))),
-        });
+        #[test]
+        fn library_checker() {
+            let mut b = BinaryTrie::new();
+            let query = vec![(0, 6), (0, 7), (2, 5), (1, 7), (1, 10), (2, 7)];
+            let mut ans = vec![];
+            query.iter().for_each(|&(p, x)| match p {
+                0 => {
+                    b.insert(x);
+                }
+                1 => {
+                    b.erase_all(x);
+                }
+                _ => ans.push(b.xor_min(x).unwrap_or_else(|| panic!("{}", x.to_string()))),
+            });
 
-        assert_eq!(vec![2, 1], ans);
+            assert_eq!(vec![2, 1], ans);
+        }
     }
 }

@@ -40,23 +40,27 @@ impl SparseTable {
     }
 }
 
-#[test]
-fn test_sparse_table() {
-    let a = SparseTable::new(&[2, 10, 1, 100]);
-    for (l, r, ans) in [
-        (0, 1, 2),
-        (0, 2, 2),
-        (0, 3, 1),
-        (0, 4, 1),
-        (1, 2, 10),
-        (1, 3, 1),
-        (1, 4, 1),
-        (2, 3, 1),
-        (2, 4, 1),
-        (3, 4, 100),
-    ]
-    .iter()
-    {
-        assert_eq!(a.query(*l, *r), *ans);
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_sparse_table() {
+        let a = SparseTable::new(&[2, 10, 1, 100]);
+        for (l, r, ans) in [
+            (0, 1, 2),
+            (0, 2, 2),
+            (0, 3, 1),
+            (0, 4, 1),
+            (1, 2, 10),
+            (1, 3, 1),
+            (1, 4, 1),
+            (2, 3, 1),
+            (2, 4, 1),
+            (3, 4, 100),
+        ]
+        .iter()
+        {
+            assert_eq!(a.query(*l, *r), *ans);
+        }
     }
 }

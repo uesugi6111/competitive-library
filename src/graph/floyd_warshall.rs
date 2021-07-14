@@ -45,21 +45,25 @@ fn test_floyd_warshall_1() {
     assert_eq!(ans, a);
 }
 
-#[test]
-fn test_floyd_warshall_2() {
-    let matrix = vec![
-        vec![Some(0), Some(10), None, Some(100)],
-        vec![None, Some(0), None, Some(1000)],
-        vec![None, Some(1), Some(0), Some(10000)],
-        vec![Some(5), None, None, Some(0)],
-    ];
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_floyd_warshall_2() {
+        let matrix = vec![
+            vec![Some(0), Some(10), None, Some(100)],
+            vec![None, Some(0), None, Some(1000)],
+            vec![None, Some(1), Some(0), Some(10000)],
+            vec![Some(5), None, None, Some(0)],
+        ];
 
-    let a = floyd_warshall(&matrix);
-    let ans = vec![
-        vec![Some(0), Some(10), None, Some(100)],
-        vec![Some(1005), Some(0), None, Some(1000)],
-        vec![Some(1006), Some(1), Some(0), Some(1001)],
-        vec![Some(5), Some(15), None, Some(0)],
-    ];
-    assert_eq!(ans, a);
+        let a = floyd_warshall(&matrix);
+        let ans = vec![
+            vec![Some(0), Some(10), None, Some(100)],
+            vec![Some(1005), Some(0), None, Some(1000)],
+            vec![Some(1006), Some(1), Some(0), Some(1001)],
+            vec![Some(5), Some(15), None, Some(0)],
+        ];
+        assert_eq!(ans, a);
+    }
 }
