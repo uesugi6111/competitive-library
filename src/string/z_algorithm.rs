@@ -32,7 +32,7 @@ pub fn z_algorithm(s: &[char]) -> Vec<usize> {
 mod tests {
     use super::*;
     #[test]
-    fn test() {
+    fn test_z_algorithm() {
         let case = vec![
             ("abcbcba", vec![7, 0, 0, 0, 0, 0, 1]),
             ("mississippi", vec![11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),

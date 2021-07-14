@@ -57,29 +57,25 @@ pub fn dijkstra(edge: &[Vec<(usize, i64)>], start: usize, end: usize) -> Option<
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[cfg(test)]
-    mod tests {
-        use super::*;
-        #[test]
-        fn test() {
-            let graph = vec![
-                vec![(2, 10), (1, 1)],
-                vec![(3, 2)],
-                vec![(1, 1), (3, 3), (4, 1)],
-                vec![(0, 7), (4, 2)],
-                vec![],
-            ];
+    #[test]
+    fn test_dijkstra() {
+        let graph = vec![
+            vec![(2, 10), (1, 1)],
+            vec![(3, 2)],
+            vec![(1, 1), (3, 3), (4, 1)],
+            vec![(0, 7), (4, 2)],
+            vec![],
+        ];
 
-            assert_eq!(dijkstra(&graph, 0, 1), Some(1));
-            assert_eq!(dijkstra(&graph, 0, 3), Some(3));
-            assert_eq!(dijkstra(&graph, 3, 0), Some(7));
-            assert_eq!(dijkstra(&graph, 0, 4), Some(5));
-            assert_eq!(dijkstra(&graph, 4, 0), None);
-        }
-        #[test]
-        #[should_panic]
-        fn test_panic() {
-            dijkstra(&[], 0, 0);
-        }
+        assert_eq!(dijkstra(&graph, 0, 1), Some(1));
+        assert_eq!(dijkstra(&graph, 0, 3), Some(3));
+        assert_eq!(dijkstra(&graph, 3, 0), Some(7));
+        assert_eq!(dijkstra(&graph, 0, 4), Some(5));
+        assert_eq!(dijkstra(&graph, 4, 0), None);
+    }
+    #[test]
+    #[should_panic]
+    fn test_panic() {
+        dijkstra(&[], 0, 0);
     }
 }

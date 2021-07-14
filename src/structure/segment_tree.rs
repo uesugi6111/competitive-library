@@ -184,7 +184,7 @@ impl<M: Monoid> SegmentTree<M> {
 mod tests {
     use super::*;
     #[test]
-    fn practice2_sample() {
+    fn test_practice2_sample() {
         let a = vec![1, 2, 3, 2, 1];
         let cxy = vec![(2, 1, 5), (3, 2, 3), (1, 3, 1), (2, 2, 4), (3, 1, 3)];
 

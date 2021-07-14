@@ -29,7 +29,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn works() {
+    fn test_cumsum_2d() {
         let a = CumSum2D::new(&[
             vec![1, 2, 3, 4],
             vec![1, 2, 3, 4],

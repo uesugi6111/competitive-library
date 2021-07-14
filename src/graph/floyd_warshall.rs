@@ -22,32 +22,31 @@ pub fn floyd_warshall(matrix: &[Vec<Option<i64>>]) -> Vec<Vec<Option<i64>>> {
     });
     m
 }
-
-#[test]
-fn test_floyd_warshall_1() {
-    let matrix = vec![
-        vec![Some(0), Some(1), Some(1), None, Some(1)],
-        vec![Some(1), Some(0), Some(1), Some(1), None],
-        vec![Some(1), Some(1), Some(0), Some(1), Some(1)],
-        vec![None, Some(1), Some(1), Some(0), Some(1)],
-        vec![Some(1), None, Some(1), Some(1), Some(0)],
-    ];
-    let a = floyd_warshall(&matrix);
-
-    let ans = vec![
-        vec![Some(0), Some(1), Some(1), Some(2), Some(1)],
-        vec![Some(1), Some(0), Some(1), Some(1), Some(2)],
-        vec![Some(1), Some(1), Some(0), Some(1), Some(1)],
-        vec![Some(2), Some(1), Some(1), Some(0), Some(1)],
-        vec![Some(1), Some(2), Some(1), Some(1), Some(0)],
-    ];
-
-    assert_eq!(ans, a);
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn test_floyd_warshall_1() {
+        let matrix = vec![
+            vec![Some(0), Some(1), Some(1), None, Some(1)],
+            vec![Some(1), Some(0), Some(1), Some(1), None],
+            vec![Some(1), Some(1), Some(0), Some(1), Some(1)],
+            vec![None, Some(1), Some(1), Some(0), Some(1)],
+            vec![Some(1), None, Some(1), Some(1), Some(0)],
+        ];
+        let a = floyd_warshall(&matrix);
+
+        let ans = vec![
+            vec![Some(0), Some(1), Some(1), Some(2), Some(1)],
+            vec![Some(1), Some(0), Some(1), Some(1), Some(2)],
+            vec![Some(1), Some(1), Some(0), Some(1), Some(1)],
+            vec![Some(2), Some(1), Some(1), Some(0), Some(1)],
+            vec![Some(1), Some(2), Some(1), Some(1), Some(0)],
+        ];
+
+        assert_eq!(ans, a);
+    }
+
     #[test]
     fn test_floyd_warshall_2() {
         let matrix = vec![
