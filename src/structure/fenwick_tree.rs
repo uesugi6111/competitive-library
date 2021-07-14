@@ -59,14 +59,18 @@ where
     }
 }
 
-#[test]
-fn test_sum() {
-    let mut a = FenwickTree::new(100);
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_sum() {
+        let mut a = FenwickTree::new(100);
 
-    for i in 1..101 {
-        a.add(i, i);
+        for i in 1..101 {
+            a.add(i, i);
+        }
+
+        assert_eq!((0..101).sum::<usize>(), a.sum(100));
+        assert_eq!((2..101).sum::<usize>(), a.sum((2, 100)));
     }
-
-    assert_eq!((0..101).sum::<usize>(), a.sum(100));
-    assert_eq!((2..101).sum::<usize>(), a.sum((2, 100)));
 }

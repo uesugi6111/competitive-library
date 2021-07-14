@@ -8,9 +8,13 @@ pub fn cumsum(v: &[i64]) -> Vec<i64> {
         .collect()
 }
 
-#[test]
-fn a() {
-    let v = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    let cumsum = cumsum(&v);
-    assert_eq!(&cumsum, &[0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55]);
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_cumsum() {
+        let v = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        let cumsum = cumsum(&v);
+        assert_eq!(&cumsum, &[0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55]);
+    }
 }

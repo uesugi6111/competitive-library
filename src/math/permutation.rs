@@ -45,3 +45,6 @@ fn push_recusive<T: Clone>(
 fn factorial(i: usize) -> usize {
     (1..=i).product()
 }
+
+#[cfg(test)]
+mod tests {}

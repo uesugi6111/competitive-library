@@ -79,7 +79,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn dsu_works() {
+    fn test_dsu() {
         let mut d = Dsu::new(4);
         d.unite(0, 1);
         assert!(d.is_same(0, 1));

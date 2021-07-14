@@ -180,22 +180,26 @@ impl<M: Monoid> SegmentTree<M> {
     }
 }
 
-#[test]
-fn practice2_sample() {
-    let a = vec![1, 2, 3, 2, 1];
-    let cxy = vec![(2, 1, 5), (3, 2, 3), (1, 3, 1), (2, 2, 4), (3, 1, 3)];
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_practice2_sample() {
+        let a = vec![1, 2, 3, 2, 1];
+        let cxy = vec![(2, 1, 5), (3, 2, 3), (1, 3, 1), (2, 2, 4), (3, 1, 3)];
 
-    let mut st = SegmentTree::<Max>::from(a);
-    let mut ans = vec![];
-    for (c, x, y) in cxy {
-        if c == 1 {
-            st.set(x as usize - 1, y);
-        } else if c == 2 {
-            ans.push(st.query(x as usize - 1, y as usize));
-        } else {
-            ans.push(st.max_right(x as usize - 1, |&v| y > v) as i64 + 1);
+        let mut st = SegmentTree::<Max>::from(a);
+        let mut ans = vec![];
+        for (c, x, y) in cxy {
+            if c == 1 {
+                st.set(x as usize - 1, y);
+            } else if c == 2 {
+                ans.push(st.query(x as usize - 1, y as usize));
+            } else {
+                ans.push(st.max_right(x as usize - 1, |&v| y > v) as i64 + 1);
+            }
         }
-    }
 
-    assert_eq!(vec![3, 3, 2, 6], ans);
+        assert_eq!(vec![3, 3, 2, 6], ans);
+    }
 }

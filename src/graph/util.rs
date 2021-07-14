@@ -20,49 +20,53 @@ pub fn adjacency_list(matrix: &[Vec<i64>]) -> Vec<Vec<i64>> {
         .collect()
 }
 
-#[test]
-fn test_to_adjacency_matrix() {
-    let m = to_adjacency_matrix(&[
-        vec![1, 2, 4],
-        vec![0, 2, 3],
-        vec![0, 1, 3, 4],
-        vec![1, 2, 4],
-        vec![0, 2, 3],
-    ]);
-
-    let ans = vec![
-        vec![0, 1, 1, 0, 1],
-        vec![1, 0, 1, 1, 0],
-        vec![1, 1, 0, 1, 1],
-        vec![0, 1, 1, 0, 1],
-        vec![1, 0, 1, 1, 0],
-    ];
-    dbg!(&m);
-    for i in 0..ans.len() {
-        for j in 0..ans.len() {
-            let v = m[i][j].unwrap_or(0);
-            assert_eq!(ans[i][j], v);
-        }
-    }
-}
-#[test]
-fn test_adjacency_list() {
-    let al = adjacency_list(&[
-        vec![0, 1, 1, 0, 1],
-        vec![1, 0, 1, 1, 0],
-        vec![1, 1, 0, 1, 1],
-        vec![0, 1, 1, 0, 1],
-        vec![1, 0, 1, 1, 0],
-    ]);
-
-    assert_eq!(
-        &vec![
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_to_adjacency_matrix() {
+        let m = to_adjacency_matrix(&[
             vec![1, 2, 4],
             vec![0, 2, 3],
             vec![0, 1, 3, 4],
             vec![1, 2, 4],
             vec![0, 2, 3],
-        ],
-        &al
-    );
+        ]);
+
+        let ans = vec![
+            vec![0, 1, 1, 0, 1],
+            vec![1, 0, 1, 1, 0],
+            vec![1, 1, 0, 1, 1],
+            vec![0, 1, 1, 0, 1],
+            vec![1, 0, 1, 1, 0],
+        ];
+        dbg!(&m);
+        for i in 0..ans.len() {
+            for j in 0..ans.len() {
+                let v = m[i][j].unwrap_or(0);
+                assert_eq!(ans[i][j], v);
+            }
+        }
+    }
+    #[test]
+    fn test_adjacency_list() {
+        let al = adjacency_list(&[
+            vec![0, 1, 1, 0, 1],
+            vec![1, 0, 1, 1, 0],
+            vec![1, 1, 0, 1, 1],
+            vec![0, 1, 1, 0, 1],
+            vec![1, 0, 1, 1, 0],
+        ]);
+
+        assert_eq!(
+            &vec![
+                vec![1, 2, 4],
+                vec![0, 2, 3],
+                vec![0, 1, 3, 4],
+                vec![1, 2, 4],
+                vec![0, 2, 3],
+            ],
+            &al
+        );
+    }
 }

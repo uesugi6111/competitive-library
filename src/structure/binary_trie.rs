@@ -141,9 +141,9 @@ impl BinaryTrie {
 }
 
 #[cfg(test)]
-mod test {
-
+mod tests {
     use super::*;
+
     #[test]
     fn bt() {
         let mut b = BinaryTrie::new();

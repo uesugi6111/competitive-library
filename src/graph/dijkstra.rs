@@ -58,7 +58,7 @@ pub fn dijkstra(edge: &[Vec<(usize, i64)>], start: usize, end: usize) -> Option<
 mod tests {
     use super::*;
     #[test]
-    fn test() {
+    fn test_dijkstra() {
         let graph = vec![
             vec![(2, 10), (1, 1)],
             vec![(3, 2)],

@@ -59,12 +59,16 @@ impl Default for ConvexHullTrick {
     }
 }
 
-#[test]
-fn test_cht() {
-    let mut cht = ConvexHullTrick::new();
-    for (a, b) in &[(2, 0), (1, 1), (0, -1), (-1, 0)] {
-        cht.add_line(*a, *b);
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_cht() {
+        let mut cht = ConvexHullTrick::new();
+        for (a, b) in &[(2, 0), (1, 1), (0, -1), (-1, 0)] {
+            cht.add_line(*a, *b);
+        }
+        let ans: Vec<_> = (0..10).map(|i| cht.query(-5 + i)).collect();
+        assert_eq!(ans, [-10, -8, -6, -4, -2, -1, -1, -2, -3, -4]);
     }
-    let ans: Vec<_> = (0..10).map(|i| cht.query(-5 + i)).collect();
-    assert_eq!(ans, [-10, -8, -6, -4, -2, -1, -1, -2, -3, -4]);
 }
