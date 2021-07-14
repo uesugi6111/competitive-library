@@ -10,6 +10,4 @@ pub fn lcm(m: i64, n: i64) -> i64 {
     m * n / gcd(m, n)
 }
 #[cfg(test)]
-mod tests {
-    use super::*;
-}
+mod tests {}

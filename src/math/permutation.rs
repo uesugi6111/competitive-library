@@ -47,6 +47,4 @@ fn factorial(i: usize) -> usize {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-}
+mod tests {}
