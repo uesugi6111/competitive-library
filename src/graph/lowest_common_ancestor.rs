@@ -95,8 +95,9 @@ impl LowestCommonAncestor {
         self.ancestors[0][u]
     }
     #[inline]
-    pub fn get_distance() -> i64 {
-        0
+    pub fn get_distance(&self, u: usize, v: usize, root: usize) -> i64 {
+        let lca = self.get_lca(u, v).unwrap_or(root);
+        self.depths[u] + self.depths[v] - self.depths[lca] * 2
     }
 }
 
