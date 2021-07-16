@@ -1,37 +1,50 @@
+use std::collections::VecDeque;
+
 struct Node {
     pub parent: Option<usize>,
-    pub me: usize,
+    pub number: usize,
     pub depth: i64,
 }
 
 impl Node {
-    pub fn new(parent: Option<usize>, me: usize, depth: i64) -> Self {
-        Node { parent, me, depth }
+    #[inline]
+    pub fn new(parent: Option<usize>, number: usize, depth: i64) -> Self {
+        Node {
+            parent,
+            number,
+            depth,
+        }
     }
 }
 
 pub struct LowestCommonAncestor {
     max_log_v: usize,
-    depth: Vec<i64>,
+    depths: Vec<i64>,
     ancestors: Vec<Vec<Option<usize>>>,
 }
 
 impl LowestCommonAncestor {
+    // 隣接リストで受け取る
+    #[inline]
     pub fn new(edges: &[Vec<i64>], root: usize) -> Self {
         let max_v = edges.len();
         let max_log_v = ((max_v as f64).ln() / 2.0_f64.ln()) as usize + 1;
         let mut ancestors = vec![vec![None; max_v]; max_log_v + 1];
-        let mut depth = vec![0; max_v];
+        let mut depths = vec![0; max_v];
 
-        let mut q = std::collections::VecDeque::new();
+        let mut q = VecDeque::new();
         q.push_back(Node::new(None, root, 0));
-        while let Some(u) = q.pop_front() {
-            ancestors[0][u.me] = u.parent;
+        while let Some(node) = q.pop_front() {
+            ancestors[0][node.number] = node.parent;
 
-            depth[u.me] = u.depth;
-            for i in 0..edges[u.me].len() {
-                if u.parent.is_none() || u.parent.unwrap() as i64 != edges[u.me][i] {
-                    q.push_back(Node::new(Some(u.me), edges[u.me][i] as usize, u.depth + 1));
+            depths[node.number] = node.depth;
+            for i in 0..edges[node.number].len() {
+                if node.parent.is_none() || node.parent.unwrap() as i64 != edges[node.number][i] {
+                    q.push_back(Node::new(
+                        Some(node.number),
+                        edges[node.number][i] as usize,
+                        node.depth + 1,
+                    ));
                 }
             }
         }
@@ -46,20 +59,20 @@ impl LowestCommonAncestor {
 
         LowestCommonAncestor {
             max_log_v,
-            depth,
+            depths,
             ancestors,
         }
     }
-
+    #[inline]
     pub fn get_lca(&self, u: usize, v: usize) -> Option<usize> {
-        let (mut u, mut v) = if self.depth[u] > self.depth[v] {
+        let (mut u, mut v) = if self.depths[u] > self.depths[v] {
             (v, u)
         } else {
             (u, v)
         };
 
         for k in 0..self.max_log_v {
-            if (((self.depth[v] - self.depth[u]) >> k) & 1) == 1 {
+            if (((self.depths[v] - self.depths[u]) >> k) & 1) == 1 {
                 v = self.ancestors[k][v].unwrap();
             }
         }
@@ -69,17 +82,19 @@ impl LowestCommonAncestor {
         }
 
         for k in (0..self.max_log_v).rev() {
-            if self.ancestors[k][u].is_some()
-                && self.ancestors[k][v].is_some()
-                && self.ancestors[k][u] != self.ancestors[k][v]
+            if self.ancestors[k][u].is_none()
+                || self.ancestors[k][v].is_none()
+                || self.ancestors[k][u] == self.ancestors[k][v]
             {
-                u = self.ancestors[k][u].unwrap();
-                v = self.ancestors[k][v].unwrap();
+                continue;
             }
+
+            u = self.ancestors[k][u].unwrap();
+            v = self.ancestors[k][v].unwrap();
         }
         self.ancestors[0][u]
     }
-
+    #[inline]
     pub fn get_distance() -> i64 {
         0
     }
