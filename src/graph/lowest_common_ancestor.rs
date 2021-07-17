@@ -30,14 +30,17 @@ impl LowestCommonAncestor {
         let max_v = edges.len();
         let max_log_v = ((max_v as f64).ln() / 2.0_f64.ln()) as usize + 1;
         let mut ancestors = vec![vec![None; max_v]; max_log_v + 1];
-        let mut depths = vec![0; max_v];
+        let mut depths = vec![None; max_v];
 
         let mut q = VecDeque::new();
         q.push_back(Node::new(None, root, 0));
         while let Some(node) = q.pop_front() {
+            if depths[node.number].is_some() {
+                continue;
+            }
             ancestors[0][node.number] = node.parent;
 
-            depths[node.number] = node.depth;
+            depths[node.number] = Some(node.depth);
             for i in 0..edges[node.number].len() {
                 if node.parent.is_none() || node.parent.unwrap() as i64 != edges[node.number][i] {
                     q.push_back(Node::new(
@@ -59,7 +62,7 @@ impl LowestCommonAncestor {
 
         LowestCommonAncestor {
             max_log_v,
-            depths,
+            depths: depths.iter().map(|x| x.unwrap()).collect::<Vec<_>>(),
             ancestors,
         }
     }
