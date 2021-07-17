@@ -11,7 +11,7 @@ impl Monoid for Add {
     type T = i64;
     #[inline]
     fn identity_element() -> Self::T {
-        0 as i64
+        0_i64
     }
     #[inline]
     fn binary_operation(a: &Self::T, b: &Self::T) -> Self::T {
@@ -78,7 +78,7 @@ mod tests {
         type T = u64;
         #[inline]
         fn identity_element() -> Self::T {
-            0 as u64
+            0_u64
         }
         #[inline]
         fn binary_operation(a: &Self::T, b: &Self::T) -> Self::T {
