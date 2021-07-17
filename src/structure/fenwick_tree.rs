@@ -1,61 +1,61 @@
 //! BIT
-use std::clone::Clone;
-use std::convert::From;
-use std::ops::{Add, AddAssign, Sub};
+
+pub trait Monoid {
+    type T: Clone;
+    fn identity_element() -> Self::T;
+    fn binary_operation(a: &Self::T, b: &Self::T) -> Self::T;
+}
+
+pub struct Add {}
+impl Monoid for Add {
+    type T = i64;
+    #[inline]
+    fn identity_element() -> Self::T {
+        0 as i64
+    }
+    #[inline]
+    fn binary_operation(a: &Self::T, b: &Self::T) -> Self::T {
+        *a + *b
+    }
+}
 
 ///binaryIndexTree
 #[derive(Clone, Debug)]
-pub struct FenwickTree<T> {
-    array: Vec<T>,
+pub struct FenwickTree<M>
+where
+    M: Monoid,
+{
+    array: Vec<M::T>,
 }
 
-impl<T> FenwickTree<T>
+impl<M> FenwickTree<M>
 where
-    T: Add + Sub + Clone + Copy + From<u8> + AddAssign,
+    M: Monoid,
 {
-    pub fn new(size: usize) -> FenwickTree<T> {
-        let v: Vec<T> = vec![T::from(0u8); size + 1];
-        Self { array: v }
+    #[inline]
+    pub fn new(size: usize) -> FenwickTree<M> {
+        Self {
+            array: vec![M::identity_element(); size + 1],
+        }
     }
-    pub fn add(&mut self, mut i: usize, x: T) {
+    #[inline]
+    pub fn add(&mut self, index: usize, x: M::T) {
+        let mut i = index + 1;
         while i < self.array.len() {
-            self.array[i] += x;
+            self.array[i] = M::binary_operation(&self.array[i], &x);
             i += i & i.wrapping_neg();
         }
     }
-}
 
-pub trait Sum<T, U> {
-    fn sum(&self, i: T) -> U;
-}
-
-impl<T> Sum<usize, T> for FenwickTree<T>
-where
-    T: Add + Sub + Clone + Copy + From<u8> + AddAssign,
-{
-    fn sum(&self, mut i: usize) -> T {
-        if i == 0 {
-            return T::from(0u8);
-        }
-        let mut s = T::from(0u8);
-
+    #[inline]
+    pub fn sum(&self, end: usize) -> M::T {
+        let mut s = M::identity_element();
+        let mut i = end;
         while i > 0 {
-            s += self.array[i];
+            s = M::binary_operation(&s, &self.array[i]);
             i -= i & i.wrapping_neg();
         }
         s
-    }
-}
-
-impl<T> Sum<(usize, usize), T> for FenwickTree<T>
-where
-    T: Add + Sub + Clone + Copy + From<u8> + AddAssign,
-    T: std::ops::Sub<Output = T>,
-{
-    fn sum(&self, i: (usize, usize)) -> T {
-        let sum_l = <FenwickTree<T> as Sum<usize, T>>::sum(self, i.0 - 1);
-        let sum_r = <FenwickTree<T> as Sum<usize, T>>::sum(self, i.1);
-        sum_r - sum_l
     }
 }
 
@@ -64,13 +64,55 @@ mod tests {
     use super::*;
     #[test]
     fn test_sum() {
-        let mut a = FenwickTree::new(100);
+        let mut a = FenwickTree::<Add>::new(100);
 
-        for i in 1..101 {
-            a.add(i, i);
+        (0..100).for_each(|i| a.add(i, i as i64 + 1));
+
+        (0..100).for_each(|i| assert_eq!((1..=i).sum::<i64>(), a.sum(i as usize)));
+    }
+
+    pub struct Xor {}
+    impl Monoid for Xor {
+        type T = u64;
+        #[inline]
+        fn identity_element() -> Self::T {
+            0 as u64
+        }
+        #[inline]
+        fn binary_operation(a: &Self::T, b: &Self::T) -> Self::T {
+            *a ^ *b
+        }
+    }
+    #[test]
+    fn test_xor() {
+        // https://atcoder.jp/contests/abc185/tasks/abc185_f
+        // sample 2
+        let a = vec![0, 5, 3, 4, 7, 0, 0, 0, 1, 0];
+        let txy_ans = vec![
+            (1, 10, 7, 0),
+            (2, 8, 9, 1),
+            (2, 3, 6, 0),
+            (2, 1, 6, 5),
+            (2, 1, 10, 3),
+            (1, 9, 4, 0),
+            (1, 6, 1, 0),
+            (1, 6, 3, 0),
+            (1, 1, 7, 0),
+            (2, 3, 5, 0),
+        ];
+
+        let mut ft = FenwickTree::<Xor>::new(10);
+
+        for (i, &v) in a.iter().enumerate() {
+            ft.add(i, v);
         }
 
-        assert_eq!((0..101).sum::<usize>(), a.sum(100));
-        assert_eq!((2..101).sum::<usize>(), a.sum((2, 100)));
+        for (t, x, y, ans) in txy_ans {
+            if t == 1 {
+                ft.add(x as usize - 1, y);
+            } else {
+                assert_eq!(ft.sum(y as usize) ^ ft.sum(x as usize - 1), ans);
+            }
+        }
     }
 }
