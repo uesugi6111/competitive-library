@@ -19,7 +19,7 @@ impl Monoid for Add {
     }
 }
 
-///binaryIndexTree
+/// Binary Index Tree
 #[derive(Clone, Debug)]
 pub struct FenwickTree<M>
 where
@@ -38,8 +38,9 @@ where
             array: vec![M::identity_element(); size + 1],
         }
     }
+
     #[inline]
-    pub fn add(&mut self, index: usize, x: M::T) {
+    pub fn operate(&mut self, index: usize, x: M::T) {
         let mut i = index + 1;
         while i < self.array.len() {
             self.array[i] = M::binary_operation(&self.array[i], &x);
@@ -47,8 +48,9 @@ where
         }
     }
 
+    /// (0..end)
     #[inline]
-    pub fn sum(&self, end: usize) -> M::T {
+    pub fn fold(&self, end: usize) -> M::T {
         let mut s = M::identity_element();
         let mut i = end;
         while i > 0 {
@@ -66,9 +68,9 @@ mod tests {
     fn test_sum() {
         let mut a = FenwickTree::<Add>::new(100);
 
-        (0..100).for_each(|i| a.add(i, i as i64 + 1));
+        (0..100).for_each(|i| a.operate(i, i as i64 + 1));
 
-        (0..100).for_each(|i| assert_eq!((1..=i).sum::<i64>(), a.sum(i as usize)));
+        (0..100).for_each(|i| assert_eq!((1..=i).sum::<i64>(), a.fold(i as usize)));
     }
 
     pub struct Xor {}
@@ -104,14 +106,14 @@ mod tests {
         let mut ft = FenwickTree::<Xor>::new(10);
 
         for (i, &v) in a.iter().enumerate() {
-            ft.add(i, v);
+            ft.operate(i, v);
         }
 
         for (t, x, y, ans) in txy_ans {
             if t == 1 {
-                ft.add(x as usize - 1, y);
+                ft.operate(x as usize - 1, y);
             } else {
-                assert_eq!(ft.sum(y as usize) ^ ft.sum(x as usize - 1), ans);
+                assert_eq!(ft.fold(y as usize) ^ ft.fold(x as usize - 1), ans);
             }
         }
     }
