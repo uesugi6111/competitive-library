@@ -22,8 +22,7 @@ pub struct DisjointSparseTable<S: SemiGroup> {
 impl<S: SemiGroup> DisjointSparseTable<S> {
     pub fn new(v: &[S::T]) -> Self {
         let size = (32 - (v.len() as u32).saturating_sub(1).leading_zeros()) as usize;
-        let mut table = vec![];
-        table.push(v.to_vec());
+        let mut table = vec![v.to_vec()];
 
         (1..size).for_each(|i| {
             let mut tmp = v.to_vec();
