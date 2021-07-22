@@ -12,7 +12,7 @@ pub trait Band {
 }
 
 /// 最小値
-struct Min {}
+pub struct Min {}
 impl Band for Min {
     type T = i64;
 
