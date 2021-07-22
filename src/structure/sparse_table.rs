@@ -1,41 +1,57 @@
 //! SparseTable
-pub struct SparseTable {
-    v: Vec<i64>,
-    log_table: Vec<usize>,
-    table: Vec<Vec<usize>>,
+//! 冪等半群列にたいして区間(l,r] の結果を戻す
+//! 構築 O(NlogN) クエリO(1)
+//! min, max, gcd, lcm 等
+
+use std::ops::Range;
+
+/// 冪等半群
+pub trait Band {
+    type T: Clone;
+    fn operate(a: &Self::T, b: &Self::T) -> Self::T;
 }
 
-impl SparseTable {
-    pub fn new(v: &[i64]) -> Self {
-        let mut log_table = vec![0; v.len() + 1];
-        for i in 2..=v.len() {
-            log_table[i] = log_table[i >> 1] + 1;
-        }
-        let mut table: Vec<Vec<usize>> = (0..v.len())
-            .map(|i| vec![i; log_table[v.len() - i] + 1])
-            .collect();
-        for k in 1..=log_table[v.len()] {
-            for i in 0..=v.len() - (1 << k) {
-                let index_1 = table[i][k - 1];
-                let index_2 = table[i + (1 << (k - 1))][k - 1];
-                table[i][k] = if v[index_1] < v[index_2] {
-                    index_1
-                } else {
-                    index_2
-                };
-            }
-        }
-        SparseTable {
-            v: v.to_vec(),
-            log_table,
-            table,
-        }
+/// 最小値
+struct Min {}
+impl Band for Min {
+    type T = i64;
+
+    fn operate(a: &Self::T, b: &Self::T) -> Self::T {
+        *a.min(b)
     }
-    pub fn query(&self, l: usize, r: usize) -> i64 {
-        let i = self.log_table[r - l];
-        std::cmp::min(
-            self.v[self.table[l][i]],
-            self.v[self.table[r - (1 << i)][i]],
+}
+
+/// SparseTable
+pub struct SparseTable<B: Band> {
+    table: Vec<Vec<B::T>>,
+}
+
+impl<B: Band> SparseTable<B> {
+    /// O(NlogN)
+    pub fn new(v: &[B::T]) -> Self {
+        let mut table = vec![v.to_vec()];
+
+        for i in 1..64 - v.len().leading_zeros() as usize {
+            let mut tmp = vec![];
+            for j in 0..=v.len() - (1 << i) {
+                tmp.push(B::operate(
+                    &table[i - 1][j],
+                    &table[i - 1][j + (1 << (i - 1))],
+                ));
+            }
+            table.push(tmp);
+        }
+
+        SparseTable { table }
+    }
+
+    /// [l,r)
+    /// O(1)
+    pub fn fold(&self, range: Range<usize>) -> B::T {
+        let i = 64 - (range.end - range.start).leading_zeros() as usize - 1;
+        B::operate(
+            &self.table[i][range.start],
+            &self.table[i][range.end - (1 << i)],
         )
     }
 }
@@ -45,7 +61,7 @@ mod tests {
     use super::*;
     #[test]
     fn test_sparse_table() {
-        let a = SparseTable::new(&[2, 10, 1, 100]);
+        let a = SparseTable::<Min>::new(&[2, 10, 1, 100]);
         for (l, r, ans) in [
             (0, 1, 2),
             (0, 2, 2),
@@ -60,7 +76,7 @@ mod tests {
         ]
         .iter()
         {
-            assert_eq!(a.query(*l, *r), *ans);
+            assert_eq!(a.fold(*l..*r), *ans);
         }
     }
 }
