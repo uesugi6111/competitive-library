@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["SparseTable",""]]});
+initSidebarItems({"struct":[["Min","最小値"],["SparseTable","SparseTable"]],"trait":[["Band","冪等半群"]]});
