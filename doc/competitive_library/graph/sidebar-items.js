@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["dijkstra","ダイクストラ"],["dijkstra_restorepath","ダイクストラ"],["floyd_warshall","ワーシャルフロイト"],["util","隣接行列 ←→ 隣接リスト"]]});
+initSidebarItems({"mod":[["dijkstra","ダイクストラ"],["dijkstra_restorepath","ダイクストラ"],["floyd_warshall","ワーシャルフロイト"],["lowest_common_ancestor",""],["minimun_spanning_tree_kruskal",""],["minimun_spanning_tree_prim",""],["util","隣接行列 ←→ 隣接リスト"]]});
