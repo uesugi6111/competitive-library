@@ -47,7 +47,7 @@ pub fn euler_tour(e: &[Vec<usize>], root: usize) -> (Vec<usize>, Vec<usize>, Vec
 
 #[cfg(test)]
 mod tests {
-    use crate::graph::euler_tour::euler_tour;
+    use super::*;
 
     #[test]
     fn test_eiler_tour() {
