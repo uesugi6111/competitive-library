@@ -100,6 +100,7 @@ mod tests {
         }
 
         let a = tree_diamiter::<WeightedEdge>(&e);
-        dbg!(&a);
+        assert_eq!(&a.1, &[6, 2, 1, 5]);
+        assert_eq!(a.0, 15);
     }
 }
