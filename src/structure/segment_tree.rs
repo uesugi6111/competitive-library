@@ -71,12 +71,12 @@ impl<M: Monoid> SegmentTree<M> {
 
         while l < r {
             if l & 1 != 0 {
-                sml = M::binary_operation(&sml, unsafe { &self.data.get_unchecked(l) });
+                sml = M::binary_operation(&sml, unsafe { self.data.get_unchecked(l) });
                 l += 1;
             }
             if r & 1 != 0 {
                 r -= 1;
-                smr = M::binary_operation(unsafe { &self.data.get_unchecked(r) }, &smr);
+                smr = M::binary_operation(unsafe { self.data.get_unchecked(r) }, &smr);
             }
             l >>= 1;
             r >>= 1;
@@ -86,8 +86,8 @@ impl<M: Monoid> SegmentTree<M> {
     }
     fn update(&mut self, k: usize) {
         *unsafe { self.data.get_unchecked_mut(k) } =
-            M::binary_operation(unsafe { &self.data.get_unchecked(2 * k) }, unsafe {
-                &self.data.get_unchecked(2 * k + 1)
+            M::binary_operation(unsafe { self.data.get_unchecked(2 * k) }, unsafe {
+                self.data.get_unchecked(2 * k + 1)
             });
     }
     pub fn set(&mut self, mut p: usize, x: M::T) {
@@ -115,11 +115,11 @@ impl<M: Monoid> SegmentTree<M> {
                 l >>= 1;
             }
             if !f(&M::binary_operation(&sm, unsafe {
-                &self.data.get_unchecked(l)
+                self.data.get_unchecked(l)
             })) {
                 while l < self.size {
                     l *= 2;
-                    let res = M::binary_operation(&sm, unsafe { &self.data.get_unchecked(l) });
+                    let res = M::binary_operation(&sm, unsafe { self.data.get_unchecked(l) });
                     if f(&res) {
                         sm = res;
                         l += 1;
@@ -127,7 +127,7 @@ impl<M: Monoid> SegmentTree<M> {
                 }
                 return l - self.size;
             }
-            sm = M::binary_operation(&sm, unsafe { &self.data.get_unchecked(l) });
+            sm = M::binary_operation(&sm, unsafe { self.data.get_unchecked(l) });
             l += 1;
             // while
             {
@@ -156,12 +156,12 @@ impl<M: Monoid> SegmentTree<M> {
                 r >>= 1;
             }
             if !f(&M::binary_operation(
-                unsafe { &self.data.get_unchecked(r) },
+                unsafe { self.data.get_unchecked(r) },
                 &sm,
             )) {
                 while r < self.size {
                     r = 2 * r + 1;
-                    let res = M::binary_operation(unsafe { &self.data.get_unchecked(r) }, &sm);
+                    let res = M::binary_operation(unsafe { self.data.get_unchecked(r) }, &sm);
                     if f(&res) {
                         sm = res;
                         r -= 1;
@@ -169,7 +169,7 @@ impl<M: Monoid> SegmentTree<M> {
                 }
                 return r + 1 - self.size;
             }
-            sm = M::binary_operation(unsafe { &self.data.get_unchecked(r) }, &sm);
+            sm = M::binary_operation(unsafe { self.data.get_unchecked(r) }, &sm);
             // while
             {
                 let r = r as isize;

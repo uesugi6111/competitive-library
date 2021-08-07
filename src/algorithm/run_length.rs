@@ -25,6 +25,6 @@ mod tests {
     fn test_run_length() {
         let v = vec![('a', 5usize), ('b', 3), ('c', 1)];
 
-        assert_eq!(compress(&"aaaaabbbc"), v);
+        assert_eq!(compress("aaaaabbbc"), v);
     }
 }
