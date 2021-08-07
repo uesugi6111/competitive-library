@@ -1,10 +1,15 @@
+//! RMQ を使用しLCAを求める
+
 use crate::graph::euler_tour;
 use crate::structure::sparse_table;
 
+/// 深さ及び頂点番号を保持しの最小値を返す
 struct MinDepth {}
 impl sparse_table::Band for MinDepth {
+    /// (vertex, depth)
     type T = (i32, i32);
 
+    /// Min depth
     fn operate(a: &Self::T, b: &Self::T) -> Self::T {
         if a.1 < b.1 {
             *a
@@ -13,13 +18,17 @@ impl sparse_table::Band for MinDepth {
         }
     }
 }
-
+/// LCA
 pub struct LowestCommonAncestor {
     st: sparse_table::SparseTable<MinDepth>,
     first_look: Vec<usize>,
 }
 
 impl LowestCommonAncestor {
+    /// ## Arguments
+    /// * `e` - 根付き木の辺集合。隣接リスト
+    /// * `root` - 根付き木の根
+    #[inline]
     pub fn new(e: &[Vec<usize>], root: usize) -> Self {
         let (tour, first_look, depths) = euler_tour::euler_tour(e, root);
         let v: Vec<(i32, i32)> = tour.iter().map(|&x| (x as i32, depths[x] as i32)).collect();
@@ -28,6 +37,15 @@ impl LowestCommonAncestor {
         LowestCommonAncestor { st, first_look }
     }
 
+    /// 対象の2頂点のLCAを取得する
+    ///
+    /// ## Arguments
+    /// * `u` - 頂点番号
+    /// * `v` - 頂点番号
+    ///
+    /// ## Returns
+    /// LCA
+    #[inline]
     pub fn get_lca(&self, u: usize, v: usize) -> usize {
         let range = if self.first_look[u] < self.first_look[v] {
             self.first_look[u]..self.first_look[v]
