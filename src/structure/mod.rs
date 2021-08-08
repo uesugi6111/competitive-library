@@ -6,4 +6,5 @@ pub mod dsu;
 pub mod fenwick_tree;
 pub mod segment_tree;
 pub mod skew_heap;
+pub mod skew_heap_lazy;
 pub mod sparse_table;
