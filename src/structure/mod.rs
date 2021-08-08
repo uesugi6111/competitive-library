@@ -5,4 +5,5 @@ pub mod disjoint_sparse_table;
 pub mod dsu;
 pub mod fenwick_tree;
 pub mod segment_tree;
+pub mod skew_heap;
 pub mod sparse_table;
