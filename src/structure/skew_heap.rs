@@ -48,7 +48,7 @@ pub fn top<T: Ord + Clone>(heap: &Option<Box<Heap<T>>>) -> Option<T> {
 
 #[inline]
 pub fn pop<T: Ord + Clone>(heap: &mut Option<Box<Heap<T>>>) -> Option<T> {
-    let value = top(&heap)?;
+    let value = top(heap)?;
 
     let (mut left, right) = {
         let mut tmp = heap.take().unwrap();
