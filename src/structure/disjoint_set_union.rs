@@ -23,7 +23,7 @@ impl Dsu {
             Node::Root(_) => target,
             Node::Child(par) => {
                 let root = self.root(par);
-                self.uf[target] = Node::Child(self.root(par));
+                self.uf[target] = Node::Child(root);
                 root
             }
         }

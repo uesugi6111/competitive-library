@@ -57,5 +57,6 @@ mod tests {
             .map(|x| x.0)
             .collect();
         assert_eq!(count.len(), 78498);
+        assert_eq!(count[0], 2);
     }
 }
