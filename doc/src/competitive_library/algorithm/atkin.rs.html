@@ -59,6 +59,7 @@
 <span id="59">59</span>
 <span id="60">60</span>
 <span id="61">61</span>
+<span id="62">62</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! アトキンの篩</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sieve_of_atkin</span>(<span class="ident">n</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span> {
@@ -119,6 +120,7 @@
             .<span class="ident">map</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="number">0</span>)
             .<span class="ident">collect</span>();
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">count</span>.<span class="ident">len</span>(), <span class="number">78498</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">count</span>[<span class="number">0</span>], <span class="number">2</span>);
     }
 }
 </pre></div>
