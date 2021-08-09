@@ -1,4 +1,4 @@
-use crate::structure::dsu::Dsu;
+use crate::structure::disjoint_set_union::Dsu;
 pub struct Edge(i64, i64, i64);
 
 pub fn kruskal(n: usize, edges: &[Edge]) -> i64 {
