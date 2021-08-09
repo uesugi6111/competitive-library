@@ -9,3 +9,4 @@ pub mod segment_tree;
 pub mod skew_heap;
 pub mod skew_heap_lazy;
 pub mod sparse_table;
+pub mod weighted_disjoint_set_union;
