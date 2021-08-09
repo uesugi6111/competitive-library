@@ -1,6 +1,7 @@
 //! グラフに関係しそうなもの
 pub mod dijkstra;
 pub mod dijkstra_restorepath;
+pub mod directed_minimun_spanning_tree;
 pub mod euler_tour;
 pub mod floyd_warshall;
 pub mod lowest_common_ancestor_doubling;
