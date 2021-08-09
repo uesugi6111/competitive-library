@@ -154,5 +154,6 @@ mod tests {
         assert!(!dsu.is_same(0, 3));
         dsu.rollback(0);
         assert!(!dsu.is_same(0, 1));
+        assert_eq!(dsu.get_history_length(), 0);
     }
 }
