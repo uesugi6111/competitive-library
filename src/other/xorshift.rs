@@ -1,7 +1,7 @@
 //! Xorshift random number generator
 use std::time::SystemTime;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone, Copy)]
 pub struct XorShift {
     seed: u64,
 }
