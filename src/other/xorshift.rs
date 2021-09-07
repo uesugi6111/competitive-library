@@ -14,6 +14,9 @@ impl XorShift {
                 .as_secs(),
         }
     }
+    pub fn from_seed(seed: u64) -> Self {
+        Self { seed }
+    }
 }
 
 impl Iterator for XorShift {
