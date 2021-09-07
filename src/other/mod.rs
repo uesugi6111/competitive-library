@@ -1,1 +1,1 @@
-pub mod memoise;
+pub mod xorshift;
