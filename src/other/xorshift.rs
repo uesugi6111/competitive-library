@@ -1,3 +1,4 @@
+//! Xorshift random number generator
 use std::time::SystemTime;
 
 #[derive(Debug, Default)]
