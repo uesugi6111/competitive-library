@@ -1,5 +1,5 @@
 //! アトキンの篩
-pub fn sieve_of_atkin(n: u64) -> Vec<bool> {
+pub fn generate_primes(n: u64) -> Vec<bool> {
     let mut is_prime = vec![false; n as usize + 1];
     let sqrt_n = (n as f64).sqrt() as u64 + 1;
 
@@ -48,7 +48,7 @@ mod tests {
     use super::*;
     #[test]
     fn test_atkin() {
-        let prime = sieve_of_atkin(1_000_000);
+        let prime = generate_primes(1_000_000);
 
         let count: Vec<_> = prime
             .iter()

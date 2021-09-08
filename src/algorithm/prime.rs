@@ -1,6 +1,8 @@
 //! 試割
-pub fn trial_division(mut n: i64) -> std::collections::HashMap<i64, i64> {
-    let mut primes = std::collections::HashMap::new();
+
+use std::collections::HashMap;
+pub fn trial_division(mut n: i64) -> HashMap<i64, i64> {
+    let mut primes = HashMap::new();
     let mut i = 2;
 
     while i * i <= n {

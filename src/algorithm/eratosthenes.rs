@@ -2,12 +2,12 @@
 
 use std::collections::BTreeMap;
 
-pub struct LinearSieve {
+pub struct Sieve {
     n: usize,
     pub table: Vec<i64>,
     pub primes: Vec<usize>,
 }
-impl LinearSieve {
+impl Sieve {
     pub fn new(n: usize) -> Self {
         let mut primes = vec![];
         let mut table = vec![0_i64; n + 1];
@@ -23,7 +23,7 @@ impl LinearSieve {
                 table[p * i] = p as i64;
             }
         }
-        LinearSieve { n, table, primes }
+        Sieve { n, table, primes }
     }
 
     pub fn factorize(&self, n: i64) -> BTreeMap<i64, i64> {
@@ -77,12 +77,12 @@ mod tests {
 
     #[test]
     fn test_prime() {
-        assert_eq!(LinearSieve::new(1_000_000).primes.len(), 78_498);
+        assert_eq!(Sieve::new(1_000_000).primes.len(), 78_498);
     }
 
     #[test]
     fn test_factorize() {
-        let ls = LinearSieve::new(1_000_000);
+        let ls = Sieve::new(1_000_000);
         let case = vec![
             31, 4657, 3, 65732, 7836, 1278, 8615, 798_179, 425, 38715, 3272, 149, 7, 48, 97, 5823,
             517, 8231, 6986, 751, 8651, 671, 7, 23,
@@ -102,7 +102,7 @@ mod tests {
     use std::collections::HashMap;
     #[test]
     fn test_divide() {
-        let ls = LinearSieve::new(1_000_000);
+        let ls = Sieve::new(1_000_000);
         let map = {
             let mut ret = HashMap::new();
             ret.insert(1, vec![1]);

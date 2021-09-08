@@ -1,3 +1,4 @@
+//! ダブリングを使用してLCA を求める
 use std::collections::VecDeque;
 
 struct Node {
