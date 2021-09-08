@@ -20,6 +20,7 @@ pub struct DisjointSparseTable<S: SemiGroup> {
 }
 
 impl<S: SemiGroup> DisjointSparseTable<S> {
+    #[inline]
     pub fn new(v: &[S::T]) -> Self {
         let size = (32 - (v.len() as u32).saturating_sub(1).leading_zeros()) as usize;
         let mut table = vec![v.to_vec()];
@@ -52,6 +53,7 @@ impl<S: SemiGroup> DisjointSparseTable<S> {
         DisjointSparseTable { table }
     }
 
+    #[inline]
     pub fn fold(&self, range: Range<usize>) -> S::T {
         if range.len() == 1 {
             return self.table[0][range.start].clone();

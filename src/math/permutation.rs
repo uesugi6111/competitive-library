@@ -1,15 +1,10 @@
 //! 順列生成
-#[test]
-fn test_prm() {
-    let n = 4;
-    let vv = make_permutation(n);
-    assert_eq!(0, vv[0][0]);
-}
 
 pub fn make_permutation(n: usize) -> Vec<Vec<usize>> {
-    let mut vvec: Vec<Vec<usize>> = vec![Vec::new(); factorial(n)];
+    let factorial = (1..=n).product();
+    let mut vvec: Vec<Vec<usize>> = vec![Vec::new(); factorial];
     let nums: Vec<usize> = (0..n).collect();
-    let indexes: Vec<usize> = (0..factorial(n)).collect();
+    let indexes: Vec<usize> = (0..factorial).collect();
     push_recusive(nums, indexes, &mut vvec);
     vvec
 }
@@ -22,7 +17,7 @@ fn push_recusive<T: Clone>(
     if nums.is_empty() {
         return vvec;
     }
-    let block_size = factorial(nums.len() - 1);
+    let block_size = (1..=nums.len() - 1).product();
     for (block_index, num) in nums.iter().enumerate() {
         for inner_index in 0..block_size {
             let index = indexes[block_size * block_index + inner_index];
@@ -42,9 +37,12 @@ fn push_recusive<T: Clone>(
     vvec
 }
 
-fn factorial(i: usize) -> usize {
-    (1..=i).product()
-}
-
 #[cfg(test)]
-mod tests {}
+mod tests {
+    use super::*;
+    #[test]
+    fn test_prm() {
+        let vv = make_permutation(4);
+        assert_eq!(0, vv[0][0]);
+    }
+}
