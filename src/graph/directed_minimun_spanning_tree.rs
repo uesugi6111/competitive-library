@@ -15,7 +15,7 @@ impl Ord for Edge {
         self.cost.cmp(&(other.cost))
     }
 }
-pub fn directed_mst(e: &[Vec<(usize, i64)>], root: usize) -> i64 {
+pub fn directed_mst(e: &[Vec<(usize, i64)>], root: usize) -> Option<(i64, Vec<usize>)> {
     let mut uf = Dsu::new(e.len());
 
     let mut from_v = vec![0; e.len()];
@@ -49,10 +49,10 @@ pub fn directed_mst(e: &[Vec<(usize, i64)>], root: usize) -> i64 {
             processing.push(cur);
 
             if heap[cur].is_empty() {
-                return 0;
+                return None;
             }
-            if let Some((c, Edge { from, to, cost })) = heap[cur].pop() {
-                from_v[cur] = uf.root(from);
+            if let Some((c, e)) = heap[cur].pop() {
+                from_v[cur] = uf.root(e.from);
                 from_cost[cur] = c;
             }
             if from_v[cur] == cur {
@@ -67,7 +67,8 @@ pub fn directed_mst(e: &[Vec<(usize, i64)>], root: usize) -> i64 {
                 };
                 if p != cur {
                     uf.unite(p, cur);
-                    SkewHeap::merge(&mut heap[cur].node, heap[p].node);
+                    let buff = heap[p].node.take();
+                    SkewHeap::merge(&mut heap[cur].node, buff);
                 }
                 p = uf.root(from_v[p]);
                 while p != cur {
@@ -76,7 +77,8 @@ pub fn directed_mst(e: &[Vec<(usize, i64)>], root: usize) -> i64 {
                     };
                     if p != cur {
                         uf.unite(p, cur);
-                        SkewHeap::merge(&mut heap[cur].node, heap[p].node);
+                        let buff = heap[p].node.take();
+                        SkewHeap::merge(&mut heap[cur].node, buff);
                     }
                     p = uf.root(from_v[p]);
                 }
@@ -88,12 +90,44 @@ pub fn directed_mst(e: &[Vec<(usize, i64)>], root: usize) -> i64 {
             used[v] = 2;
         }
     }
-    ans
+    Some((ans, from_v))
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     #[test]
-    fn test_directed_mst() {}
+    fn test_directed_mst() {
+        let input = vec![(0, 1, 10), (0, 2, 10), (0, 3, 3), (3, 2, 4)];
+        let mut e = vec![vec![]; 4];
+
+        for (from, to, cost) in input {
+            e[from].push((to, cost));
+        }
+        let ans = directed_mst(&e, 0).unwrap();
+        assert_eq!(ans.0, 17);
+        assert_eq!(ans.1, &[0, 0, 3, 0]);
+    }
+    #[test]
+    fn test_directed_mst2() {
+        let input = vec![
+            (3, 1, 10),
+            (1, 2, 1),
+            (2, 0, 1),
+            (0, 1, 1),
+            (2, 6, 10),
+            (6, 4, 1),
+            (4, 5, 1),
+            (5, 6, 1),
+        ];
+
+        let mut e = vec![vec![]; 7];
+
+        for (from, to, cost) in input {
+            e[from].push((to, cost));
+        }
+        let ans = directed_mst(&e, 3).unwrap();
+        assert_eq!(ans.0, 24);
+        assert_eq!(ans.1, &[2, 3, 1, 3, 6, 4, 2]);
+    }
 }
