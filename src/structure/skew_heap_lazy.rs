@@ -26,8 +26,15 @@ pub struct SkewHeap<T: Clone> {
     node: Option<Box<Heap<T>>>,
 }
 impl<T: Clone> SkewHeap<T> {
+    #[inline]
     pub fn new() -> Self {
         Self { node: None }
+    }
+    #[inline]
+    pub fn from(cost: i64, value: T) -> Self {
+        let mut s = Self { node: None };
+        s.push(cost, value);
+        s
     }
 
     #[inline]
