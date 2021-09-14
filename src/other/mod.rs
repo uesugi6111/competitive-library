@@ -1,1 +1,2 @@
-pub mod memoise;
+pub mod binary_search;
+pub mod xorshift;

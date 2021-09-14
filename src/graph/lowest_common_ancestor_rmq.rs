@@ -1,11 +1,11 @@
 //! RMQ を使用しLCAを求める
 
-use crate::graph::euler_tour;
-use crate::structure::sparse_table;
+use crate::graph::euler_tour::euler_tour;
+use crate::structure::sparse_table::{Band, SparseTable};
 
 /// 深さ及び頂点番号を保持しの最小値を返す
 struct MinDepth {}
-impl sparse_table::Band for MinDepth {
+impl Band for MinDepth {
     /// (vertex, depth)
     type T = (i32, i32);
 
@@ -20,7 +20,7 @@ impl sparse_table::Band for MinDepth {
 }
 /// LCA
 pub struct LowestCommonAncestor {
-    st: sparse_table::SparseTable<MinDepth>,
+    st: SparseTable<MinDepth>,
     first_look: Vec<usize>,
 }
 
@@ -30,9 +30,12 @@ impl LowestCommonAncestor {
     /// * `root` - 根付き木の根
     #[inline]
     pub fn new(e: &[Vec<usize>], root: usize) -> Self {
-        let (tour, first_look, depths) = euler_tour::euler_tour(e, root);
-        let v: Vec<(i32, i32)> = tour.iter().map(|&x| (x as i32, depths[x] as i32)).collect();
-        let st = sparse_table::SparseTable::<MinDepth>::new(&v);
+        let (tour, first_look, depths) = euler_tour(e, root);
+        let v = tour
+            .iter()
+            .map(|&x| (x as i32, depths[x] as i32))
+            .collect::<Vec<_>>();
+        let st = SparseTable::new(&v);
 
         LowestCommonAncestor { st, first_look }
     }

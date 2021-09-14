@@ -1,11 +1,11 @@
-use crate::structure::disjoint_set_union::Dsu;
+use crate::structure::disjoint_set_union::DisjointSetUnion;
 pub struct Edge(i64, i64, i64);
 
 pub fn kruskal(n: usize, edges: &[Edge]) -> i64 {
     let mut edges = edges.iter().collect::<Vec<_>>();
     edges.sort_by_key(|e| e.2);
 
-    let mut dsu = Dsu::new(n);
+    let mut dsu = DisjointSetUnion::new(n);
 
     let mut min_cost = 0;
 

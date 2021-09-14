@@ -1,6 +1,6 @@
 //! ランレングス
 pub fn compress(s: &str) -> Vec<(char, usize)> {
-    let vs: Vec<char> = s.chars().collect();
+    let vs = s.chars().collect::<Vec<_>>();
 
     let mut buff = vs[0];
     let mut count = 1;

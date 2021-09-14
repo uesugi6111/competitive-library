@@ -7,13 +7,13 @@ enum Node {
 }
 ///UnionFind
 #[derive(Clone, Debug)]
-pub struct Dsu {
+pub struct DisjointSetUnion {
     uf: Vec<Node>,
 }
 
-impl Dsu {
-    pub fn new(n: usize) -> Dsu {
-        Dsu {
+impl DisjointSetUnion {
+    pub fn new(n: usize) -> DisjointSetUnion {
+        DisjointSetUnion {
             uf: vec![Node::Root(1); n],
         }
     }
@@ -80,7 +80,7 @@ mod tests {
 
     #[test]
     fn test_dsu() {
-        let mut d = Dsu::new(4);
+        let mut d = DisjointSetUnion::new(4);
         d.unite(0, 1);
         assert!(d.is_same(0, 1));
         d.unite(1, 2);
