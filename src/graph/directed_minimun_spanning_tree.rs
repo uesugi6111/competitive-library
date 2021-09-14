@@ -1,14 +1,13 @@
 use std::cmp::Ordering;
 
-use crate::structure::disjoint_set_union::Dsu;
-use crate::structure::disjoint_set_union_undo::DisjointSetUnionRollback;
+use crate::structure::disjoint_set_union_undo::DisjointSetUnionRollback
 use crate::structure::skew_heap_lazy::SkewHeap;
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 struct Edge {
-    pub from: usize,
-    pub to: usize,
-    pub cost: i64,
+    from: usize,
+    to: usize,
+    cost: i64,
 }
 
 impl Ord for Edge {
@@ -17,9 +16,9 @@ impl Ord for Edge {
     }
 }
 pub fn directed_mst(e: &[Vec<(usize, i64)>], root: usize) -> Option<(i64, Vec<usize>)> {
-    let mut uf_undo = DisjointSetUnionRollback::new(e.len());
-    let mut uf = Dsu::new(e.len());
-    let mut from = vec![(0, None); e.len()];
+    let mut uf = DisjointSetUnionRollback::new(e.len());
+
+    let mut from = vec![0; e.len()];
     let mut costs = vec![0; e.len()];
     let mut used = vec![0; e.len()];
     let mut heap = vec![SkewHeap::new(); e.len()];
@@ -50,11 +49,12 @@ pub fn directed_mst(e: &[Vec<(usize, i64)>], root: usize) -> Option<(i64, Vec<us
             used[current] = 1;
             processing.push(current);
 
-            if let Some((c, e)) = heap[current].pop() {
-                from[current] = (uf.root(e.from), Some(e));
-                costs[current] = c;
-            } else {
+            if heap[current].is_empty() {
                 return None;
+            }
+            if let Some((c, e)) = heap[current].pop() {
+                from[current] = (uf.root(e.from),e);
+                costs[current] = c;
             }
             if from[current].0 == current {
                 continue;
@@ -63,7 +63,7 @@ pub fn directed_mst(e: &[Vec<(usize, i64)>], root: usize) -> Option<(i64, Vec<us
 
             if used[from[current].0] == 1 {
                 let mut p = current;
-                let time = uf_undo.get_history_length();
+                let time = dsu.get_history_length();
 
                 while {
                     if !heap[p].is_empty() {
@@ -77,7 +77,7 @@ pub fn directed_mst(e: &[Vec<(usize, i64)>], root: usize) -> Option<(i64, Vec<us
                     p = uf.root(from[p].0);
                     p != current
                 } {}
-                cycles.push((p, time));
+                cycles.push((p,time));
             } else {
                 current = from[current].0;
             }
@@ -86,15 +86,16 @@ pub fn directed_mst(e: &[Vec<(usize, i64)>], root: usize) -> Option<(i64, Vec<us
             used[v] = 2;
         }
     }
-    for it in cycles.iter().rev() {
-        let vrepr = uf_undo.root(from[it.0].1.as_ref().unwrap().to);
-        uf_undo.rollback(it.1);
-        let vinc = uf_undo.root(from[vrepr].1.as_ref().unwrap().to);
-        from[vinc] = (from[vrepr].0, from[vrepr].1.as_ref().cloned());
-        from[vrepr] = (it.0, None);
+    for it in cycles.iter().ewv(){
+        let  vrepr = dsu.root(from[it.0].1.to);
+        dsu.rollback(it.1);
+        let  vinc = dsu.find(from[edge[vrepr]].to);
+        edge[vinc] = exchange(edge[vrepr], it->first);
     }
 
-    Some((ans, from.iter().map(|x| x.0).collect::<Vec<_>>()))
+
+
+    Some((ans, from))
 }
 
 #[cfg(test)]
