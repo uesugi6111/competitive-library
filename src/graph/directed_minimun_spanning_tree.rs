@@ -78,7 +78,6 @@ pub fn directed_mst(e: &[Vec<(usize, i64)>], root: usize) -> Option<(i64, Vec<us
                 p = uf_undo.root(from_v[p].0);
                 p != current
             } {}
-            dbg!(&from_v[p]);
             cycles.push((from_v[p].clone(), time));
         }
         for v in processing {
