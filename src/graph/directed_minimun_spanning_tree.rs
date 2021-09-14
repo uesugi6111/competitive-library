@@ -1,6 +1,7 @@
 use std::cmp::Ordering;
 
 use crate::structure::disjoint_set_union::Dsu;
+use crate::structure::disjoint_set_union_undo::DisjointSetUnionRollback;
 use crate::structure::skew_heap_lazy::SkewHeap;
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
@@ -18,7 +19,7 @@ impl Ord for Edge {
 pub fn directed_mst(e: &[Vec<(usize, i64)>], root: usize) -> Option<(i64, Vec<usize>)> {
     let mut uf = Dsu::new(e.len());
 
-    let mut from_v = vec![0; e.len()];
+    let mut from_v = vec![(0, None); e.len()];
     let mut from_cost = vec![0; e.len()];
     let mut used = vec![0; e.len()];
     let mut heap = vec![SkewHeap::new(); e.len()];
@@ -42,55 +43,45 @@ pub fn directed_mst(e: &[Vec<(usize, i64)>], root: usize) -> Option<(i64, Vec<us
         if used[start] != 0 {
             continue;
         }
-        let mut cur = start;
+        let mut current = start;
         let mut processing = vec![];
-        while used[cur] != 2 {
-            used[cur] = 1;
-            processing.push(cur);
+        while used[current] != 2 {
+            used[current] = 1;
+            processing.push(current);
 
-            if heap[cur].is_empty() {
+            if let Some((c, e)) = heap[current].pop() {
+                from_v[current] = (uf.root(e.from), Some(e));
+                from_cost[current] = c;
+            } else {
                 return None;
             }
-            if let Some((c, e)) = heap[cur].pop() {
-                from_v[cur] = uf.root(e.from);
-                from_cost[cur] = c;
-            }
-            if from_v[cur] == cur {
+            if from_v[current].0 == current {
                 continue;
             }
-            ans += from_cost[cur];
+            ans += from_cost[current];
 
-            if used[from_v[cur]] == 1 {
-                let mut p = cur;
+            if used[from_v[current].0] != 1 {
+                current = from_v[current].0;
+                continue;
+            }
+            let mut p = current;
+            while {
                 if !heap[p].is_empty() {
                     heap[p].add(-from_cost[p])
                 };
-                if p != cur {
-                    uf.unite(p, cur);
-                    let buff = heap[p].node.take();
-                    SkewHeap::merge(&mut heap[cur].node, buff);
-                }
-                p = uf.root(from_v[p]);
-                while p != cur {
-                    if !heap[p].is_empty() {
-                        heap[p].add(-from_cost[p])
-                    };
-                    if p != cur {
-                        uf.unite(p, cur);
-                        let buff = heap[p].node.take();
-                        SkewHeap::merge(&mut heap[cur].node, buff);
-                    }
-                    p = uf.root(from_v[p]);
-                }
-            } else {
-                cur = from_v[cur];
-            }
+                uf.unite(p, current);
+                let buff = heap[p].node.take();
+                SkewHeap::merge(&mut heap[current].node, buff);
+
+                p = uf.root(from_v[p].0);
+                p != current
+            } {}
         }
         for v in processing {
             used[v] = 2;
         }
     }
-    Some((ans, from_v))
+    Some((ans, from_v.iter().map(|x| x.0).collect()))
 }
 
 #[cfg(test)]
