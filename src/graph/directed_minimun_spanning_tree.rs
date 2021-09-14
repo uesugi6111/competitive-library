@@ -17,12 +17,13 @@ impl Ord for Edge {
     }
 }
 pub fn directed_mst(e: &[Vec<(usize, i64)>], root: usize) -> Option<(i64, Vec<usize>)> {
+    let mut uf_undo = DisjointSetUnionRollback::new(e.len());
     let mut uf = Dsu::new(e.len());
-
     let mut from_v = vec![(0, None); e.len()];
     let mut from_cost = vec![0; e.len()];
     let mut used = vec![0; e.len()];
     let mut heap = vec![SkewHeap::new(); e.len()];
+    let mut cycles = vec![];
     used[root] = 2;
 
     for i in 0..e.len() {
@@ -50,7 +51,7 @@ pub fn directed_mst(e: &[Vec<(usize, i64)>], root: usize) -> Option<(i64, Vec<us
             processing.push(current);
 
             if let Some((c, e)) = heap[current].pop() {
-                from_v[current] = (uf.root(e.from), Some(e));
+                from_v[current] = (uf_undo.root(e.from), Some(e));
                 from_cost[current] = c;
             } else {
                 return None;
@@ -65,23 +66,47 @@ pub fn directed_mst(e: &[Vec<(usize, i64)>], root: usize) -> Option<(i64, Vec<us
                 continue;
             }
             let mut p = current;
+            let time = uf_undo.get_history_length();
             while {
                 if !heap[p].is_empty() {
-                    heap[p].add(-from_cost[p])
-                };
-                uf.unite(p, current);
+                    heap[p].add(-from_cost[p]);
+                }
+                uf_undo.unite(p, current);
                 let buff = heap[p].node.take();
                 SkewHeap::merge(&mut heap[current].node, buff);
 
-                p = uf.root(from_v[p].0);
+                p = uf_undo.root(from_v[p].0);
                 p != current
             } {}
+            dbg!(&from_v[p]);
+            cycles.push((from_v[p].clone(), time));
         }
         for v in processing {
             used[v] = 2;
         }
     }
-    Some((ans, from_v.iter().map(|x| x.0).collect()))
+    for (f, time) in cycles
+        .iter()
+        .rev()
+        .take(0.max(cycles.len() as i64 - 1) as usize)
+    {
+        let vrepr = uf_undo.root(f.1.as_ref().unwrap().to);
+        uf_undo.rollback(*time);
+        let vinc = uf_undo.root(from_v[vrepr].1.as_ref().unwrap().to);
+
+        from_v[vinc] = from_v[vrepr].clone();
+        from_v[vrepr] = f.to_owned();
+    }
+    let mut edges = vec![11111; e.len()];
+    for i in 0..e.len() {
+        edges[i] = if i == root {
+            root
+        } else {
+            from_v[i].1.as_ref().unwrap().from
+        };
+    }
+
+    Some((ans, edges))
 }
 
 #[cfg(test)]
