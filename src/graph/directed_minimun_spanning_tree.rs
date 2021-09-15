@@ -1,6 +1,5 @@
 use std::cmp::Ordering;
 
-use crate::structure::disjoint_set_union::Dsu;
 use crate::structure::disjoint_set_union_undo::DisjointSetUnionRollback;
 use crate::structure::skew_heap_lazy::SkewHeap;
 
@@ -18,7 +17,7 @@ impl Ord for Edge {
 }
 pub fn directed_mst(e: &[Vec<(usize, i64)>], root: usize) -> Option<(i64, Vec<usize>)> {
     let mut uf_undo = DisjointSetUnionRollback::new(e.len());
-    let mut uf = Dsu::new(e.len());
+    // let mut uf = Dsu::new(e.len());
     let mut from_v = vec![(0, None); e.len()];
     let mut from_cost = vec![0; e.len()];
     let mut used = vec![0; e.len()];
@@ -92,8 +91,7 @@ pub fn directed_mst(e: &[Vec<(usize, i64)>], root: usize) -> Option<(i64, Vec<us
         let vrepr = uf_undo.root(f.1.as_ref().unwrap().to);
         uf_undo.rollback(*time);
         let vinc = uf_undo.root(from_v[vrepr].1.as_ref().unwrap().to);
-
-        from_v[vinc] = from_v[vrepr].clone();
+        from_v.swap(vinc, vrepr);
         from_v[vrepr] = f.to_owned();
     }
     let mut edges = vec![11111; e.len()];
