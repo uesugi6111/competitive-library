@@ -17,7 +17,7 @@ pub fn is_prime(n: i64) -> bool {
 
     let r = {
         let mut r = XorShift::new().next().unwrap() as i64 % (n - 3);
-        r += 3;
+        r += 2;
         r
     };
 
@@ -69,7 +69,7 @@ mod tests {
     }
     #[test]
     fn test_miller_rabin_loop() {
-        for _ in 0..10 {
+        for _ in 0..100 {
             test_miller_rabin();
         }
     }
