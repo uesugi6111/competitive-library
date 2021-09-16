@@ -16,7 +16,7 @@ pub fn is_prime(n: i64) -> bool {
     }
 
     let r = {
-        let mut r = XorShift::from_seed(1).next().unwrap() as i64 % (n - 3);
+        let mut r = XorShift::new().next().unwrap() as i64 % (n - 3);
         r += 3;
         r
     };
