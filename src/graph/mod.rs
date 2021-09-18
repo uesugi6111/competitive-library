@@ -9,3 +9,4 @@ pub mod minimun_spanning_tree_kruskal;
 pub mod minimun_spanning_tree_prim;
 pub mod tree_diamiter;
 pub mod util;
+pub mod zero_one_bfs;
