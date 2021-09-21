@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Add",""],["FenwickTree","Binary Index Tree"]],"trait":[["Monoid",""]]});

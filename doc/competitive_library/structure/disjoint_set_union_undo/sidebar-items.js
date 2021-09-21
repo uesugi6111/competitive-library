@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["DisjointSetUnionRollback","UnionFind 経路圧縮を行わないことで undo を可能にする"]]});

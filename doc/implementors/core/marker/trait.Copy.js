@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["competitive_library"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.55.0/core/marker/trait.Copy.html\" title=\"trait core::marker::Copy\">Copy</a> for <a class=\"struct\" href=\"competitive_library/other/xorshift/struct.XorShift.html\" title=\"struct competitive_library::other::xorshift::XorShift\">XorShift</a>","synthetic":false,"types":["competitive_library::other::xorshift::XorShift"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
