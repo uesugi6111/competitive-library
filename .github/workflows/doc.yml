@@ -15,7 +15,7 @@ jobs:
 
       - name: Move doc
         run: |
-          rm -r ./doc
+          rm -rf ./doc
           mv ./target/doc ./
 
       - name: Create Pull Request 
