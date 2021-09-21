@@ -15,6 +15,9 @@ impl HeavyLightDecomposition {
         let e = {
             let mut e = vec![vec![]; parent.len()];
             for (i, &v) in parent.iter().enumerate() {
+                if i == v {
+                    continue;
+                }
                 e[v].push(i);
             }
             e
@@ -30,13 +33,14 @@ impl HeavyLightDecomposition {
             head: (0..parent.len()).collect(),
         }
     }
-    pub fn decompose(&mut self) {
+    pub fn decompose(&mut self) -> Vec<usize> {
         for i in 0..self.e.len() {
-            if self.parent[i] == i {
+            if self.parent[i] != i {
                 continue;
             }
             self.decompose_inner(i, i);
         }
+        self.hld.clone()
     }
     fn decompose_inner(&mut self, v: usize, a: usize) {
         self.pre[v] = self.hld.len();
@@ -47,17 +51,17 @@ impl HeavyLightDecomposition {
             return;
         }
         let mut m = 0;
-        let mut index = -1;
+        let mut index = 0;
         for i in 0..self.e[v].len() {
             if self.count_node(self.e[v][i]) > m {
                 m = self.count_node(self.e[v][i]);
-                index = i as i32;
+                index = i;
             }
         }
-        self.decompose_inner(self.e[v][index as usize], a);
+        self.decompose_inner(self.e[v][index], a);
 
         for i in 0..self.e[v].len() {
-            if i != index as usize {
+            if i != index {
                 self.decompose_inner(self.e[v][i], self.e[v][i]);
             }
         }
@@ -114,9 +118,15 @@ mod tests {
         let v = vec![0, 0, 1, 2, 2, 1, 0, 6, 7, 7, 0, 10];
 
         let mut hld = HeavyLightDecomposition::new(&v);
-        hld.decompose();
+        let _h = hld.decompose();
 
-        let a = hld.query(4, 9);
-        dbg!(&a);
+        use std::collections::HashSet;
+
+        assert_eq!(
+            hld.query(4, 9).iter().collect::<HashSet<_>>(),
+            vec![(9, 9), (4, 4), (6, 7), (0, 2)]
+                .iter()
+                .collect::<HashSet<_>>()
+        );
     }
 }
