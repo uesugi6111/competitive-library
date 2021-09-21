@@ -108,6 +108,14 @@ impl HeavyLightDecomposition {
         });
         ret
     }
+    pub fn get_lca(&mut self, u: usize, v: usize) -> Option<usize> {
+        let a = *self.query(u, v).last()?;
+        Some(if self.depth(a.0) < self.depth(a.1) {
+            a.0
+        } else {
+            a.1
+        })
+    }
 }
 
 #[cfg(test)]
@@ -128,5 +136,16 @@ mod tests {
                 .iter()
                 .collect::<HashSet<_>>()
         );
+    }
+    #[test]
+    fn test_lca() {
+        let v = vec![0, 0, 0, 2, 2];
+
+        let mut hld = HeavyLightDecomposition::new(&v);
+        let _h = hld.decompose();
+        dbg!(_h);
+        for &(u, v, ans) in [(0, 1, 0), (0, 4, 0), (1, 2, 0), (2, 3, 2), (3, 4, 2)].iter() {
+            assert_eq!(hld.get_lca(u, v).unwrap(), ans, "{} {}", u, v);
+        }
     }
 }
