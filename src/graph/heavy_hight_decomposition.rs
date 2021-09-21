@@ -1,17 +1,20 @@
 //! HL 分解
 
 pub struct HeavyLightDecomposition {
+    root: usize,
+    parent: Vec<usize>,
+    e: Vec<Vec<usize>>,
     child_count: Vec<usize>,
     depths: Vec<usize>,
-    e: Vec<Vec<usize>>,
+
     pre: Vec<usize>,
-    parent: Vec<usize>,
+
     hld: Vec<usize>,
     head: Vec<usize>,
 }
 
 impl HeavyLightDecomposition {
-    pub fn new(parent: &[usize]) -> Self {
+    pub fn new(root: usize, parent: &[usize]) -> Self {
         let e = {
             let mut e = vec![vec![]; parent.len()];
             for (i, &v) in parent.iter().enumerate() {
@@ -24,22 +27,22 @@ impl HeavyLightDecomposition {
         };
 
         Self {
-            child_count: vec![0; parent.len()],
-            e,
-            depths: vec![0; parent.len()],
+            root,
             parent: parent.to_vec(),
+            e,
+            child_count: vec![0; parent.len()],
+
+            depths: vec![0; parent.len()],
+
             pre: vec![0; parent.len()],
             hld: vec![],
             head: (0..parent.len()).collect(),
         }
     }
     pub fn decompose(&mut self) -> Vec<usize> {
-        for i in 0..self.e.len() {
-            if self.parent[i] != i {
-                continue;
-            }
-            self.decompose_inner(i, i);
-        }
+        let init = self.root;
+        self.decompose_inner(init, init);
+
         self.hld.clone()
     }
     fn decompose_inner(&mut self, v: usize, a: usize) {
@@ -109,11 +112,14 @@ impl HeavyLightDecomposition {
         ret
     }
     pub fn get_lca(&mut self, u: usize, v: usize) -> Option<usize> {
-        let a = *self.query(u, v).last()?;
-        Some(if self.depth(a.0) < self.depth(a.1) {
-            a.0
+        if u == v {
+            return Some(u);
+        }
+        let common_range = *self.query(u, v).last()?;
+        Some(if self.depth(common_range.0) < self.depth(common_range.1) {
+            common_range.0
         } else {
-            a.1
+            common_range.1
         })
     }
 }
@@ -125,7 +131,7 @@ mod tests {
     fn test_hld() {
         let v = vec![0, 0, 1, 2, 2, 1, 0, 6, 7, 7, 0, 10];
 
-        let mut hld = HeavyLightDecomposition::new(&v);
+        let mut hld = HeavyLightDecomposition::new(0, &v);
         let _h = hld.decompose();
 
         use std::collections::HashSet;
@@ -141,7 +147,7 @@ mod tests {
     fn test_lca() {
         let v = vec![0, 0, 0, 2, 2];
 
-        let mut hld = HeavyLightDecomposition::new(&v);
+        let mut hld = HeavyLightDecomposition::new(0, &v);
         let _h = hld.decompose();
         dbg!(_h);
         for &(u, v, ans) in [
