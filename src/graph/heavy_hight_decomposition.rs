@@ -1,11 +1,12 @@
 //! HL 分解
 
+#[derive(Debug, Clone)]
 pub struct HeavyLightDecomposition {
     /// 根
     root: usize,
     /// 各頂点の親
     parent: Vec<usize>,
-    /// e[i][j] は i を親に持つ
+    /// e\[i]\[j] は i を親に持つ
     e: Vec<Vec<usize>>,
     /// 各頂点から見た子要素数
     child_count: Vec<usize>,
@@ -21,16 +22,10 @@ pub struct HeavyLightDecomposition {
 impl HeavyLightDecomposition {
     #[inline]
     pub fn new(root: usize, parent: &[usize]) -> Self {
-        let e = {
-            let mut e = vec![vec![]; parent.len()];
-            for (i, &v) in parent.iter().enumerate() {
-                if i == v {
-                    continue;
-                }
-                e[v].push(i);
-            }
-            e
-        };
+        let mut e = vec![vec![]; parent.len()];
+        for (i, &v) in parent.iter().enumerate().filter(|&x| x.0 != *x.1) {
+            e[v].push(i);
+        }
 
         Self {
             root,
@@ -48,72 +43,76 @@ impl HeavyLightDecomposition {
     #[inline]
     pub fn decompose(&mut self) -> Vec<usize> {
         let init = self.root;
-        self.decompose_inner(init, init);
+        self.count_node(init);
+        self.count_depth(init);
+        self.decompose_inner_root(init);
+
         self.hld.clone()
+    }
+
+    #[inline]
+    /// 根から分解
+    fn decompose_inner_root(&mut self, v: usize) {
+        self.decompose_inner(v, v);
     }
 
     /// 分解用の内部関数
     #[inline]
-    fn decompose_inner(&mut self, v: usize, a: usize) {
+    fn decompose_inner(&mut self, v: usize, h: usize) {
         self.pre[v] = self.hld.len();
         self.hld.push(v);
-        self.head[v] = a;
+        self.head[v] = h;
 
         if self.e[v].is_empty() {
             return;
         }
-        let mut m = 0;
-        let mut index = 0;
-        for i in 0..self.e[v].len() {
-            if self.count_node(self.e[v][i]) > m {
-                m = self.count_node(self.e[v][i]);
-                index = i;
-            }
-        }
-        self.decompose_inner(self.e[v][index], a);
+        let index = self.e[v]
+            .iter()
+            .enumerate()
+            .max_by_key(|&(_, &y)| self.child_count[y])
+            .unwrap()
+            .0;
+        self.decompose_inner(self.e[v][index], h);
 
-        for i in 0..self.e[v].len() {
-            if i != index {
-                self.decompose_inner(self.e[v][i], self.e[v][i]);
-            }
+        for i in (0..self.e[v].len()).filter(|&i| i != index) {
+            self.decompose_inner_root(self.e[v][i]);
         }
     }
 
     /// 子要素のカウント
     #[inline]
-    pub fn count_node(&mut self, value: usize) -> usize {
-        if self.child_count[value] != 0 {
-            return self.child_count[value];
+    fn count_node(&mut self, index: usize) -> usize {
+        if self.child_count[index] != 0 {
+            return self.child_count[index];
         }
-        self.child_count[value] = 1;
-        for i in 0..self.e[value].len() {
-            self.child_count[value] += self.count_node(self.e[value][i]);
+        self.child_count[index] = 1;
+        for i in 0..self.e[index].len() {
+            self.child_count[index] += self.count_node(self.e[index][i]);
         }
-        self.child_count[value]
+        self.child_count[index]
     }
 
     /// 深さのカウント
     #[inline]
-    pub fn depth(&mut self, v: usize) -> usize {
-        if self.depths[v] != 0 {
-            return self.depths[v];
+    fn count_depth(&mut self, index: usize) -> usize {
+        if self.depths[index] != 0 {
+            return self.depths[index];
         }
-        if self.parent[v] == v {
+        if self.parent[index] == index {
             return 0;
         }
-        self.depths[v] = self.depth(self.parent[v]) + 1;
-        self.depths[v]
+        self.depths[index] = self.count_depth(self.parent[index]) + 1;
+        self.depths[index]
     }
 
     /// HLD 配列の区間を返す
     #[inline]
-    pub fn query(&mut self, u: usize, v: usize) -> Vec<(usize, usize)> {
+    pub fn query(&mut self, mut u: usize, mut v: usize) -> Vec<(usize, usize)> {
         debug_assert!(!self.hld.is_empty());
-        let (mut u, mut v) = (u, v);
 
         let mut ret = vec![];
         while self.head[u] != self.head[v] {
-            if self.depth(self.head[u]) <= self.depth(self.head[v]) {
+            if self.count_depth(self.head[u]) <= self.count_depth(self.head[v]) {
                 ret.push((self.pre[self.head[v]], self.pre[v]));
                 v = self.parent[self.head[v]];
             } else {
@@ -145,16 +144,19 @@ mod tests {
         let v = vec![0, 0, 1, 2, 2, 1, 0, 6, 7, 7, 0, 10];
 
         let mut hld = HeavyLightDecomposition::new(0, &v);
-        let _h = hld.decompose();
+        let h = hld.decompose();
+        dbg!(&h);
 
         use std::collections::HashSet;
+        let mut set = HashSet::new();
+        for (f, t) in hld.query(4, 9) {
+            for &i in h.iter().take(t + 1).skip(f) {
+                set.insert(i);
+            }
+        }
+        let ans_set = [4_usize, 2, 1, 0, 6, 7, 9].iter().cloned().collect();
 
-        assert_eq!(
-            hld.query(4, 9).iter().collect::<HashSet<_>>(),
-            vec![(9, 9), (4, 4), (6, 7), (0, 2)]
-                .iter()
-                .collect::<HashSet<_>>()
-        );
+        assert_eq!(set, ans_set);
     }
     #[test]
     fn test_lca() {
