@@ -1,19 +1,25 @@
 //! HL 分解
 
 pub struct HeavyLightDecomposition {
+    /// 根
     root: usize,
+    /// 各頂点の親
     parent: Vec<usize>,
+    /// e[i][j] は i を親に持つ
     e: Vec<Vec<usize>>,
+    /// 各頂点から見た子要素数
     child_count: Vec<usize>,
+    /// 各頂点の深さ
     depths: Vec<usize>,
-
     pre: Vec<usize>,
-
+    /// HLD
     hld: Vec<usize>,
+    /// 列の先頭
     head: Vec<usize>,
 }
 
 impl HeavyLightDecomposition {
+    #[inline]
     pub fn new(root: usize, parent: &[usize]) -> Self {
         let e = {
             let mut e = vec![vec![]; parent.len()];
@@ -31,20 +37,23 @@ impl HeavyLightDecomposition {
             parent: parent.to_vec(),
             e,
             child_count: vec![0; parent.len()],
-
             depths: vec![0; parent.len()],
-
             pre: vec![0; parent.len()],
             hld: vec![],
             head: (0..parent.len()).collect(),
         }
     }
+
+    /// 分解
+    #[inline]
     pub fn decompose(&mut self) -> Vec<usize> {
         let init = self.root;
         self.decompose_inner(init, init);
-
         self.hld.clone()
     }
+
+    /// 分解用の内部関数
+    #[inline]
     fn decompose_inner(&mut self, v: usize, a: usize) {
         self.pre[v] = self.hld.len();
         self.hld.push(v);
@@ -69,6 +78,9 @@ impl HeavyLightDecomposition {
             }
         }
     }
+
+    /// 子要素のカウント
+    #[inline]
     pub fn count_node(&mut self, value: usize) -> usize {
         if self.child_count[value] != 0 {
             return self.child_count[value];
@@ -80,6 +92,8 @@ impl HeavyLightDecomposition {
         self.child_count[value]
     }
 
+    /// 深さのカウント
+    #[inline]
     pub fn depth(&mut self, v: usize) -> usize {
         if self.depths[v] != 0 {
             return self.depths[v];
@@ -91,7 +105,10 @@ impl HeavyLightDecomposition {
         self.depths[v]
     }
 
+    /// HLD 配列の区間を返す
+    #[inline]
     pub fn query(&mut self, u: usize, v: usize) -> Vec<(usize, usize)> {
+        debug_assert!(!self.hld.is_empty());
         let (mut u, mut v) = (u, v);
 
         let mut ret = vec![];
@@ -111,6 +128,9 @@ impl HeavyLightDecomposition {
         });
         ret
     }
+
+    /// LCA を求める
+    #[inline]
     pub fn get_lca(&mut self, u: usize, v: usize) -> Option<usize> {
         let common_range = *self.query(u, v).last()?;
         Some(self.hld[common_range.0])
