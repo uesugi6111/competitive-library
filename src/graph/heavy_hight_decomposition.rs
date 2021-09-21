@@ -112,15 +112,8 @@ impl HeavyLightDecomposition {
         ret
     }
     pub fn get_lca(&mut self, u: usize, v: usize) -> Option<usize> {
-        if u == v {
-            return Some(u);
-        }
         let common_range = *self.query(u, v).last()?;
-        Some(if self.depth(common_range.0) < self.depth(common_range.1) {
-            common_range.0
-        } else {
-            common_range.1
-        })
+        Some(self.hld[common_range.0])
     }
 }
 
@@ -148,8 +141,8 @@ mod tests {
         let v = vec![0, 0, 0, 2, 2];
 
         let mut hld = HeavyLightDecomposition::new(0, &v);
-        let _h = hld.decompose();
-        dbg!(_h);
+        let h = hld.decompose();
+        dbg!(&h);
         for &(u, v, ans) in [
             (0, 0, 0),
             (0, 1, 0),
