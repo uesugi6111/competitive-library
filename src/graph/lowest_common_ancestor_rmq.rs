@@ -50,6 +50,9 @@ impl LowestCommonAncestor {
     /// LCA
     #[inline]
     pub fn get_lca(&self, u: usize, v: usize) -> usize {
+        if u == v {
+            return u;
+        }
         let range = if self.first_look[u] < self.first_look[v] {
             self.first_look[u]..self.first_look[v]
         } else {
@@ -72,7 +75,25 @@ mod tests {
         }
 
         let lca = LowestCommonAncestor::new(&e, 0);
-        for &(u, v, ans) in [(0, 1, 0), (0, 4, 0), (1, 2, 0), (2, 3, 2), (3, 4, 2)].iter() {
+        for &(u, v, ans) in [
+            (0, 0, 0),
+            (0, 1, 0),
+            (0, 2, 0),
+            (0, 3, 0),
+            (0, 4, 0),
+            (1, 1, 1),
+            (1, 2, 0),
+            (1, 3, 0),
+            (1, 4, 0),
+            (2, 2, 2),
+            (2, 3, 2),
+            (2, 4, 2),
+            (3, 3, 3),
+            (3, 4, 2),
+            (4, 4, 4),
+        ]
+        .iter()
+        {
             assert_eq!(lca.get_lca(u, v), ans);
         }
     }

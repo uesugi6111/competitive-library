@@ -144,7 +144,25 @@ mod tests {
         let mut hld = HeavyLightDecomposition::new(&v);
         let _h = hld.decompose();
         dbg!(_h);
-        for &(u, v, ans) in [(0, 1, 0), (0, 4, 0), (1, 2, 0), (2, 3, 2), (3, 4, 2)].iter() {
+        for &(u, v, ans) in [
+            (0, 0, 0),
+            (0, 1, 0),
+            (0, 2, 0),
+            (0, 3, 0),
+            (0, 4, 0),
+            (1, 1, 1),
+            (1, 2, 0),
+            (1, 3, 0),
+            (1, 4, 0),
+            (2, 2, 2),
+            (2, 3, 2),
+            (2, 4, 2),
+            (3, 3, 3),
+            (3, 4, 2),
+            (4, 4, 4),
+        ]
+        .iter()
+        {
             assert_eq!(hld.get_lca(u, v).unwrap(), ans, "{} {}", u, v);
         }
     }
