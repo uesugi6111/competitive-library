@@ -33,7 +33,7 @@ pub fn decompose(e: &[Vec<usize>]) -> Vec<Vec<usize>> {
             }
         }
     }
-
+    dbg!(&nodes);
     let mut reverse_edge = vec![vec![]; e.len()];
     for i in 0..e.len() {
         for j in 0..e[i].len() {
@@ -139,6 +139,30 @@ mod tests {
     fn test_scc4() {
         let n = 5;
         let v = vec![(0, 1), (0, 2), (2, 3), (3, 4)];
+        let mut e = vec![vec![]; n];
+        for &(v, u) in v.iter() {
+            e[v].push(u);
+        }
+        let a = decompose(&e);
+        dbg!(&a);
+        //assert_eq!(a, vec![vec![0], vec![1], vec![3, 2], vec![5, 6, 4]]);
+    }
+    #[test]
+    fn test_scc5() {
+        let n = 5;
+        let v = vec![(0, 1), (1, 2), (2, 3), (3, 4), (4, 0)];
+        let mut e = vec![vec![]; n];
+        for &(v, u) in v.iter() {
+            e[v].push(u);
+        }
+        let a = decompose(&e);
+        dbg!(&a);
+        //assert_eq!(a, vec![vec![0], vec![1], vec![3, 2], vec![5, 6, 4]]);
+    }
+    #[test]
+    fn test_scc6() {
+        let n = 6;
+        let v = vec![(0, 1), (1, 2), (2, 0), (0, 3), (3, 4), (4, 0)];
         let mut e = vec![vec![]; n];
         for &(v, u) in v.iter() {
             e[v].push(u);
