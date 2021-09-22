@@ -1,6 +1,6 @@
 //! 累乗剰余
 pub fn modpow(base: i64, exp: i64, n: i64) -> i64 {
-    let (mut base, mut exp, n) = (base, exp, n);
+    let (mut base, mut exp, n) = (base as u128, exp, n as u128);
 
     assert!(
         exp >= 0,
@@ -21,7 +21,7 @@ pub fn modpow(base: i64, exp: i64, n: i64) -> i64 {
         }
 
         if exp == 1 {
-            return res;
+            return res as i64;
         }
 
         exp /= 2;

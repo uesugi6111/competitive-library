@@ -8,7 +8,7 @@ use std::collections::VecDeque;
 pub struct LinearFunction(i64, i64);
 
 pub struct ConvexHullTrick {
-    d: std::collections::VecDeque<LinearFunction>,
+    d: VecDeque<LinearFunction>,
     f: fn(&LinearFunction, i64) -> i64,
 }
 fn f(f: &LinearFunction, x: i64) -> i64 {

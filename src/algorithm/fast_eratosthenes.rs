@@ -44,15 +44,15 @@ impl Eratosthenes {
 
         let remainder = n % 30;
         flags_[size - 1] = match remainder {
-            1..=1 => 0x0,
+            1 => 0x0,
             2..=7 => 0x1,
             8..=11 => 0x3,
             12..=13 => 0x7,
             14..=17 => 0xf,
             18..=19 => 0x1f,
             20..=23 => 0x3f,
-            24..=29 => 0x7f,
-            _ => panic!(),
+            // 24..=29
+            _ => 0x7f,
         };
 
         let quart_x = ((n as f64).sqrt() + 1.0) as usize / 30 + 1;
@@ -64,22 +64,22 @@ impl Eratosthenes {
                 let lsb = flags & flags.wrapping_neg();
                 let i_bit = lsb.trailing_zeros() as usize;
 
-                let m = Eratosthenes::MOD_30[i_bit];
+                let m = Self::MOD_30[i_bit];
 
                 let mut k = i_bit;
                 let mut j = i * (30 * i + 2 * m) + (m * m) / 30;
 
                 while j < flags_.len() {
-                    flags_[j] &= Eratosthenes::K_MASK[i_bit][k];
+                    flags_[j] &= Self::K_MASK[i_bit][k];
 
-                    j += i * Eratosthenes::C1[k] + Eratosthenes::C0[i_bit][k];
+                    j += i * Self::C1[k] + Self::C0[i_bit][k];
                     k = (k + 1) & 7;
                 }
                 flags &= flags - 1;
             }
         }
 
-        Eratosthenes { flags_, n }
+        Self { flags_, n }
     }
 
     ///素数の個数をカウント
@@ -93,7 +93,7 @@ impl Eratosthenes {
 
     ///フラグから素数配列を生成
     pub fn primes(&self) -> Vec<usize> {
-        let mut ret = Vec::<usize>::new();
+        let mut ret = vec![];
 
         [2usize, 3, 5]
             .iter()
@@ -101,7 +101,7 @@ impl Eratosthenes {
             .for_each(|x| ret.push(*x));
 
         for (i, f) in self.flags_.iter().enumerate() {
-            for (ii, m) in Eratosthenes::MOD_30.iter().enumerate() {
+            for (ii, m) in Self::MOD_30.iter().enumerate() {
                 if (*f & (1 << ii)) != 0 {
                     ret.push(30 * i + *m);
                 }
