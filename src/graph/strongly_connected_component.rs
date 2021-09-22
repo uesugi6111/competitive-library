@@ -51,11 +51,14 @@ pub fn decompose(e: &[Vec<usize>]) -> Vec<Vec<usize>> {
 
         while let Some(vertex) = back_stack.pop_back() {
             if let Vertex::In(v) = vertex {
-                for &to in reverse_edge[v].iter().filter(|&&to| !back_seen[to]) {
+                for &to in reverse_edge[v].iter() {
+                    if back_seen[to] {
+                        continue;
+                    }
                     back_stack.push_back(Vertex::Out(to));
                     back_stack.push_back(Vertex::In(to));
+                    back_seen[to] = true;
                 }
-                back_seen[v] = true;
             } else if let Vertex::Out(v) = vertex {
                 scc.push(v);
             }
@@ -99,5 +102,34 @@ mod tests {
         let a = decompose(&e);
         dbg!(&a);
         assert_eq!(a, vec![vec![0], vec![1], vec![3, 2], vec![5, 6, 4]]);
+    }
+
+    #[test]
+    fn test_scc3() {
+        let n = 11;
+        let v = vec![
+            (0, 1),
+            (1, 2),
+            (1, 10),
+            (2, 0),
+            (2, 3),
+            (3, 4),
+            (4, 5),
+            (4, 10),
+            (5, 6),
+            (6, 3),
+            (7, 8),
+            (7, 9),
+            (8, 10),
+            (9, 7),
+            (10, 7),
+        ];
+        let mut e = vec![vec![]; n];
+        for &(v, u) in v.iter() {
+            e[v].push(u);
+        }
+        let a = decompose(&e);
+        dbg!(&a);
+        //assert_eq!(a, vec![vec![0], vec![1], vec![3, 2], vec![5, 6, 4]]);
     }
 }
