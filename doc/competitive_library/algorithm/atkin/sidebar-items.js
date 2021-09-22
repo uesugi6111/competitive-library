@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["sieve_of_atkin",""]]});
+initSidebarItems({"fn":[["generate_primes",""]]});

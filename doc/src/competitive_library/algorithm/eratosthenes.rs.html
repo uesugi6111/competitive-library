@@ -136,12 +136,12 @@
 
 <span class="kw">use</span> <span class="ident">std::collections::BTreeMap</span>;
 
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LinearSieve</span> {
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Sieve</span> {
     <span class="ident">n</span>: <span class="ident">usize</span>,
     <span class="kw">pub</span> <span class="ident">table</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">primes</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
 }
-<span class="kw">impl</span> <span class="ident">LinearSieve</span> {
+<span class="kw">impl</span> <span class="ident">Sieve</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">n</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">primes</span> <span class="op">=</span> <span class="macro">vec!</span>[];
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">table</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="number">0_i64</span>; <span class="ident">n</span> <span class="op">+</span> <span class="number">1</span>];
@@ -157,7 +157,7 @@
                 <span class="ident">table</span>[<span class="ident">p</span> <span class="op">*</span> <span class="ident">i</span>] <span class="op">=</span> <span class="ident">p</span> <span class="kw">as</span> <span class="ident">i64</span>;
             }
         }
-        <span class="ident">LinearSieve</span> { <span class="ident">n</span>, <span class="ident">table</span>, <span class="ident">primes</span> }
+        <span class="ident">Sieve</span> { <span class="ident">n</span>, <span class="ident">table</span>, <span class="ident">primes</span> }
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">factorize</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">n</span>: <span class="ident">i64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">BTreeMap</span><span class="op">&lt;</span><span class="ident">i64</span>, <span class="ident">i64</span><span class="op">&gt;</span> {
@@ -211,12 +211,12 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_prime</span>() {
-        <span class="macro">assert_eq!</span>(<span class="ident">LinearSieve::new</span>(<span class="number">1_000_000</span>).<span class="ident">primes</span>.<span class="ident">len</span>(), <span class="number">78_498</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">Sieve::new</span>(<span class="number">1_000_000</span>).<span class="ident">primes</span>.<span class="ident">len</span>(), <span class="number">78_498</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_factorize</span>() {
-        <span class="kw">let</span> <span class="ident">ls</span> <span class="op">=</span> <span class="ident">LinearSieve::new</span>(<span class="number">1_000_000</span>);
+        <span class="kw">let</span> <span class="ident">ls</span> <span class="op">=</span> <span class="ident">Sieve::new</span>(<span class="number">1_000_000</span>);
         <span class="kw">let</span> <span class="ident">case</span> <span class="op">=</span> <span class="macro">vec!</span>[
             <span class="number">31</span>, <span class="number">4657</span>, <span class="number">3</span>, <span class="number">65732</span>, <span class="number">7836</span>, <span class="number">1278</span>, <span class="number">8615</span>, <span class="number">798_179</span>, <span class="number">425</span>, <span class="number">38715</span>, <span class="number">3272</span>, <span class="number">149</span>, <span class="number">7</span>, <span class="number">48</span>, <span class="number">97</span>, <span class="number">5823</span>,
             <span class="number">517</span>, <span class="number">8231</span>, <span class="number">6986</span>, <span class="number">751</span>, <span class="number">8651</span>, <span class="number">671</span>, <span class="number">7</span>, <span class="number">23</span>,
@@ -236,7 +236,7 @@
     <span class="kw">use</span> <span class="ident">std::collections::HashMap</span>;
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_divide</span>() {
-        <span class="kw">let</span> <span class="ident">ls</span> <span class="op">=</span> <span class="ident">LinearSieve::new</span>(<span class="number">1_000_000</span>);
+        <span class="kw">let</span> <span class="ident">ls</span> <span class="op">=</span> <span class="ident">Sieve::new</span>(<span class="number">1_000_000</span>);
         <span class="kw">let</span> <span class="ident">map</span> <span class="op">=</span> {
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ret</span> <span class="op">=</span> <span class="ident">HashMap::new</span>();
             <span class="ident">ret</span>.<span class="ident">insert</span>(<span class="number">1</span>, <span class="macro">vec!</span>[<span class="number">1</span>]);

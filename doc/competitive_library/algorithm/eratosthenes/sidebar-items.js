@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["LinearSieve",""]]});
+initSidebarItems({"struct":[["Sieve",""]]});

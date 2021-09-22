@@ -83,7 +83,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LinearFunction</span>(<span class="ident">i64</span>, <span class="ident">i64</span>);
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ConvexHullTrick</span> {
-    <span class="ident">d</span>: <span class="ident">std::collections::VecDeque</span><span class="op">&lt;</span><span class="ident">LinearFunction</span><span class="op">&gt;</span>,
+    <span class="ident">d</span>: <span class="ident">VecDeque</span><span class="op">&lt;</span><span class="ident">LinearFunction</span><span class="op">&gt;</span>,
     <span class="ident">f</span>: <span class="kw">fn</span>(<span class="kw-2">&amp;</span><span class="ident">LinearFunction</span>, <span class="ident">i64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i64</span>,
 }
 <span class="kw">fn</span> <span class="ident">f</span>(<span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="ident">LinearFunction</span>, <span class="ident">x</span>: <span class="ident">i64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i64</span> {

@@ -101,13 +101,13 @@
 }
 <span class="doccomment">///UnionFind</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Dsu</span> {
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DisjointSetUnion</span> {
     <span class="ident">uf</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Node</span><span class="op">&gt;</span>,
 }
 
-<span class="kw">impl</span> <span class="ident">Dsu</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">n</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Dsu</span> {
-        <span class="ident">Dsu</span> {
+<span class="kw">impl</span> <span class="ident">DisjointSetUnion</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">n</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DisjointSetUnion</span> {
+        <span class="ident">DisjointSetUnion</span> {
             <span class="ident">uf</span>: <span class="macro">vec!</span>[<span class="ident">Node::Root</span>(<span class="number">1</span>); <span class="ident">n</span>],
         }
     }
@@ -174,7 +174,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_dsu</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">d</span> <span class="op">=</span> <span class="ident">Dsu::new</span>(<span class="number">4</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">d</span> <span class="op">=</span> <span class="ident">DisjointSetUnion::new</span>(<span class="number">4</span>);
         <span class="ident">d</span>.<span class="ident">unite</span>(<span class="number">0</span>, <span class="number">1</span>);
         <span class="macro">assert!</span>(<span class="ident">d</span>.<span class="ident">is_same</span>(<span class="number">0</span>, <span class="number">1</span>));
         <span class="ident">d</span>.<span class="ident">unite</span>(<span class="number">1</span>, <span class="number">2</span>);

@@ -46,21 +46,14 @@
 <span id="46">46</span>
 <span id="47">47</span>
 <span id="48">48</span>
-<span id="49">49</span>
-<span id="50">50</span>
 </pre><pre class="rust">
 <span class="doccomment">//! 順列生成</span>
-<span class="attribute">#[<span class="ident">test</span>]</span>
-<span class="kw">fn</span> <span class="ident">test_prm</span>() {
-    <span class="kw">let</span> <span class="ident">n</span> <span class="op">=</span> <span class="number">4</span>;
-    <span class="kw">let</span> <span class="ident">vv</span> <span class="op">=</span> <span class="ident">make_permutation</span>(<span class="ident">n</span>);
-    <span class="macro">assert_eq!</span>(<span class="number">0</span>, <span class="ident">vv</span>[<span class="number">0</span>][<span class="number">0</span>]);
-}
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_permutation</span>(<span class="ident">n</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">vvec</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="ident">Vec::new</span>(); <span class="ident">factorial</span>(<span class="ident">n</span>)];
+    <span class="kw">let</span> <span class="ident">factorial</span> <span class="op">=</span> (<span class="number">1</span>..<span class="op">=</span><span class="ident">n</span>).<span class="ident">product</span>();
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">vvec</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="ident">Vec::new</span>(); <span class="ident">factorial</span>];
     <span class="kw">let</span> <span class="ident">nums</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="number">0</span>..<span class="ident">n</span>).<span class="ident">collect</span>();
-    <span class="kw">let</span> <span class="ident">indexes</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="number">0</span>..<span class="ident">factorial</span>(<span class="ident">n</span>)).<span class="ident">collect</span>();
+    <span class="kw">let</span> <span class="ident">indexes</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="number">0</span>..<span class="ident">factorial</span>).<span class="ident">collect</span>();
     <span class="ident">push_recusive</span>(<span class="ident">nums</span>, <span class="ident">indexes</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">vvec</span>);
     <span class="ident">vvec</span>
 }
@@ -73,7 +66,7 @@
     <span class="kw">if</span> <span class="ident">nums</span>.<span class="ident">is_empty</span>() {
         <span class="kw">return</span> <span class="ident">vvec</span>;
     }
-    <span class="kw">let</span> <span class="ident">block_size</span> <span class="op">=</span> <span class="ident">factorial</span>(<span class="ident">nums</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">1</span>);
+    <span class="kw">let</span> <span class="ident">block_size</span> <span class="op">=</span> (<span class="number">1</span>..<span class="op">=</span><span class="ident">nums</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">1</span>).<span class="ident">product</span>();
     <span class="kw">for</span> (<span class="ident">block_index</span>, <span class="ident">num</span>) <span class="kw">in</span> <span class="ident">nums</span>.<span class="ident">iter</span>().<span class="ident">enumerate</span>() {
         <span class="kw">for</span> <span class="ident">inner_index</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">block_size</span> {
             <span class="kw">let</span> <span class="ident">index</span> <span class="op">=</span> <span class="ident">indexes</span>[<span class="ident">block_size</span> <span class="op">*</span> <span class="ident">block_index</span> <span class="op">+</span> <span class="ident">inner_index</span>];
@@ -93,12 +86,15 @@
     <span class="ident">vvec</span>
 }
 
-<span class="kw">fn</span> <span class="ident">factorial</span>(<span class="ident">i</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
-    (<span class="number">1</span>..<span class="op">=</span><span class="ident">i</span>).<span class="ident">product</span>()
-}
-
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">mod</span> <span class="ident">tests</span> {}
+<span class="kw">mod</span> <span class="ident">tests</span> {
+    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_prm</span>() {
+        <span class="kw">let</span> <span class="ident">vv</span> <span class="op">=</span> <span class="ident">make_permutation</span>(<span class="number">4</span>);
+        <span class="macro">assert_eq!</span>(<span class="number">0</span>, <span class="ident">vv</span>[<span class="number">0</span>][<span class="number">0</span>]);
+    }
+}
 </pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="competitive_library" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script>

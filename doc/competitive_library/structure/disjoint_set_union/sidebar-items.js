@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Dsu","UnionFind"]]});
+initSidebarItems({"struct":[["DisjointSetUnion","UnionFind"]]});
