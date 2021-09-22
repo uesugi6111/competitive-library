@@ -173,18 +173,18 @@ mod tests {
         let mut a = convert(a);
         let mut b = convert(b);
 
-        for i in 0..a.len() {
-            for j in 0..a.len() {
-                if b[j].is_none() {
+        for i in a.iter_mut() {
+            for j in b.iter_mut() {
+                if j.is_none() {
                     continue;
                 }
-                if a[i].as_ref()?.eq(b[j].as_ref()?) {
-                    a[i].take();
-                    b[j].take();
+                if i.as_ref()?.eq(j.as_ref()?) {
+                    i.take();
+                    j.take();
                     break;
                 }
             }
-            assert!(a[i].is_none());
+            assert!(i.is_none());
         }
         Some(())
     }
