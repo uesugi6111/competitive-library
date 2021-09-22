@@ -76,7 +76,7 @@ mod tests {
             e[v].push(u);
         }
         let a = decompose(&e);
-        assert_eq!(a, vec![vec![5], vec![1, 4], vec![2], vec![0, 3]]);
+        assertvv(&a, &[vec![5], vec![1, 4], vec![2], vec![0, 3]]);
     }
     #[test]
     fn test_scc2() {
@@ -97,7 +97,7 @@ mod tests {
         }
         let a = decompose(&e);
         dbg!(&a);
-        assert_eq!(a, vec![vec![0], vec![1], vec![3, 2], vec![5, 6, 4]]);
+        assertvv(&a, &[vec![0], vec![1], vec![3, 2], vec![5, 6, 4]]);
     }
 
     #[test]
@@ -129,7 +129,7 @@ mod tests {
         }
         let a = decompose(&e);
         dbg!(&a);
-        //assert_eq!(a, vec![vec![0], vec![1], vec![3, 2], vec![5, 6, 4]]);
+        assertvv(&a, &[vec![0, 1, 2], vec![3, 4, 5, 6], vec![7, 8, 9, 10]]);
     }
     #[test]
     fn test_scc4() {
@@ -141,7 +141,7 @@ mod tests {
         }
         let a = decompose(&e);
         dbg!(&a);
-        //assert_eq!(a, vec![vec![0], vec![1], vec![3, 2], vec![5, 6, 4]]);
+        assertvv(&a, &[vec![0], vec![1], vec![2], vec![3], vec![4]]);
     }
     #[test]
     fn test_scc5() {
@@ -153,7 +153,7 @@ mod tests {
         }
         let a = decompose(&e);
         dbg!(&a);
-        //assert_eq!(a, vec![vec![0], vec![1], vec![3, 2], vec![5, 6, 4]]);
+        assertvv(&a, &[vec![0, 1, 2, 3, 4]]);
     }
     #[test]
     fn test_scc6() {
@@ -165,6 +165,32 @@ mod tests {
         }
         let a = decompose(&e);
         dbg!(&a);
-        //assert_eq!(a, vec![vec![0], vec![1], vec![3, 2], vec![5, 6, 4]]);
+        assertvv(&a, &[vec![0, 1, 2, 3, 4], vec![5]]);
+    }
+    use std::collections::HashSet;
+    fn assertvv(a: &[Vec<usize>], b: &[Vec<usize>]) -> Option<()> {
+        assert_eq!(a.len(), b.len());
+        let mut a = convert(a);
+        let mut b = convert(b);
+
+        for i in 0..a.len() {
+            for j in 0..a.len() {
+                if b[j].is_none() {
+                    continue;
+                }
+                if a[i].as_ref()?.eq(b[j].as_ref()?) {
+                    a[i].take();
+                    b[j].take();
+                    break;
+                }
+            }
+            assert!(a[i].is_none());
+        }
+        Some(())
+    }
+    fn convert(a: &[Vec<usize>]) -> Vec<Option<HashSet<usize>>> {
+        a.iter()
+            .map(|x| Some(x.iter().cloned().collect::<HashSet<_>>()))
+            .collect::<Vec<_>>()
     }
 }
