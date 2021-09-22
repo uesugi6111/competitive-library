@@ -5,14 +5,6 @@ pub enum Vertex {
     In(usize),
     Out(usize),
 }
-impl Vertex {
-    pub fn get_value(&self) -> usize {
-        match self {
-            Vertex::In(value) => *value,
-            Vertex::Out(value) => *value,
-        }
-    }
-}
 
 pub fn decompose(e: &[Vec<usize>]) -> Vec<Vec<usize>> {
     let mut seen = vec![false; e.len()];
