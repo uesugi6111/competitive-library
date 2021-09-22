@@ -1,5 +1,5 @@
 #[derive(Debug)]
-pub enum Vertex {
+enum Vertex {
     In(usize),
     Out(usize),
 }
