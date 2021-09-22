@@ -25,7 +25,7 @@ pub fn decompose(e: &[Vec<usize>]) -> Vec<Vec<usize>> {
         while let Some(vertex) = stack.pop_back() {
             if let Vertex::In(v) = vertex {
                 for &to in e[v].iter().filter(|&&to| !seen[to]) {
-                    stack.push_back(Vertex::Out(v));
+                    stack.push_back(Vertex::Out(to));
                     stack.push_back(Vertex::In(to));
                 }
                 seen[v] = true;
@@ -43,19 +43,19 @@ pub fn decompose(e: &[Vec<usize>]) -> Vec<Vec<usize>> {
     }
 
     let mut components = vec![];
-    let mut bask_stack = VecDeque::new();
+    let mut back_stack = VecDeque::new();
     let mut back_seen = vec![false; e.len()];
     while let Some(v) = nodes.pop_back() {
-        if back_seen[v] {
-            continue;
-        }
         let mut scc = vec![];
+        back_stack.push_back(Vertex::Out(v));
+        back_stack.push_back(Vertex::In(v));
+        back_seen[v] = true;
 
-        while let Some(vertex) = bask_stack.pop_back() {
+        while let Some(vertex) = back_stack.pop_back() {
             if let Vertex::In(v) = vertex {
                 for &to in reverse_edge[v].iter().filter(|&&to| !back_seen[to]) {
-                    bask_stack.push_back(Vertex::Out(v));
-                    bask_stack.push_back(Vertex::In(to));
+                    back_stack.push_back(Vertex::Out(to));
+                    back_stack.push_back(Vertex::In(to));
                 }
                 back_seen[v] = true;
             } else if let Vertex::Out(v) = vertex {
@@ -65,4 +65,20 @@ pub fn decompose(e: &[Vec<usize>]) -> Vec<Vec<usize>> {
         components.push(scc);
     }
     components
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_scc() {
+        let n = 6;
+        let v = vec![(1, 4), (5, 2), (3, 0), (5, 5), (4, 1), (0, 3), (4, 2)];
+        let mut e = vec![vec![]; n];
+        for &(v, u) in v.iter() {
+            e[v].push(u);
+        }
+        let a = decompose(&e);
+        assert_eq!(a, vec![vec![5], vec![1, 4], vec![2], vec![0, 3]]);
+    }
 }
