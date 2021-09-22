@@ -26,6 +26,7 @@ jobs:
         with:
           title: Update doc
           labels: Auto PR
+          base: doc
           branch: auto-pr/update-doc 
           branch-suffix : timestamp 
           commit-message: update doc
