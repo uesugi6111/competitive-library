@@ -13,18 +13,17 @@ pub fn decompose(e: &[Vec<usize>]) -> Vec<Vec<usize>> {
         if seen[i] {
             continue;
         }
-        stack.push(Vertex::Out(i));
         stack.push(Vertex::In(i));
-        seen[i] = true;
+
         while let Some(vertex) = stack.pop() {
             if let Vertex::In(v) = vertex {
+                if seen[v] {
+                    continue;
+                }
+                stack.push(Vertex::Out(v));
+                seen[v] = true;
                 for &to in e[v].iter() {
-                    if seen[to] {
-                        continue;
-                    }
-                    stack.push(Vertex::Out(to));
                     stack.push(Vertex::In(to));
-                    seen[to] = true;
                 }
             } else if let Vertex::Out(v) = vertex {
                 nodes.push(v);
