@@ -1,5 +1,3 @@
-use std::collections::VecDeque;
-
 #[derive(Debug)]
 pub enum Vertex {
     In(usize),
@@ -9,31 +7,30 @@ pub enum Vertex {
 pub fn decompose(e: &[Vec<usize>]) -> Vec<Vec<usize>> {
     let mut seen = vec![false; e.len()];
 
-    let mut stack = VecDeque::new();
-    let mut nodes = VecDeque::new();
+    let mut stack = vec![];
+    let mut nodes = Vec::with_capacity(e.len());
     for i in 0..e.len() {
         if seen[i] {
             continue;
         }
-        stack.push_back(Vertex::Out(i));
-        stack.push_back(Vertex::In(i));
+        stack.push(Vertex::Out(i));
+        stack.push(Vertex::In(i));
         seen[i] = true;
-        while let Some(vertex) = stack.pop_back() {
+        while let Some(vertex) = stack.pop() {
             if let Vertex::In(v) = vertex {
                 for &to in e[v].iter() {
                     if seen[to] {
                         continue;
                     }
-                    stack.push_back(Vertex::Out(to));
-                    stack.push_back(Vertex::In(to));
+                    stack.push(Vertex::Out(to));
+                    stack.push(Vertex::In(to));
                     seen[to] = true;
                 }
             } else if let Vertex::Out(v) = vertex {
-                nodes.push_back(v);
+                nodes.push(v);
             }
         }
     }
-    dbg!(&nodes);
     let mut reverse_edge = vec![vec![]; e.len()];
     for i in 0..e.len() {
         for j in 0..e[i].len() {
@@ -42,22 +39,22 @@ pub fn decompose(e: &[Vec<usize>]) -> Vec<Vec<usize>> {
     }
 
     let mut components = vec![];
-    let mut back_stack = VecDeque::new();
+    let mut back_stack = vec![];
     let mut back_seen = vec![false; e.len()];
-    while let Some(v) = nodes.pop_back() {
+    while let Some(v) = nodes.pop() {
         if back_seen[v] {
             continue;
         }
         let mut scc = vec![];
-        back_stack.push_back(v);
+        back_stack.push(v);
         back_seen[v] = true;
 
-        while let Some(v) = back_stack.pop_back() {
+        while let Some(v) = back_stack.pop() {
             for &to in reverse_edge[v].iter() {
                 if back_seen[to] {
                     continue;
                 }
-                back_stack.push_back(to);
+                back_stack.push(to);
                 back_seen[to] = true;
             }
 
