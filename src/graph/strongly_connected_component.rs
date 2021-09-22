@@ -17,13 +17,17 @@ pub fn decompose(e: &[Vec<usize>]) -> Vec<Vec<usize>> {
         }
         stack.push_back(Vertex::Out(i));
         stack.push_back(Vertex::In(i));
+        seen[i] = true;
         while let Some(vertex) = stack.pop_back() {
             if let Vertex::In(v) = vertex {
-                for &to in e[v].iter().filter(|&&to| !seen[to]) {
+                for &to in e[v].iter() {
+                    if seen[to] {
+                        continue;
+                    }
                     stack.push_back(Vertex::Out(to));
                     stack.push_back(Vertex::In(to));
+                    seen[to] = true;
                 }
-                seen[v] = true;
             } else if let Vertex::Out(v) = vertex {
                 nodes.push_back(v);
             }
@@ -45,23 +49,19 @@ pub fn decompose(e: &[Vec<usize>]) -> Vec<Vec<usize>> {
             continue;
         }
         let mut scc = vec![];
-        back_stack.push_back(Vertex::Out(v));
-        back_stack.push_back(Vertex::In(v));
+        back_stack.push_back(v);
         back_seen[v] = true;
 
-        while let Some(vertex) = back_stack.pop_back() {
-            if let Vertex::In(v) = vertex {
-                for &to in reverse_edge[v].iter() {
-                    if back_seen[to] {
-                        continue;
-                    }
-                    back_stack.push_back(Vertex::Out(to));
-                    back_stack.push_back(Vertex::In(to));
-                    back_seen[to] = true;
+        while let Some(v) = back_stack.pop_back() {
+            for &to in reverse_edge[v].iter() {
+                if back_seen[to] {
+                    continue;
                 }
-            } else if let Vertex::Out(v) = vertex {
-                scc.push(v);
+                back_stack.push_back(to);
+                back_seen[to] = true;
             }
+
+            scc.push(v);
         }
         components.push(scc);
     }
@@ -122,8 +122,23 @@ mod tests {
             (7, 9),
             (8, 10),
             (9, 7),
+            (9, 7),
+            (9, 7),
+            (9, 7),
             (10, 7),
         ];
+        let mut e = vec![vec![]; n];
+        for &(v, u) in v.iter() {
+            e[v].push(u);
+        }
+        let a = decompose(&e);
+        dbg!(&a);
+        //assert_eq!(a, vec![vec![0], vec![1], vec![3, 2], vec![5, 6, 4]]);
+    }
+    #[test]
+    fn test_scc4() {
+        let n = 5;
+        let v = vec![(0, 1), (0, 2), (2, 3), (3, 4)];
         let mut e = vec![vec![]; n];
         for &(v, u) in v.iter() {
             e[v].push(u);
