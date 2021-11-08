@@ -109,7 +109,7 @@ impl<M: Monoid> SegmentTree<M> {
         }
         l += self.size;
         let mut sm = M::identity_element();
-        while {
+        loop {
             // do
             while l % 2 == 0 {
                 l >>= 1;
@@ -130,11 +130,12 @@ impl<M: Monoid> SegmentTree<M> {
             sm = M::binary_operation(&sm, unsafe { self.data.get_unchecked(l) });
             l += 1;
             // while
-            {
-                let l = l as isize;
-                (l & -l) != l
+
+            let l = l as isize;
+            if (l & -l) == l {
+                break;
             }
-        } {}
+        }
         self.n
     }
 
@@ -149,7 +150,7 @@ impl<M: Monoid> SegmentTree<M> {
         }
         r += self.size;
         let mut sm = M::identity_element();
-        while {
+        loop {
             // do
             r -= 1;
             while r > 1 && r % 2 == 1 {
@@ -171,11 +172,13 @@ impl<M: Monoid> SegmentTree<M> {
             }
             sm = M::binary_operation(unsafe { self.data.get_unchecked(r) }, &sm);
             // while
-            {
-                let r = r as isize;
-                (r & -r) != r
+
+            let r = r as isize;
+            if (r & -r) == r {
+                break;
             }
-        } {}
+        }
+
         0
     }
 }
