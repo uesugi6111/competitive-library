@@ -6,6 +6,7 @@ struct Node {
     count: u32,
 }
 impl Node {
+    #[inline]
     fn new() -> Self {
         Self {
             children: vec![None; 2],
@@ -20,6 +21,7 @@ pub struct BinaryTrie {
 }
 impl BinaryTrie {
     /// 構築
+    #[inline]
     pub const fn new() -> Self {
         Self { nodes: None }
     }
@@ -64,6 +66,7 @@ impl BinaryTrie {
 
     /// 値を削除
     /// 内部関数
+    #[inline]
     fn erase_inner(&mut self, x: u32, erase_count: u32) -> Option<()> {
         let mut node = &mut self.nodes;
         for i in (0..32).rev() {
@@ -106,26 +109,42 @@ impl BinaryTrie {
     /// 最小値を求める
     #[inline]
     pub fn min(&self) -> Option<u32> {
-        let mut ans = 0;
-        let mut node = self.nodes.as_ref()?;
-        for i in (0..32).rev() {
-            let bit = if node.children[0].is_none() { 1 } else { 0 };
-            ans ^= (bit as u32) << i;
-            node = node.children[bit].as_ref()?;
-        }
-        Some(ans)
+        self.xth_element(1)
     }
 
     /// 最大値を求める
     #[inline]
     pub fn max(&self) -> Option<u32> {
+        let max = self.size()?;
+        self.xth_element(max)
+    }
+    #[inline]
+    pub fn size(&self) -> Option<u32> {
+        Some(self.nodes.as_ref()?.count)
+    }
+    #[inline]
+    pub fn xth_element(&self, xth: u32) -> Option<u32> {
+        let mut x = xth;
         let mut ans = 0;
         let mut node = self.nodes.as_ref()?;
+
         for i in (0..32).rev() {
-            let bit = if node.children[1].is_none() { 0 } else { 1 };
+            let count = if let Some(node) = node.children[0].as_ref() {
+                node.count
+            } else {
+                0
+            };
+
+            let bit = if count >= x {
+                0
+            } else {
+                x -= count;
+                1
+            };
             ans ^= (bit as u32) << i;
             node = node.children[bit].as_ref()?;
         }
+
         Some(ans)
     }
 }
@@ -138,13 +157,19 @@ mod tests {
     fn bt() {
         let mut b = BinaryTrie::new();
         b.insert(6);
+        assert_eq!(b.size().unwrap(), 1);
 
         let a = b.clone();
         b.insert(7);
         b.insert(7);
+        assert_eq!(b.size().unwrap(), 3);
+        assert_eq!(b.xth_element(1).unwrap(), 6);
+        assert_eq!(b.xth_element(2).unwrap(), 7);
+        assert_eq!(b.xth_element(3).unwrap(), 7);
         b.erase(7);
         b.erase(7);
-        b.erase(10);
+        assert_eq!(b.size().unwrap(), 1);
+        assert_eq!(b.erase(10), None);
         assert_eq!(a.nodes, b.nodes);
     }
     #[test]
