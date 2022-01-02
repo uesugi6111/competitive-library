@@ -27,17 +27,11 @@ impl BinaryTrie {
     /// 値の挿入
     #[inline]
     pub fn insert(&mut self, x: u32) -> Option<()> {
-        if self.nodes.is_none() {
-            self.nodes = Some(Node::new());
-        }
-        let mut node = self.nodes.as_mut()?;
+        let mut node = self.nodes.get_or_insert_with(Node::new);
+
         for i in (0..32).rev() {
             node.count += 1;
-            let bit = (x >> i & 1) as usize;
-            if node.children[bit].is_none() {
-                node.children[bit] = Some(Node::new());
-            }
-            node = node.children[bit].as_mut()?;
+            node = node.children[(x >> i & 1) as usize].get_or_insert_with(Node::new);
         }
         node.count += 1;
         Some(())
