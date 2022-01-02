@@ -6,6 +6,7 @@ struct Node {
     count: u32,
 }
 impl Node {
+    #[inline]
     fn new() -> Self {
         Self {
             children: vec![None; 2],
@@ -20,6 +21,7 @@ pub struct BinaryTrie {
 }
 impl BinaryTrie {
     /// 構築
+    #[inline]
     pub const fn new() -> Self {
         Self { nodes: None }
     }
@@ -27,17 +29,11 @@ impl BinaryTrie {
     /// 値の挿入
     #[inline]
     pub fn insert(&mut self, x: u32) -> Option<()> {
-        if self.nodes.is_none() {
-            self.nodes = Some(Node::new());
-        }
-        let mut node = self.nodes.as_mut()?;
+        let mut node = self.nodes.get_or_insert_with(Node::new);
+
         for i in (0..32).rev() {
             node.count += 1;
-            let bit = (x >> i & 1) as usize;
-            if unsafe { node.children.get_unchecked(bit) }.is_none() {
-                *unsafe { node.children.get_unchecked_mut(bit) } = Some(Node::new());
-            }
-            node = unsafe { node.children.get_unchecked_mut(bit) }.as_mut()?;
+            node = node.children[(x >> i & 1) as usize].get_or_insert_with(Node::new);
         }
         node.count += 1;
         Some(())
@@ -49,7 +45,7 @@ impl BinaryTrie {
         let mut node = &self.nodes;
 
         for i in (0..32).rev() {
-            node = unsafe { node.as_ref()?.children.get_unchecked((x >> i & 1) as usize) };
+            node = &node.as_ref()?.children[(x >> i & 1) as usize];
         }
         Some(node.as_ref()?.count)
     }
@@ -70,6 +66,7 @@ impl BinaryTrie {
 
     /// 値を削除
     /// 内部関数
+    #[inline]
     fn erase_inner(&mut self, x: u32, erase_count: u32) -> Option<()> {
         let mut node = &mut self.nodes;
         for i in (0..32).rev() {
@@ -79,11 +76,7 @@ impl BinaryTrie {
             } else {
                 node.as_mut()?.count -= erase_count;
             }
-            node = unsafe {
-                node.as_mut()?
-                    .children
-                    .get_unchecked_mut((x >> i & 1) as usize)
-            };
+            node = &mut node.as_mut()?.children[(x >> i & 1) as usize];
         }
         if node.as_ref()?.count == erase_count {
             *node = None;
@@ -102,13 +95,13 @@ impl BinaryTrie {
         for i in (0..32).rev() {
             let bit = {
                 let mut buff = (x >> i & 1) as usize;
-                if unsafe { node.children.get_unchecked(buff) }.is_none() {
+                if node.children[buff].is_none() {
                     buff ^= 1;
                 }
                 buff
             };
             ans ^= (bit as u32) << i;
-            node = unsafe { node.children.get_unchecked(bit) }.as_ref()?;
+            node = node.children[bit].as_ref()?;
         }
         Some(ans ^ x)
     }
@@ -116,26 +109,42 @@ impl BinaryTrie {
     /// 最小値を求める
     #[inline]
     pub fn min(&self) -> Option<u32> {
-        let mut ans = 0;
-        let mut node = self.nodes.as_ref()?;
-        for i in (0..32).rev() {
-            let bit = if node.children[0].is_none() { 1 } else { 0 };
-            ans ^= (bit as u32) << i;
-            node = unsafe { node.children.get_unchecked(bit) }.as_ref()?;
-        }
-        Some(ans)
+        self.xth_element(1)
     }
 
     /// 最大値を求める
     #[inline]
     pub fn max(&self) -> Option<u32> {
+        let max = self.size()?;
+        self.xth_element(max)
+    }
+    #[inline]
+    pub fn size(&self) -> Option<u32> {
+        Some(self.nodes.as_ref()?.count)
+    }
+    #[inline]
+    pub fn xth_element(&self, xth: u32) -> Option<u32> {
+        let mut x = xth;
         let mut ans = 0;
         let mut node = self.nodes.as_ref()?;
+
         for i in (0..32).rev() {
-            let bit = if node.children[1].is_none() { 0 } else { 1 };
+            let count = if let Some(node) = node.children[0].as_ref() {
+                node.count
+            } else {
+                0
+            };
+
+            let bit = if count >= x {
+                0
+            } else {
+                x -= count;
+                1
+            };
             ans ^= (bit as u32) << i;
-            node = unsafe { node.children.get_unchecked(bit) }.as_ref()?;
+            node = node.children[bit].as_ref()?;
         }
+
         Some(ans)
     }
 }
@@ -148,13 +157,19 @@ mod tests {
     fn bt() {
         let mut b = BinaryTrie::new();
         b.insert(6);
+        assert_eq!(b.size().unwrap(), 1);
 
         let a = b.clone();
         b.insert(7);
         b.insert(7);
+        assert_eq!(b.size().unwrap(), 3);
+        assert_eq!(b.xth_element(1).unwrap(), 6);
+        assert_eq!(b.xth_element(2).unwrap(), 7);
+        assert_eq!(b.xth_element(3).unwrap(), 7);
         b.erase(7);
         b.erase(7);
-        b.erase(10);
+        assert_eq!(b.size().unwrap(), 1);
+        assert_eq!(b.erase(10), None);
         assert_eq!(a.nodes, b.nodes);
     }
     #[test]
