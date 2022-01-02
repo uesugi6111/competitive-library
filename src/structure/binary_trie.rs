@@ -34,10 +34,10 @@ impl BinaryTrie {
         for i in (0..32).rev() {
             node.count += 1;
             let bit = (x >> i & 1) as usize;
-            if unsafe { node.children.get_unchecked(bit) }.is_none() {
-                *unsafe { node.children.get_unchecked_mut(bit) } = Some(Node::new());
+            if node.children[bit].is_none() {
+                node.children[bit] = Some(Node::new());
             }
-            node = unsafe { node.children.get_unchecked_mut(bit) }.as_mut()?;
+            node = node.children[bit].as_mut()?;
         }
         node.count += 1;
         Some(())
@@ -49,7 +49,7 @@ impl BinaryTrie {
         let mut node = &self.nodes;
 
         for i in (0..32).rev() {
-            node = unsafe { node.as_ref()?.children.get_unchecked((x >> i & 1) as usize) };
+            node = &node.as_ref()?.children[(x >> i & 1) as usize];
         }
         Some(node.as_ref()?.count)
     }
@@ -79,11 +79,7 @@ impl BinaryTrie {
             } else {
                 node.as_mut()?.count -= erase_count;
             }
-            node = unsafe {
-                node.as_mut()?
-                    .children
-                    .get_unchecked_mut((x >> i & 1) as usize)
-            };
+            node = &mut node.as_mut()?.children[(x >> i & 1) as usize];
         }
         if node.as_ref()?.count == erase_count {
             *node = None;
@@ -102,13 +98,13 @@ impl BinaryTrie {
         for i in (0..32).rev() {
             let bit = {
                 let mut buff = (x >> i & 1) as usize;
-                if unsafe { node.children.get_unchecked(buff) }.is_none() {
+                if node.children[buff].is_none() {
                     buff ^= 1;
                 }
                 buff
             };
             ans ^= (bit as u32) << i;
-            node = unsafe { node.children.get_unchecked(bit) }.as_ref()?;
+            node = node.children[bit].as_ref()?;
         }
         Some(ans ^ x)
     }
@@ -121,7 +117,7 @@ impl BinaryTrie {
         for i in (0..32).rev() {
             let bit = if node.children[0].is_none() { 1 } else { 0 };
             ans ^= (bit as u32) << i;
-            node = unsafe { node.children.get_unchecked(bit) }.as_ref()?;
+            node = node.children[bit].as_ref()?;
         }
         Some(ans)
     }
@@ -134,7 +130,7 @@ impl BinaryTrie {
         for i in (0..32).rev() {
             let bit = if node.children[1].is_none() { 0 } else { 1 };
             ans ^= (bit as u32) << i;
-            node = unsafe { node.children.get_unchecked(bit) }.as_ref()?;
+            node = node.children[bit].as_ref()?;
         }
         Some(ans)
     }
