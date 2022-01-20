@@ -68,9 +68,10 @@ mod tests {
         ];
 
         assert_eq!(dijkstra(&graph, 0, 1), Some(1));
+        assert_eq!(dijkstra(&graph, 0, 2), Some(10));
         assert_eq!(dijkstra(&graph, 0, 3), Some(3));
-        assert_eq!(dijkstra(&graph, 3, 0), Some(7));
         assert_eq!(dijkstra(&graph, 0, 4), Some(5));
+        assert_eq!(dijkstra(&graph, 3, 0), Some(7));
         assert_eq!(dijkstra(&graph, 4, 0), None);
     }
     #[test]
