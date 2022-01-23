@@ -1,10 +1,12 @@
 //! SPFA
 
+use std::collections::VecDeque;
+
 pub fn spfa(edge: &[Vec<(usize, i64)>], start: usize) -> Option<Vec<i64>> {
     let mut pending = vec![false; edge.len()];
     let mut times = vec![0; edge.len()];
     let mut costs = vec![std::i64::MAX; edge.len()];
-    let mut q = std::collections::VecDeque::new();
+    let mut q = VecDeque::new();
     q.push_back(start);
     times[start] = 1;
     costs[start] = 0;
