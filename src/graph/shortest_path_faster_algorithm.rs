@@ -17,7 +17,7 @@ pub fn spfa(edge: &[Vec<(usize, i64)>], start: usize) -> Option<Vec<i64>> {
 
         for &(to, c) in &edge[p] {
             let cost = costs[p] + c;
-            if costs[to] < cost {
+            if costs[to] <= cost {
                 continue;
             }
             costs[to] = cost;
