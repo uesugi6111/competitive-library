@@ -1,9 +1,6 @@
 //! 転倒数
 pub fn inversion_number(array: &[i64]) -> i64 {
-    count_merge(
-        &mut array.iter().copied().collect::<Vec<_>>(),
-        0..array.len(),
-    )
+    count_merge(&mut array.to_vec(), 0..array.len())
 }
 fn count_merge(array: &mut Vec<i64>, range: std::ops::Range<usize>) -> i64 {
     let length = range.len() as i64;
