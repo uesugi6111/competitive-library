@@ -1,3 +1,4 @@
+//! Zobrist Hash
 use super::xorshift::XorShift;
 use std::collections::HashSet;
 
@@ -61,6 +62,19 @@ mod tests {
         assert_eq!(
             hash_vec[4],
             zh.hash_from_set(&HashSet::from([1, 2, 3, 4, 5]))
+        );
+    }
+    #[test]
+    fn rand() {
+        let mut rand = XorShift::new();
+
+        let v = (0..10000).map(|_| rand.next().unwrap()).collect::<Vec<_>>();
+        let mut vv = v.clone();
+        vv.sort_unstable();
+        let mut zh = ZobristHash::new();
+        assert_eq!(
+            zh.hash_from_set(&v.into_iter().collect::<HashSet::<_>>()),
+            zh.hash_from_set(&vv.into_iter().collect::<HashSet::<_>>())
         );
     }
 }
