@@ -30,8 +30,8 @@ jobs:
         fail-fast: false
         matrix:
           toolchain:
-            - 1.42.0-x86_64-unknown-linux-gnu
-            - 1.58.0-x86_64-unknown-linux-gnu
+            - 1.42.0
+            - 1.58.0
 
     name: Test (${{ matrix.toolchain }})
 
@@ -39,6 +39,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.toolchain }}
+          override: true
 
       - name: Clippy
         uses: actions-rs/cargo@v1
