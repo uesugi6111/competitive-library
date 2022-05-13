@@ -54,9 +54,9 @@ mod tests {
     }
     #[test]
     fn test_2() {
-        let mx = 1000000000i64;
+        let mx = 1_000_000_000_i64;
 
-        let k = 500000;
+        let k = 500_000;
         let n = 3 * k + 1;
         let mut h = vec![0; n];
 
