@@ -55,14 +55,14 @@ mod tests {
         let hash_vec = zh.hash_vec_from_vec(&v);
 
         assert_eq!(hash_vec.len(), 5);
-        assert_eq!(hash_vec[0], zh.hash_from_set(&HashSet::from([1])));
-        assert_eq!(hash_vec[1], zh.hash_from_set(&HashSet::from([1, 2])));
-        assert_eq!(hash_vec[2], zh.hash_from_set(&HashSet::from([1, 2, 3])));
-        assert_eq!(hash_vec[3], zh.hash_from_set(&HashSet::from([1, 2, 3, 4])));
-        assert_eq!(
-            hash_vec[4],
-            zh.hash_from_set(&HashSet::from([1, 2, 3, 4, 5]))
-        );
+        assert_eq!(hash_vec[0], zh.hash_from_set(&to_set(1, &v)));
+        assert_eq!(hash_vec[1], zh.hash_from_set(&to_set(2, &v)));
+        assert_eq!(hash_vec[2], zh.hash_from_set(&to_set(3, &v)));
+        assert_eq!(hash_vec[3], zh.hash_from_set(&to_set(4, &v)));
+        assert_eq!(hash_vec[4], zh.hash_from_set(&to_set(5, &v)));
+    }
+    fn to_set(n: usize, v: &[i32]) -> HashSet<i32> {
+        v.iter().cloned().take(n).collect::<HashSet<_>>()
     }
     #[test]
     fn rand() {

@@ -17,7 +17,7 @@ fn push_recusive<T: Clone>(
     if nums.is_empty() {
         return vvec;
     }
-    let block_size = (1..=nums.len() - 1).product();
+    let block_size = (1..nums.len()).product();
     for (block_index, num) in nums.iter().enumerate() {
         for inner_index in 0..block_size {
             let index = indexes[block_size * block_index + inner_index];
