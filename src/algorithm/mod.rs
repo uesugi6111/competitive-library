@@ -10,3 +10,4 @@ pub mod inversion_number;
 pub mod largest_rectangle;
 pub mod prime;
 pub mod run_length;
+pub mod e;
