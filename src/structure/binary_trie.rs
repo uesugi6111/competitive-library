@@ -3,7 +3,7 @@
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 struct Node {
     children: Vec<Option<Node>>,
-    count: u32,
+    count: u64,
 }
 impl Node {
     #[inline]
@@ -28,51 +28,98 @@ impl BinaryTrie {
 
     /// 値の挿入
     #[inline]
-    pub fn insert(&mut self, x: u32) -> Option<()> {
+    pub fn insert(&mut self, x: u32) -> u64 {
+        self.insert_n(x, 1)
+    }
+    #[inline]
+    pub fn insert_n(&mut self, x: u32, n: u64) -> u64 {
+        if n == 0 {
+            return 0;
+        }
         let mut node = self.nodes.get_or_insert_with(Node::new);
 
         for i in (0..32).rev() {
-            node.count += 1;
+            node.count += n;
             node = node.children[(x >> i & 1) as usize].get_or_insert_with(Node::new);
         }
-        node.count += 1;
-        Some(())
+        node.count += n;
+        node.count
     }
 
-    /// 値のカウント
+    /// xのカウント
     #[inline]
-    pub fn count(&self, x: u32) -> Option<u32> {
+    pub fn count(&self, x: u32) -> u64 {
         let mut node = &self.nodes;
 
         for i in (0..32).rev() {
-            node = &node.as_ref()?.children[(x >> i & 1) as usize];
+            if node.as_ref().is_none() {
+                return 0;
+            }
+            node = &node.as_ref().unwrap().children[(x >> i & 1) as usize];
         }
-        Some(node.as_ref()?.count)
+        node.as_ref().unwrap().count
+    }
+
+    /// x 未満の値のカウント
+    #[inline]
+    pub fn count_less(&self, x: u32) -> u64 {
+        self.inner_count_than(x, 1)
+    }
+
+    /// x を超える値のカウント
+    #[inline]
+    pub fn count_more(&self, x: u32) -> u64 {
+        self.inner_count_than(x, 0)
+    }
+    #[inline]
+    fn inner_count_than(&self, x: u32, bit: u32) -> u64 {
+        let mut node = &self.nodes;
+
+        let mut count = 0;
+        for i in (0..32).rev() {
+            if node.as_ref().is_none() {
+                break;
+            }
+            if (x >> i & 1) == bit {
+                count += match &node.as_ref().unwrap().children[(bit ^ 1) as usize].as_ref() {
+                    Some(v) => v.count,
+                    None => 0,
+                }
+            }
+
+            node = &node.as_ref().unwrap().children[(x >> i & 1) as usize];
+        }
+        count
     }
 
     /// 値の削除
     #[inline]
     pub fn erase(&mut self, x: u32) -> Option<()> {
-        self.count(x)?;
-        self.erase_inner(x, 1)
+        if 1 > self.count(x) {
+            return None;
+        }
+        self.inner_erase(x, 1)
     }
 
     /// 値をすべて削除
     #[inline]
     pub fn erase_all(&mut self, x: u32) -> Option<()> {
-        let erase_count = self.count(x)?;
-        self.erase_inner(x, erase_count)
+        let erase_count = self.count(x);
+        if erase_count == 0 {
+            return None;
+        }
+        self.inner_erase(x, erase_count)
     }
 
     /// 値を削除
     /// 内部関数
     #[inline]
-    fn erase_inner(&mut self, x: u32, erase_count: u32) -> Option<()> {
+    fn inner_erase(&mut self, x: u32, erase_count: u64) -> Option<()> {
         let mut node = &mut self.nodes;
         for i in (0..32).rev() {
             if node.as_ref()?.count == erase_count {
                 *node = None;
-                return Some(());
+                return None;
             } else {
                 node.as_mut()?.count -= erase_count;
             }
@@ -115,15 +162,18 @@ impl BinaryTrie {
     /// 最大値を求める
     #[inline]
     pub fn max(&self) -> Option<u32> {
-        let max = self.size()?;
+        let max = self.size();
         self.xth_element(max)
     }
     #[inline]
-    pub fn size(&self) -> Option<u32> {
-        Some(self.nodes.as_ref()?.count)
+    pub fn size(&self) -> u64 {
+        match self.nodes.as_ref() {
+            Some(x) => x.count,
+            None => 0,
+        }
     }
     #[inline]
-    pub fn xth_element(&self, xth: u32) -> Option<u32> {
+    pub fn xth_element(&self, xth: u64) -> Option<u32> {
         let mut x = xth;
         let mut ans = 0;
         let mut node = self.nodes.as_ref()?;
@@ -157,18 +207,23 @@ mod tests {
     fn bt() {
         let mut b = BinaryTrie::new();
         b.insert(6);
-        assert_eq!(b.size().unwrap(), 1);
+        assert_eq!(b.size(), 1);
 
         let a = b.clone();
         b.insert(7);
         b.insert(7);
-        assert_eq!(b.size().unwrap(), 3);
+        assert_eq!(b.size(), 3);
         assert_eq!(b.xth_element(1).unwrap(), 6);
         assert_eq!(b.xth_element(2).unwrap(), 7);
         assert_eq!(b.xth_element(3).unwrap(), 7);
         b.erase(7);
         b.erase(7);
-        assert_eq!(b.size().unwrap(), 1);
+        assert_eq!(b.count(2), 0);
+        assert_eq!(b.count(3), 0);
+        assert_eq!(b.count(4), 0);
+        assert_eq!(b.count(5), 0);
+        assert_eq!(b.count(8), 0);
+        assert_eq!(b.size(), 1);
         assert_eq!(b.erase(10), None);
         assert_eq!(a.nodes, b.nodes);
     }
@@ -183,6 +238,24 @@ mod tests {
             b.erase(n + i);
             assert_eq!(b.min().unwrap(), n + i + 1);
         }
+    }
+
+    #[test]
+    fn test_count_than() {
+        let mut b = BinaryTrie::new();
+
+        for i in 0..1000 {
+            b.insert(i);
+            assert_eq!(b.count_less(i), i as u64);
+        }
+
+        assert_eq!(b.min().unwrap(), 0);
+        assert_eq!(b.max().unwrap(), 999);
+        for i in 0..1000 {
+            assert_eq!(b.count_more(i), 999 - i as u64);
+        }
+        assert_eq!(b.count_less(std::u32::MAX), 1000);
+        assert_eq!(b.count_more(std::u32::MIN), 999);
     }
 
     #[test]
