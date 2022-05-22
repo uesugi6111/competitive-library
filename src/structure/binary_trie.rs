@@ -287,7 +287,7 @@ mod tests {
         let mut b = BinaryTrie::new();
         b.insert(0);
         let mut ans = vec![];
-        for i in 0..200000 {
+        for i in 0..200_000 {
             match xs.next().unwrap() % 3 {
                 0 => {
                     b.insert(xs.next().unwrap() as u32 % std::u32::MAX);
