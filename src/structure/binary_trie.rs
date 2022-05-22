@@ -67,6 +67,9 @@ impl BinaryTrie {
             }
             node_index = self.nodes[node_index.unwrap()].children[(x >> i & 1) as usize];
         }
+        if node_index.is_none() {
+            return 0;
+        }
         self.nodes[node_index.unwrap()].count
     }
 
@@ -138,7 +141,7 @@ impl BinaryTrie {
     #[inline]
     pub fn xor_min(&self, x: u32) -> Option<u32> {
         let mut ans = 0;
-        // let mut node = self.nodes.as_ref()?;
+
         let mut node_index = Some(0);
         for i in (0..32).rev() {
             let bit = {
@@ -275,5 +278,30 @@ mod tests {
         assert_eq!(vec![2, 1], ans);
         assert_eq!(b.count(6), 1);
         assert_eq!(b.count(7), 0);
+    }
+
+    #[test]
+    fn q() {
+        use crate::other::xorshift::XorShift;
+        let mut xs = XorShift::new();
+        let mut b = BinaryTrie::new();
+        b.insert(0);
+        let mut ans = vec![];
+        for i in 0..200000 {
+            match xs.next().unwrap() % 3 {
+                0 => {
+                    b.insert(xs.next().unwrap() as u32 % std::u32::MAX);
+                }
+                1 => {
+                    b.erase_all(xs.next().unwrap() as u32 % std::u32::MAX);
+                }
+                _ => ans.push(
+                    b.xor_min(xs.next().unwrap() as u32 % std::u32::MAX)
+                        .unwrap_or_else(|| panic!()),
+                ),
+            }
+
+            b.xor_min(i);
+        }
     }
 }
