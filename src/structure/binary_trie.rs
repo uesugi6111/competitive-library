@@ -318,7 +318,7 @@ mod tests {
         }
     }
     #[test]
-    fn bound() {
+    fn lower_bound() {
         let v = vec![
             1, 1, 4, 7, 8, 9, 11, 64, 98, 641, 1_111, 1_111, 1_111, 6_000, 10_000, 123_456,
             1_111_111, 9_999_999,
@@ -344,7 +344,19 @@ mod tests {
         assert_eq!(b.lower_bound(123_456), Some(1_111_111));
         assert_eq!(b.lower_bound(1_111_111), Some(9_999_999));
         assert_eq!(b.lower_bound(9_999_999), None);
+    }
 
+    #[test]
+    fn upper_bound() {
+        let v = vec![
+            1, 1, 4, 7, 8, 9, 11, 64, 98, 641, 1_111, 1_111, 1_111, 6_000, 10_000, 123_456,
+            1_111_111, 9_999_999,
+        ];
+
+        let mut b = BinaryTrie::new();
+        v.iter().for_each(|x| {
+            b.insert(*x);
+        });
         assert_eq!(b.upper_bound(1), None);
         assert_eq!(b.upper_bound(4), Some(1));
         assert_eq!(b.upper_bound(7), Some(4));
