@@ -1,4 +1,4 @@
-//! BinaryTire
+//! BinaryTrie
 
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 struct Node {
@@ -178,6 +178,9 @@ impl BinaryTrie {
     }
     #[inline]
     pub fn xth_element(&self, xth: u64) -> Option<u32> {
+        if self.size() < xth {
+            return None;
+        }
         let mut x = xth;
         let mut ans = 0;
         let mut node_index = Some(0);
@@ -200,6 +203,16 @@ impl BinaryTrie {
         }
 
         Some(ans)
+    }
+
+    #[inline]
+    pub fn lower_bound(&self, x: u32) -> Option<u32> {
+        self.xth_element(self.count_less(x + 1) + 1)
+    }
+
+    #[inline]
+    pub fn upper_bound(&self, x: u32) -> Option<u32> {
+        self.xth_element(self.size() - self.count_more(x - 1))
     }
 }
 
@@ -303,5 +316,50 @@ mod tests {
 
             b.xor_min(i);
         }
+    }
+    #[test]
+    fn bound() {
+        let v = vec![
+            1, 1, 4, 7, 8, 9, 11, 64, 98, 641, 1_111, 1_111, 1_111, 6_000, 10_000, 123_456, 1_111_111,
+            9_999_999,
+        ];
+
+        let mut b = BinaryTrie::new();
+        v.iter().for_each(|x| {
+            b.insert(*x);
+        });
+        assert_eq!(b.lower_bound(0), Some(1));
+        assert_eq!(b.lower_bound(1), Some(4));
+        assert_eq!(b.lower_bound(4), Some(7));
+        assert_eq!(b.lower_bound(7), Some(8));
+        assert_eq!(b.lower_bound(8), Some(9));
+        assert_eq!(b.lower_bound(9), Some(11));
+        assert_eq!(b.lower_bound(11), Some(64));
+        assert_eq!(b.lower_bound(64), Some(98));
+        assert_eq!(b.lower_bound(98), Some(641));
+        assert_eq!(b.lower_bound(641), Some(1_111));
+        assert_eq!(b.lower_bound(1_111), Some(6_000));
+        assert_eq!(b.lower_bound(6_000), Some(10_000));
+        assert_eq!(b.lower_bound(10_000), Some(123_456));
+        assert_eq!(b.lower_bound(123_456), Some(1_111_111));
+        assert_eq!(b.lower_bound(1_111_111), Some(9_999_999));
+        assert_eq!(b.lower_bound(9_999_999), None);
+
+        assert_eq!(b.upper_bound(1), None);
+        assert_eq!(b.upper_bound(4), Some(1));
+        assert_eq!(b.upper_bound(7), Some(4));
+        assert_eq!(b.upper_bound(8), Some(7));
+        assert_eq!(b.upper_bound(9), Some(8));
+        assert_eq!(b.upper_bound(11), Some(9));
+        assert_eq!(b.upper_bound(64), Some(11));
+        assert_eq!(b.upper_bound(98), Some(64));
+        assert_eq!(b.upper_bound(641), Some(98));
+        assert_eq!(b.upper_bound(1_111), Some(641));
+        assert_eq!(b.upper_bound(6_000), Some(1_111));
+        assert_eq!(b.upper_bound(10_000), Some(6_000));
+        assert_eq!(b.upper_bound(123_456), Some(10_000));
+        assert_eq!(b.upper_bound(1_111_111), Some(123_456));
+        assert_eq!(b.upper_bound(9_999_999), Some(1_111_111));
+        assert_eq!(b.upper_bound(10_000_000), Some(9_999_999));
     }
 }
