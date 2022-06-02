@@ -178,7 +178,7 @@ impl BinaryTrie {
     }
     #[inline]
     pub fn xth_element(&self, xth: u64) -> Option<u32> {
-        if self.size() < xth {
+        if self.size() < xth || xth == 0 {
             return None;
         }
         let mut x = xth;
@@ -373,5 +373,13 @@ mod tests {
         assert_eq!(b.upper_bound(1_111_111), Some(123_456));
         assert_eq!(b.upper_bound(9_999_999), Some(1_111_111));
         assert_eq!(b.upper_bound(10_000_000), Some(9_999_999));
+    }
+
+    #[test]
+    fn c() {
+        let mut b = BinaryTrie::new();
+        b.insert(1);
+        assert_eq!(b.xth_element(0), None);
+        assert_eq!(b.xth_element(1), Some(1));
     }
 }
