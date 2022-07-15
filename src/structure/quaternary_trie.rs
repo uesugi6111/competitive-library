@@ -1,11 +1,11 @@
 //! QuaternaryTrie
 
-use std::num::NonZeroUsize;
+use std::num::NonZeroU32;
 
-#[derive(Debug, Default, Clone, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, PartialEq, Eq)]
 struct Node {
-    children: [Option<NonZeroUsize>; 4],
-    count: u64,
+    children: [Option<NonZeroU32>; 4],
+    count: u32,
 }
 impl Node {
     #[inline]
@@ -16,19 +16,20 @@ impl Node {
         }
     }
     #[inline]
-    fn get_child(&self, index: usize) -> &Option<NonZeroUsize> {
+    fn get_child(&self, index: usize) -> &Option<NonZeroU32> {
         unsafe { self.children.get_unchecked(index) }
     }
     #[inline]
-    fn get_child_mut(&mut self, index: usize) -> &mut Option<NonZeroUsize> {
+    fn get_child_mut(&mut self, index: usize) -> &mut Option<NonZeroU32> {
         unsafe { self.children.get_unchecked_mut(index) }
     }
 }
 
-#[derive(Debug, Default, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct QuaternaryTrie {
     nodes: Vec<Node>,
     bit_length: u32,
+    len: usize,
 }
 impl QuaternaryTrie {
     /// 構築
@@ -37,6 +38,7 @@ impl QuaternaryTrie {
         Self {
             nodes: vec![Node::new()],
             bit_length: 30,
+            len: 1,
         }
     }
 
@@ -51,11 +53,11 @@ impl QuaternaryTrie {
 
     /// 値の挿入
     #[inline]
-    pub fn insert(&mut self, x: u32) -> u64 {
+    pub fn insert(&mut self, x: u32) -> u32 {
         self.insert_n(x, 1)
     }
     #[inline]
-    pub fn insert_n(&mut self, x: u32, n: u64) -> u64 {
+    pub fn insert_n(&mut self, x: u32, n: u32) -> u32 {
         if n == 0 {
             return 0;
         }
@@ -67,14 +69,15 @@ impl QuaternaryTrie {
                 .get_node(node_index)
                 .get_child((x >> (i * 2) & 3) as usize)
             {
-                Some(i) => i.get(),
+                Some(i) => i.get() as usize,
                 None => {
                     self.nodes.push(Node::new());
+                    self.len += 1;
                     *self
                         .get_node_mut(node_index)
                         .get_child_mut((x >> (i * 2) & 3) as usize) =
-                        Some(unsafe { NonZeroUsize::new_unchecked(self.nodes.len() - 1) });
-                    self.nodes.len() - 1
+                        Some(unsafe { NonZeroU32::new_unchecked(self.len as u32 - 1) });
+                    self.len - 1
                 }
             };
         }
@@ -84,7 +87,7 @@ impl QuaternaryTrie {
 
     /// xのカウント
     #[inline]
-    pub fn count(&self, x: u32) -> u64 {
+    pub fn count(&self, x: u32) -> u32 {
         let mut node_index = Some(0);
 
         for i in (0..self.bit_length / 2).rev() {
@@ -94,7 +97,7 @@ impl QuaternaryTrie {
             node_index = self
                 .get_node(node_index.unwrap())
                 .get_child((x >> (i * 2) & 3) as usize)
-                .map(|n| n.get());
+                .map(|n| n.get() as usize);
         }
         if node_index.is_none() {
             return 0;
@@ -124,14 +127,14 @@ impl QuaternaryTrie {
     /// 値を削除
     /// 内部関数
     #[inline]
-    fn inner_erase(&mut self, x: u32, erase_count: u64) -> Option<()> {
+    fn inner_erase(&mut self, x: u32, erase_count: u32) -> Option<()> {
         let mut node_index = Some(0);
         for i in (0..self.bit_length / 2).rev() {
             self.get_node_mut(node_index?).count -= erase_count;
             node_index = self
                 .get_node(node_index?)
                 .get_child((x >> (i * 2) & 3) as usize)
-                .map(|n| n.get());
+                .map(|n| n.get() as usize);
         }
         self.get_node_mut(node_index?).count -= erase_count;
 
@@ -151,7 +154,7 @@ impl QuaternaryTrie {
 
                 for j in 0..4 {
                     if a.get_child(buff ^ j)
-                        .filter(|&index| self.get_node(index.get()).count > 0)
+                        .filter(|&index| self.get_node(index.get() as usize).count > 0)
                         .is_some()
                     {
                         buff ^= j;
@@ -164,13 +167,13 @@ impl QuaternaryTrie {
             node_index = self
                 .get_node(node_index.unwrap_or(0))
                 .get_child(bit)
-                .map(|n| n.get());
+                .map(|n| n.get() as usize);
         }
         Some(ans ^ x)
     }
 
     #[inline]
-    pub fn size(&self) -> u64 {
+    pub fn size(&self) -> u32 {
         self.get_node(0).count
     }
 }
