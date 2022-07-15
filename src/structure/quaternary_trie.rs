@@ -1,8 +1,10 @@
 //! QuaternaryTrie
 
+use std::num::NonZeroUsize;
+
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 struct Node {
-    children: [Option<usize>; 4],
+    children: [Option<NonZeroUsize>; 4],
     count: u64,
 }
 impl Node {
@@ -14,11 +16,11 @@ impl Node {
         }
     }
     #[inline]
-    fn get_child(&self, index: usize) -> &Option<usize> {
+    fn get_child(&self, index: usize) -> &Option<NonZeroUsize> {
         unsafe { self.children.get_unchecked(index) }
     }
     #[inline]
-    fn get_child_mut(&mut self, index: usize) -> &mut Option<usize> {
+    fn get_child_mut(&mut self, index: usize) -> &mut Option<NonZeroUsize> {
         unsafe { self.children.get_unchecked_mut(index) }
     }
 }
@@ -65,12 +67,13 @@ impl QuaternaryTrie {
                 .get_node(node_index)
                 .get_child((x >> (i * 2) & 3) as usize)
             {
-                Some(i) => *i,
+                Some(i) => i.get(),
                 None => {
                     self.nodes.push(Node::new());
                     *self
                         .get_node_mut(node_index)
-                        .get_child_mut((x >> (i * 2) & 3) as usize) = Some(self.nodes.len() - 1);
+                        .get_child_mut((x >> (i * 2) & 3) as usize) =
+                        Some(unsafe { NonZeroUsize::new_unchecked(self.nodes.len() - 1) });
                     self.nodes.len() - 1
                 }
             };
@@ -88,9 +91,10 @@ impl QuaternaryTrie {
             if node_index.is_none() {
                 return 0;
             }
-            node_index = *self
+            node_index = self
                 .get_node(node_index.unwrap())
-                .get_child((x >> (i * 2) & 3) as usize);
+                .get_child((x >> (i * 2) & 3) as usize)
+                .map(|n| n.get());
         }
         if node_index.is_none() {
             return 0;
@@ -124,9 +128,10 @@ impl QuaternaryTrie {
         let mut node_index = Some(0);
         for i in (0..self.bit_length / 2).rev() {
             self.get_node_mut(node_index?).count -= erase_count;
-            node_index = *self
+            node_index = self
                 .get_node(node_index?)
-                .get_child((x >> (i * 2) & 3) as usize);
+                .get_child((x >> (i * 2) & 3) as usize)
+                .map(|n| n.get());
         }
         self.get_node_mut(node_index?).count -= erase_count;
 
@@ -138,15 +143,15 @@ impl QuaternaryTrie {
     pub fn xor_min(&self, x: u32) -> Option<u32> {
         let mut ans = 0;
 
-        let mut node_index = Some(0);
+        let mut node_index = None;
         for i in (0..self.bit_length / 2).rev() {
             let bit = {
                 let mut buff = (x >> (i * 2) & 3) as usize;
-                let a = self.get_node(node_index.unwrap());
+                let a = self.get_node(node_index.unwrap_or(0));
 
                 for j in 0..4 {
                     if a.get_child(buff ^ j)
-                        .filter(|&index| self.get_node(index).count > 0)
+                        .filter(|&index| self.get_node(index.get()).count > 0)
                         .is_some()
                     {
                         buff ^= j;
@@ -156,7 +161,10 @@ impl QuaternaryTrie {
                 buff
             };
             ans ^= (bit as u32) << (i * 2);
-            node_index = *self.get_node(node_index.unwrap()).get_child(bit);
+            node_index = self
+                .get_node(node_index.unwrap_or(0))
+                .get_child(bit)
+                .map(|n| n.get());
         }
         Some(ans ^ x)
     }

@@ -1,8 +1,10 @@
 //! BinaryTrie
 
-#[derive(Debug, Default, Clone, PartialEq, Eq)]
+use std::num::NonZeroUsize;
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 struct Node {
-    children: [Option<usize>; 2],
+    children: [Option<std::num::NonZeroUsize>; 2],
     count: u64,
 }
 impl Node {
@@ -43,11 +45,11 @@ impl BinaryTrie {
             self.nodes[node_index].count += n;
 
             node_index = match self.nodes[node_index].children[(x >> i & 1) as usize] {
-                Some(i) => i,
+                Some(i) => i.get(),
                 None => {
                     self.nodes.push(Node::new());
                     self.nodes[node_index].children[(x >> i & 1) as usize] =
-                        Some(self.nodes.len() - 1);
+                        Some(NonZeroUsize::new(self.nodes.len() - 1).unwrap());
                     self.nodes.len() - 1
                 }
             };
@@ -59,18 +61,18 @@ impl BinaryTrie {
     /// xのカウント
     #[inline]
     pub fn count(&self, x: u32) -> u64 {
-        let mut node_index = Some(0);
+        let mut node_index = self.nodes[0].children[(x >> 31 & 1) as usize];
 
-        for i in (0..32).rev() {
+        for i in (0..32 - 1).rev() {
             if node_index.is_none() {
                 return 0;
             }
-            node_index = self.nodes[node_index.unwrap()].children[(x >> i & 1) as usize];
+            node_index = self.nodes[node_index.unwrap().get()].children[(x >> i & 1) as usize];
         }
         if node_index.is_none() {
             return 0;
         }
-        self.nodes[node_index.unwrap()].count
+        self.nodes[node_index.unwrap().get()].count
     }
 
     /// x 未満の値のカウント
@@ -86,20 +88,25 @@ impl BinaryTrie {
     }
     #[inline]
     fn inner_count_than(&self, x: u32, bit: u32) -> u64 {
-        let mut node_index = Some(0);
-
         let mut count = 0;
-        for i in (0..32).rev() {
+        let mut node_index = self.nodes[0].children[(x >> 31 & 1) as usize];
+        if (x >> 31 & 1) == bit {
+            if let Some(i) = self.nodes[0].children[(bit ^ 1) as usize] {
+                count += self.nodes[i.get()].count
+            }
+        }
+
+        for i in (0..32 - 1).rev() {
             if node_index.is_none() {
                 break;
             }
             if (x >> i & 1) == bit {
-                count += match self.nodes[node_index.unwrap()].children[(bit ^ 1) as usize] {
-                    Some(i) => self.nodes[i].count,
+                count += match self.nodes[node_index.unwrap().get()].children[(bit ^ 1) as usize] {
+                    Some(i) => self.nodes[i.get()].count,
                     None => 0,
                 }
             }
-            node_index = self.nodes[node_index.unwrap()].children[(x >> i & 1) as usize];
+            node_index = self.nodes[node_index.unwrap().get()].children[(x >> i & 1) as usize];
         }
         count
     }
@@ -127,12 +134,13 @@ impl BinaryTrie {
     /// 内部関数
     #[inline]
     fn inner_erase(&mut self, x: u32, erase_count: u64) -> Option<()> {
-        let mut node_index = Some(0);
-        for i in (0..32).rev() {
-            self.nodes[node_index?].count -= erase_count;
-            node_index = self.nodes[node_index?].children[(x >> i & 1) as usize];
+        self.nodes[0].count -= erase_count;
+        let mut node_index = self.nodes[0].children[(x >> 31 & 1) as usize];
+        for i in (0..32 - 1).rev() {
+            self.nodes[node_index?.get()].count -= erase_count;
+            node_index = self.nodes[node_index?.get()].children[(x >> i & 1) as usize];
         }
-        self.nodes[node_index?].count -= erase_count;
+        self.nodes[node_index?.get()].count -= erase_count;
 
         Some(())
     }
@@ -142,12 +150,12 @@ impl BinaryTrie {
     pub fn xor_min(&self, x: u32) -> Option<u32> {
         let mut ans = 0;
 
-        let mut node_index = Some(0);
+        let mut node_index = None;
         for i in (0..32).rev() {
             let bit = {
                 let mut buff = (x >> i & 1) as usize;
-                if self.nodes[node_index.unwrap()].children[buff]
-                    .filter(|&index| self.nodes[index].count > 0)
+                if self.nodes[node_index.unwrap_or(0)].children[buff]
+                    .filter(|&index| self.nodes[index.get()].count > 0)
                     .is_none()
                 {
                     buff ^= 1;
@@ -155,7 +163,7 @@ impl BinaryTrie {
                 buff
             };
             ans ^= (bit as u32) << i;
-            node_index = self.nodes[node_index.unwrap()].children[bit];
+            node_index = self.nodes[node_index.unwrap_or(0)].children[bit].map(|n| n.get());
         }
         Some(ans ^ x)
     }
@@ -183,11 +191,11 @@ impl BinaryTrie {
         }
         let mut x = xth;
         let mut ans = 0;
-        let mut node_index = Some(0);
+        let mut node_index = None;
 
         for i in (0..32).rev() {
-            let count = if let Some(i) = self.nodes[node_index.unwrap()].children[0] {
-                self.nodes[i].count
+            let count = if let Some(i) = self.nodes[node_index.unwrap_or(0)].children[0] {
+                self.nodes[i.get()].count
             } else {
                 0
             };
@@ -199,7 +207,7 @@ impl BinaryTrie {
                 1
             };
             ans ^= (bit as u32) << i;
-            node_index = self.nodes[node_index.unwrap()].children[bit];
+            node_index = self.nodes[node_index.unwrap_or(0)].children[bit].map(|n| n.get());
         }
 
         Some(ans)
