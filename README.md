@@ -25,7 +25,7 @@ This library does not depend on external crates.
 │   ├── [dijkstra_restorepath.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/graph/dijkstra_restorepath.rs)  
 │   ├── [euler_tour.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/graph/euler_tour.rs)  
 │   ├── [floyd_warshall.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/graph/floyd_warshall.rs)  
-│   ├── [heavy_hight_decomposition.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/graph/heavy_hight_decomposition.rs)  
+│   ├── [heavy_light_decomposition.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/graph/heavy_light_decomposition.rs)  
 │   ├── [lowest_common_ancestor_doubling.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/graph/lowest_common_ancestor_doubling.rs)  
 │   ├── [lowest_common_ancestor_rmq.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/graph/lowest_common_ancestor_rmq.rs)  
 │   ├── [minimun_spanning_tree_kruskal.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/graph/minimun_spanning_tree_kruskal.rs)  
