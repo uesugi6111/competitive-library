@@ -3,7 +3,7 @@ pub mod dijkstra;
 pub mod dijkstra_restorepath;
 pub mod euler_tour;
 pub mod floyd_warshall;
-pub mod heavy_hight_decomposition;
+pub mod heavy_light_decomposition;
 pub mod lowest_common_ancestor_doubling;
 pub mod lowest_common_ancestor_rmq;
 pub mod minimun_spanning_tree_kruskal;
