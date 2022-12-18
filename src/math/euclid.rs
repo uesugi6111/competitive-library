@@ -56,6 +56,6 @@ mod tests {
         assert_eq!(gcd(10, 15), 5);
         assert_eq!(gcd(6, 4), 2);
         assert_eq!(gcd(100, 30), 10);
-        assert_eq!(gcd(1000000008, 1000000007), 1);
+        assert_eq!(gcd(1_000_000_008, 1_000_000_007), 1);
     }
 }
