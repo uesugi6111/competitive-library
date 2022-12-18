@@ -16,8 +16,10 @@ pub fn gcd(mut m: u64, mut n: u64) -> u64 {
         return n;
     }
     let (i, j) = (
-        unsafe { std::num::NonZeroU64::new_unchecked(m) }.trailing_zeros(),
-        unsafe { std::num::NonZeroU64::new_unchecked(n) }.trailing_zeros(),
+        // unsafe { std::num::NonZeroU64::new_unchecked(m) }.trailing_zeros(),
+        // unsafe { std::num::NonZeroU64::new_unchecked(n) }.trailing_zeros(),
+        m.trailing_zeros(),
+        n.trailing_zeros(),
     );
     m >>= i;
     n >>= j;
@@ -30,7 +32,8 @@ pub fn gcd(mut m: u64, mut n: u64) -> u64 {
         if n == 0 {
             return m << min(i, j);
         }
-        n >>= unsafe { std::num::NonZeroU64::new_unchecked(n) }.trailing_zeros();
+        // n >>= unsafe { std::num::NonZeroU64::new_unchecked(n) }.trailing_zeros();
+        n >>= n.trailing_zeros();
     }
 }
 #[cfg(test)]
