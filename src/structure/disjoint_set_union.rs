@@ -1,6 +1,6 @@
 //! Union find
 use std::collections::{HashMap, HashSet};
-#[derive(Debug, Clone)]
+#[derive(Copy, Clone, Debug)]
 enum Node {
     Root(usize),
     Child(usize),
@@ -8,29 +8,29 @@ enum Node {
 ///UnionFind
 #[derive(Clone, Debug)]
 pub struct DisjointSetUnion {
-    uf: Vec<Node>,
+    nodes: Vec<Node>,
 }
 
 impl DisjointSetUnion {
     pub fn new(n: usize) -> DisjointSetUnion {
         DisjointSetUnion {
-            uf: vec![Node::Root(1); n],
+            nodes: vec![Node::Root(1); n],
         }
     }
 
-    pub fn root(&mut self, target: usize) -> usize {
-        match self.uf[target] {
+    pub fn find_root(&mut self, target: usize) -> usize {
+        match unsafe { *self.nodes.get_unchecked(target) } {
             Node::Root(_) => target,
-            Node::Child(par) => {
-                let root = self.root(par);
-                self.uf[target] = Node::Child(root);
-                root
+            Node::Child(parent) => {
+                let parent_index = self.find_root(parent);
+                self.nodes[target] = Node::Child(parent_index);
+                parent_index
             }
         }
     }
     pub fn unite(&mut self, x: usize, y: usize) -> bool {
-        let rx = self.root(x);
-        let ry = self.root(y);
+        let rx = self.find_root(x);
+        let ry = self.find_root(y);
         if rx == ry {
             return false;
         }
@@ -38,37 +38,37 @@ impl DisjointSetUnion {
         let size_y = self.size(y);
 
         let (i, j) = if size_x > size_y { (rx, ry) } else { (ry, rx) };
-        self.uf[i] = Node::Root(size_x + size_y);
-        self.uf[j] = Node::Child(i);
+        self.nodes[i] = Node::Root(size_x + size_y);
+        self.nodes[j] = Node::Child(i);
 
         true
     }
     pub fn is_same(&mut self, x: usize, y: usize) -> bool {
-        self.root(x) == self.root(y)
+        self.find_root(x) == self.find_root(y)
     }
     pub fn size(&mut self, x: usize) -> usize {
-        let root = self.root(x);
-        match self.uf[root] {
+        let root = self.find_root(x);
+        match self.nodes[root] {
             Node::Root(size) => size,
             Node::Child(_) => 0,
         }
     }
     pub fn get_same_group(&mut self, x: usize) -> HashSet<usize> {
-        let root = self.root(x);
+        let root = self.find_root(x);
         let mut g = HashSet::new();
-        for i in 0..self.uf.len() {
-            if root == self.root(i) {
+        for i in 0..self.nodes.len() {
+            if root == self.find_root(i) {
                 g.insert(i);
             }
         }
         g
     }
     pub fn get_all_groups(&mut self) -> HashMap<usize, HashSet<usize>> {
-        let mut map: HashMap<usize, HashSet<usize>> = HashMap::new();
-        for i in 0..self.uf.len() {
-            let root = self.root(i);
-
-            map.entry(root).or_insert_with(HashSet::new).insert(i);
+        let mut map = HashMap::new();
+        for i in 0..self.nodes.len() {
+            map.entry(self.find_root(i))
+                .or_insert_with(HashSet::new)
+                .insert(i);
         }
         map
     }
