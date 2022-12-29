@@ -1,19 +1,19 @@
 pub fn manachar(s: &[char]) -> Vec<usize> {
-    let (mut r, mut i, mut j) = (vec![0; s.len()], 0, 0);
+    let (mut radius, mut i, mut j) = (vec![0; s.len()], 0, 0);
     while i < s.len() {
         while i >= j && i + j < s.len() && s[i - j] == s[i + j] {
             j += 1;
         }
-        r[i] = j;
+        radius[i] = j;
         let mut k = 1;
-        while i >= k && k + r[i - k] < j {
-            r[i + k] = r[i - k];
+        while i >= k && k + radius[i - k] < j {
+            radius[i + k] = radius[i - k];
             k += 1;
         }
         i += k;
         j -= k;
     }
-    r
+    radius
 }
 
 #[cfg(test)]
