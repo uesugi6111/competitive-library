@@ -41,6 +41,6 @@ mod tests {
         let f = move |x| (x as f64 * b) + a / (x as f64 + 1.0).sqrt();
         let h = ternary_search(0.0, 1000000000000000000.0, Box::new(f));
 
-        assert!(dbg!((f((h + 0.4) as i64 as f64) - 8_772_053_214_538.598 as f64).abs()) < 0.01);
+        assert!(dbg!((f((h + 0.4) as i64 as f64) - 8_772_053_214_538.598_f64).abs()) < 0.01);
     }
 }
