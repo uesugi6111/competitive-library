@@ -1,5 +1,8 @@
 use core::hash::Hash;
-use std::collections::HashMap;
+use std::{
+    collections::{HashMap, VecDeque},
+    rc::Rc,
+};
 
 #[derive(Debug)]
 struct Node<T>
@@ -7,7 +10,7 @@ where
     T: Eq + Hash + Copy,
 {
     to: HashMap<T, usize>,
-    keyword: Option<Vec<T>>,
+    keyword: Option<Rc<Vec<T>>>,
     failure: usize,
 }
 impl<T> Node<T>
@@ -60,12 +63,12 @@ where
             };
         }
 
-        self.nodes[index].keyword = Some(keyword.to_vec());
+        self.nodes[index].keyword = Some(Rc::new(keyword.to_vec()));
     }
 
     pub fn make_failure_link(&mut self) {
         self.prepared = true;
-        let mut queue = std::collections::VecDeque::new();
+        let mut queue = VecDeque::new();
 
         queue.push_back(0);
 
@@ -84,14 +87,14 @@ where
         Matcher::new(self, target)
     }
 
-    pub(crate) fn get_to(&self, index: usize) -> &std::collections::HashMap<T, usize> {
+    pub(crate) fn get_to(&self, index: usize) -> &HashMap<T, usize> {
         &self.nodes[index].to
     }
     pub(crate) fn get_failure(&self, index: usize) -> usize {
         self.nodes[index].failure
     }
-    pub(crate) fn get_keyword(&self, index: usize) -> Option<&Vec<T>> {
-        self.nodes[index].keyword.as_ref()
+    pub(crate) fn get_keyword(&self, index: usize) -> Option<Rc<Vec<T>>> {
+        self.nodes[index].keyword.clone()
     }
 
     pub(crate) fn inner_next(&self, aho_index: usize, value: &T) -> usize {
@@ -146,7 +149,7 @@ impl<'a, 'b, T> Iterator for Matcher<'a, 'b, T>
 where
     T: Eq + Hash + Copy,
 {
-    type Item = (Vec<T>, usize);
+    type Item = (Rc<Vec<T>>, usize);
     fn next(&mut self) -> Option<Self::Item> {
         while self.target_index < self.target.len() {
             self.aho_index = match self
@@ -178,6 +181,8 @@ where
 
 #[cfg(test)]
 mod tests {
+    use std::ops::Deref;
+
     use super::*;
 
     #[test]
@@ -192,18 +197,15 @@ mod tests {
         aho.make_failure_link();
         let mut m = aho.create_matcher(&s);
         dbg!(&aho);
-        assert_eq!(m.next().unwrap(), (vec!['a', 'h', 'o'], 0));
+        assert_eq!(m.next().unwrap().0.deref(), &['a', 'h', 'o']);
 
         assert_eq!(
-            m.next().unwrap(),
-            (
-                vec!['a', 'h', 'o', '-', 'c', 'o', 'r', 'a', 's', 'i', 'c', 'k'],
-                0
-            )
+            m.next().unwrap().0.deref(),
+            &['a', 'h', 'o', '-', 'c', 'o', 'r', 'a', 's', 'i', 'c', 'k']
         );
         assert_eq!(
-            m.next().unwrap(),
-            (vec!['c', 'o', 'r', 'a', 's', 'i', 'c', 'k'], 4)
+            m.next().unwrap().0.deref(),
+            &['c', 'o', 'r', 'a', 's', 'i', 'c', 'k']
         );
         assert_eq!(m.next(), None);
     }
@@ -219,7 +221,7 @@ mod tests {
             .chars()
             .collect::<Vec<char>>();
         for (i, (keyword, index)) in aho.create_matcher(&s).enumerate() {
-            assert_eq!(keyword, vec!['a']);
+            assert_eq!(keyword.deref(), &['a']);
             assert_eq!(index, i);
         }
     }
@@ -239,7 +241,10 @@ mod tests {
         aho.make_failure_link();
         for (i, (keyword, index)) in aho.create_matcher(&s).enumerate() {
             assert_eq!(index, i);
-            assert_eq!(keyword, s.iter().skip(i).copied().collect::<Vec<char>>())
+            assert_eq!(
+                keyword.deref(),
+                &s.iter().skip(i).copied().collect::<Vec<char>>()
+            )
         }
     }
 }
