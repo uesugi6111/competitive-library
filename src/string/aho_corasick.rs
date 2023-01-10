@@ -161,7 +161,14 @@ where
                     self.target_index += 1;
                     index
                 }
-                None => self.aho.get_failure(self.aho_index),
+                None => {
+                    let buff = self.aho.get_failure(self.aho_index);
+                    if buff == self.aho_index {
+                        self.target_index += 1;
+                        continue;
+                    }
+                    buff
+                }
             };
 
             if let Some(keyword) = self.aho.get_keyword(self.aho_index) {
@@ -245,6 +252,38 @@ mod tests {
                 keyword.deref(),
                 &s.iter().skip(i).copied().collect::<Vec<char>>()
             )
+        }
+    }
+    #[test]
+    fn add() {
+        let mut aho = AhoCorasick::new();
+
+        let s = "abcdefghijklmn".to_string().chars().collect::<Vec<char>>();
+
+        aho.add(&"abcd".to_string().chars().collect::<Vec<char>>());
+        aho.add(&"ijk".to_string().chars().collect::<Vec<char>>());
+        aho.add(&"ghi".to_string().chars().collect::<Vec<char>>());
+        aho.make_failure_link();
+        aho.create_matcher(&s).next();
+        aho.create_matcher(&s).next();
+        aho.create_matcher(&s).next();
+        aho.create_matcher(&s).next();
+        aho.create_matcher(&s).next();
+    }
+    #[test]
+    fn addd() {
+        let mut aho = AhoCorasick::new();
+
+        let s = "atcoderbeginnercontest"
+            .to_string()
+            .chars()
+            .collect::<Vec<char>>();
+
+        aho.add(&"abc".to_string().chars().collect::<Vec<char>>());
+        aho.make_failure_link();
+
+        for i in aho.create_matcher(&s) {
+            dbg!(&i);
         }
     }
 }
