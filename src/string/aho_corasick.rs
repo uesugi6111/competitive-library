@@ -258,32 +258,17 @@ mod tests {
     fn add() {
         let mut aho = AhoCorasick::new();
 
-        let s = "abcdefghijklmn".to_string().chars().collect::<Vec<char>>();
+        let s = "zabcdefghijklmn".to_string().chars().collect::<Vec<char>>();
 
         aho.add(&"abcd".to_string().chars().collect::<Vec<char>>());
         aho.add(&"ijk".to_string().chars().collect::<Vec<char>>());
         aho.add(&"ghi".to_string().chars().collect::<Vec<char>>());
         aho.make_failure_link();
-        aho.create_matcher(&s).next();
-        aho.create_matcher(&s).next();
-        aho.create_matcher(&s).next();
-        aho.create_matcher(&s).next();
-        aho.create_matcher(&s).next();
-    }
-    #[test]
-    fn addd() {
-        let mut aho = AhoCorasick::new();
+        let mut m = aho.create_matcher(&s);
 
-        let s = "atcoderbeginnercontest"
-            .to_string()
-            .chars()
-            .collect::<Vec<char>>();
-
-        aho.add(&"abc".to_string().chars().collect::<Vec<char>>());
-        aho.make_failure_link();
-
-        for i in aho.create_matcher(&s) {
-            dbg!(&i);
-        }
+        assert_eq!(m.next().unwrap().0.deref(), &['a', 'b', 'c', 'd']);
+        assert_eq!(m.next().unwrap().0.deref(), &['g', 'h', 'i']);
+        assert_eq!(m.next().unwrap().0.deref(), &['i', 'j', 'k']);
+        assert_eq!(m.next(), None);
     }
 }
