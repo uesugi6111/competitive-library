@@ -63,7 +63,8 @@ where
         self.nodes[index].keyword = Some(keyword.to_vec());
     }
 
-    fn make_failure_link(&mut self) {
+    pub fn make_failure_link(&mut self) {
+        self.prepared = true;
         let mut queue = std::collections::VecDeque::new();
 
         queue.push_back(0);
@@ -77,11 +78,9 @@ where
             }
         }
     }
-    pub fn create_matcher<'a, 'b>(&'a mut self, target: &'b [T]) -> Matcher<'a, 'b, T> {
-        if !self.prepared {
-            self.make_failure_link();
-            self.prepared = true;
-        }
+    pub fn create_matcher<'a, 'b>(&'a self, target: &'b [T]) -> Matcher<'a, 'b, T> {
+        assert!(self.prepared);
+
         Matcher::new(self, target)
     }
 
@@ -190,8 +189,9 @@ mod tests {
         aho.add(&"aho-corasick".to_string().chars().collect::<Vec<char>>());
 
         let s = "aho-corasick".to_string().chars().collect::<Vec<char>>();
+        aho.make_failure_link();
         let mut m = aho.create_matcher(&s);
-
+        dbg!(&aho);
         assert_eq!(m.next().unwrap(), (vec!['a', 'h', 'o'], 0));
 
         assert_eq!(
@@ -206,7 +206,40 @@ mod tests {
             (vec!['c', 'o', 'r', 'a', 's', 'i', 'c', 'k'], 4)
         );
         assert_eq!(m.next(), None);
-        drop(m);
-        dbg!(aho);
+    }
+
+    #[test]
+    fn aaa() {
+        let mut aho = AhoCorasick::new();
+
+        aho.add(&"a".to_string().chars().collect::<Vec<char>>());
+        aho.make_failure_link();
+        let s = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            .to_string()
+            .chars()
+            .collect::<Vec<char>>();
+        for (i, (keyword, index)) in aho.create_matcher(&s).enumerate() {
+            assert_eq!(keyword, vec!['a']);
+            assert_eq!(index, i);
+        }
+    }
+    #[test]
+    fn abc() {
+        let mut aho = AhoCorasick::new();
+
+        let s = "abcdefghijklmnopqrstuvwxyz"
+            .to_string()
+            .chars()
+            .collect::<Vec<char>>();
+
+        for i in 0..s.len() {
+            aho.add(&s.iter().skip(i).copied().collect::<Vec<char>>());
+        }
+
+        aho.make_failure_link();
+        for (i, (keyword, index)) in aho.create_matcher(&s).enumerate() {
+            assert_eq!(index, i);
+            assert_eq!(keyword, s.iter().skip(i).copied().collect::<Vec<char>>())
+        }
     }
 }
