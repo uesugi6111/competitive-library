@@ -75,7 +75,17 @@ where
         while let Some(i) = queue.pop_front() {
             for (value, &index) in self.nodes[i].to.clone().iter() {
                 if i != 0 {
-                    self.nodes[index].failure = self.inner_next(self.nodes[i].failure, value);
+                    let mut buff = self.nodes[i].failure;
+                    self.nodes[index].failure = loop {
+                        if let Some(&next_index) = self.get_to(buff).get(value) {
+                            break next_index;
+                        } else {
+                            if buff == 0 {
+                                break 0;
+                            }
+                            buff = self.nodes[buff].failure
+                        };
+                    }
                 }
                 queue.push_back(index);
             }
@@ -95,20 +105,6 @@ where
     }
     pub(crate) fn get_keyword(&self, index: usize) -> Option<Rc<Vec<T>>> {
         self.nodes[index].keyword.clone()
-    }
-
-    pub(crate) fn inner_next(&self, aho_index: usize, value: &T) -> usize {
-        let mut i = aho_index;
-        loop {
-            if let Some(&next_index) = self.get_to(i).get(value) {
-                return next_index;
-            }
-            i = self.get_failure(i);
-            if i == 0 {
-                break;
-            }
-        }
-        0
     }
 }
 
@@ -130,6 +126,7 @@ where
     target: &'b [T],
     target_index: usize,
     aho_index: usize,
+    failure_index: usize,
 }
 impl<'a, 'b, T> Matcher<'a, 'b, T>
 where
@@ -141,6 +138,7 @@ where
             target,
             target_index: 0,
             aho_index: 0,
+            failure_index: 0,
         }
     }
 }
@@ -152,14 +150,23 @@ where
     type Item = (Rc<Vec<T>>, usize);
     fn next(&mut self) -> Option<Self::Item> {
         while self.target_index < self.target.len() {
-            self.aho_index = match self
+            while self.failure_index != 0 {
+                if let Some(keyword) = self.aho.get_keyword(self.failure_index) {
+                    self.failure_index = self.aho.get_failure(self.failure_index);
+                    return Some((keyword.clone(), self.target_index - keyword.len()));
+                }
+                self.failure_index = self.aho.get_failure(self.failure_index);
+            }
+
+            match self
                 .aho
                 .get_to(self.aho_index)
                 .get(&self.target[self.target_index])
             {
                 Some(&index) => {
                     self.target_index += 1;
-                    index
+                    self.failure_index = self.aho.get_failure(index);
+                    self.aho_index = index;
                 }
                 None => {
                     let buff = self.aho.get_failure(self.aho_index);
@@ -167,7 +174,8 @@ where
                         self.target_index += 1;
                         continue;
                     }
-                    buff
+                    self.aho_index = buff;
+                    continue;
                 }
             };
 
@@ -181,7 +189,6 @@ where
                 return Some((keyword.clone(), self.target_index - keyword.len()));
             }
         }
-
         None
     }
 }
@@ -269,6 +276,28 @@ mod tests {
         assert_eq!(m.next().unwrap().0.deref(), &['a', 'b', 'c', 'd']);
         assert_eq!(m.next().unwrap().0.deref(), &['g', 'h', 'i']);
         assert_eq!(m.next().unwrap().0.deref(), &['i', 'j', 'k']);
+        assert_eq!(m.next(), None);
+    }
+    #[test]
+    fn xbabcdex() {
+        let mut aho = AhoCorasick::new();
+
+        let s = "xbabcdex".to_string().chars().collect::<Vec<char>>();
+
+        aho.add(&"ab".to_string().chars().collect::<Vec<char>>());
+        aho.add(&"bc".to_string().chars().collect::<Vec<char>>());
+        aho.add(&"bab".to_string().chars().collect::<Vec<char>>());
+        aho.add(&"d".to_string().chars().collect::<Vec<char>>());
+        aho.add(&"abcde".to_string().chars().collect::<Vec<char>>());
+        aho.make_failure_link();
+        let mut m = aho.create_matcher(&s);
+
+        assert_eq!(m.next().unwrap().0.deref(), &['b', 'a', 'b']);
+        assert_eq!(m.next().unwrap().0.deref(), &['a', 'b']);
+
+        assert_eq!(m.next().unwrap().0.deref(), &['b', 'c']);
+        assert_eq!(m.next().unwrap().0.deref(), &['d']);
+        assert_eq!(m.next().unwrap().0.deref(), &['a', 'b', 'c', 'd', 'e']);
         assert_eq!(m.next(), None);
     }
 }
