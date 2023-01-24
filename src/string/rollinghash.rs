@@ -1,21 +1,21 @@
 //! ロリハ
 //const BASE: Wrapping<u128> = Wrapping(2_305_843_009_213_693_951); // 2^61-1
 use std::num::Wrapping;
-type MOD = u128;
-const BASE: Wrapping<MOD> = Wrapping(1_000_000_007);
+type Mod = u128;
+const BASE: Wrapping<Mod> = Wrapping(1_000_000_007);
 
 ///  text 内での pattern の出現位置の始点を返す
-pub fn rolling_hash<T: Into<MOD> + Copy>(pattern: &[T], text: &[T]) -> Vec<usize> {
+pub fn rolling_hash<T: Into<Mod> + Copy>(pattern: &[T], text: &[T]) -> Vec<usize> {
     let rh = RollingHash::new(text, pattern.len());
     rh.search(pattern)
 }
 
 pub struct RollingHash {
-    pub text_hash: Vec<Wrapping<MOD>>,
+    pub text_hash: Vec<Wrapping<Mod>>,
     length: usize,
 }
 impl RollingHash {
-    pub fn new<T: Into<MOD> + Copy>(text: &[T], length: usize) -> Self {
+    pub fn new<T: Into<Mod> + Copy>(text: &[T], length: usize) -> Self {
         let pow_base = Wrapping(BASE.0.wrapping_pow(length as u32));
 
         let mut hash = Wrapping(0);
@@ -34,7 +34,7 @@ impl RollingHash {
         }
         Self { text_hash, length }
     }
-    pub fn search<T: Into<MOD> + Copy>(&self, pattern: &[T]) -> Vec<usize> {
+    pub fn search<T: Into<Mod> + Copy>(&self, pattern: &[T]) -> Vec<usize> {
         assert_eq!(self.length, pattern.len());
 
         let mut pattern_hash = Wrapping(0);
@@ -101,7 +101,7 @@ mod monoid {
     use crate::structure::segment_tree::Monoid;
     struct RollingHashMonoid {}
     impl Monoid for RollingHashMonoid {
-        type T = (Wrapping<MOD>, Wrapping<MOD>);
+        type T = (Wrapping<Mod>, Wrapping<Mod>);
 
         fn identity_element() -> Self::T {
             (Wrapping(0), Wrapping(1))
