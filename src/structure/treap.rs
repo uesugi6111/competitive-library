@@ -79,10 +79,10 @@ where
             if x.priority < x.children[index].as_ref().unwrap().priority {
                 x.rotate(index);
             }
-            return value;
+            value
         } else {
             *node = Some(new_node);
-            return None;
+            None
         }
     }
     pub fn get(&self, key: &K) -> Option<&V> {
