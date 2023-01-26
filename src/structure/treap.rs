@@ -1,13 +1,21 @@
 #[derive(Debug)]
-pub struct Node {
+pub struct Node<K, V>
+where
+    K: Ord,
+    V: Clone + Copy,
+{
     priority: u64,
-    children: [Option<Box<Node>>; 2],
+    children: [Option<Box<Node<K, V>>>; 2],
 
-    key: i64,
-    value: i64,
+    key: K,
+    value: V,
 }
-impl Node {
-    pub fn new(key: i64, value: i64, priority: u64) -> Self {
+impl<K, V> Node<K, V>
+where
+    K: Ord,
+    V: Clone + Copy,
+{
+    pub fn new(key: K, value: V, priority: u64) -> Self {
         Self {
             priority,
             children: [None, None],
@@ -27,11 +35,19 @@ impl Node {
 
 use crate::other::xorshift::XorShift;
 #[derive(Debug)]
-pub struct Treap {
-    nodes: Option<Box<Node>>,
+pub struct Treap<K, V>
+where
+    K: Ord,
+    V: Clone + Copy,
+{
+    nodes: Option<Box<Node<K, V>>>,
     xorshift: XorShift,
 }
-impl Treap {
+impl<K, V> Treap<K, V>
+where
+    K: Ord,
+    V: Clone + Copy,
+{
     pub fn new() -> Self {
         Self {
             nodes: None,
@@ -39,36 +55,42 @@ impl Treap {
         }
     }
 
-    pub fn insert(&mut self, key: i64, value: i64) {
+    pub fn insert(&mut self, key: K, value: V) -> Option<V> {
         let new_node = Node::new(key, value, self.xorshift.next().unwrap());
-
-        Treap::insert_inner(&mut self.nodes, new_node);
+        Treap::insert_inner(&mut self.nodes, new_node)
     }
 
-    fn insert_inner(node: &mut Option<Box<Node>>, new_node: Node) {
-        if node.is_none() {
-            *node = Some(Box::new(new_node));
-            return;
-        }
-
+    fn insert_inner(node: &mut Option<Box<Node<K, V>>>, new_node: Node<K, V>) -> Option<V> {
         if let Some(x) = node {
-            let index = if new_node.key < x.key { 0 } else { 1 };
+            let index = match new_node.key.cmp(&x.key) {
+                std::cmp::Ordering::Equal => {
+                    let ret = std::mem::replace(&mut x.value, new_node.value);
+                    return Some(ret);
+                }
+                std::cmp::Ordering::Less => 0,
+                std::cmp::Ordering::Greater => 1,
+            };
 
-            Treap::insert_inner(&mut x.children[index], new_node);
+            let value = Treap::insert_inner(&mut x.children[index], new_node);
 
             if x.priority < x.children[index].as_ref().unwrap().priority {
                 x.rotate(index);
             }
+            return value;
+        } else {
+            *node = Some(Box::new(new_node));
+            return None;
         }
     }
-    pub fn get(&self, key: i64) -> Option<i64> {
+    pub fn get(&self, key: K) -> Option<V> {
         let mut node = &self.nodes;
 
         while let Some(x) = node {
-            if key == x.key {
-                return Some(x.value);
+            node = match key.cmp(&x.key) {
+                std::cmp::Ordering::Equal => return Some(x.value),
+                std::cmp::Ordering::Less => &x.children[0],
+                std::cmp::Ordering::Greater => &x.children[1],
             }
-            node = &x.children[if key < x.key { 0 } else { 1 }];
         }
         None
     }
@@ -105,5 +127,7 @@ mod tests {
         assert_eq!(a.get(10), Some(10010));
         assert_eq!(a.get(100), Some(10100));
         assert_eq!(a.get(999), Some(10999));
+        assert_eq!(a.insert(999, 2), Some(10999));
+        assert_eq!(a.get(999), Some(2));
     }
 }
