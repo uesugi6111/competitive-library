@@ -2,17 +2,17 @@
 use super::xorshift::XorShift;
 use std::collections::HashSet;
 
-#[derive(Default, Clone)]
+#[derive(Clone)]
 pub struct ZobristHash<T: Eq + std::hash::Hash + Copy> {
     map: std::collections::HashMap<T, u64>,
-    rand: XorShift,
+    rand: XorShift<u64>,
 }
 
 impl<T: Eq + std::hash::Hash + Copy> ZobristHash<T> {
     pub fn new() -> Self {
         Self {
             map: std::collections::HashMap::<T, u64>::new(),
-            rand: XorShift::new(),
+            rand: XorShift::<u64>::new(),
         }
     }
     #[allow(clippy::or_fun_call)]
@@ -66,7 +66,7 @@ mod tests {
     }
     #[test]
     fn rand() {
-        let mut rand = XorShift::new();
+        let mut rand = XorShift::<u64>::new();
 
         let v = (0..10000).map(|_| rand.next().unwrap()).collect::<Vec<_>>();
         let mut vv = v.clone();
