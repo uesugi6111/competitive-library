@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Node<K, V>
 where
     K: Ord,
@@ -6,7 +6,6 @@ where
 {
     priority: u32,
     children: [Option<Box<Node<K, V>>>; 2],
-
     key: K,
     value: V,
 }
@@ -104,14 +103,7 @@ where
         while node.is_some() {
             node = match key.cmp(&node.as_ref().unwrap().key) {
                 std::cmp::Ordering::Equal => {
-                    let mut y = if node.as_mut().unwrap().rotate(0) {
-                        &mut node.as_mut().unwrap().children[1]
-                    } else if node.as_mut().unwrap().rotate(1) {
-                        &mut node.as_mut().unwrap().children[0]
-                    } else {
-                        return Some(node.take().unwrap().value);
-                    };
-
+                    let mut y = node;
                     loop {
                         y = if y.as_mut().unwrap().rotate(0) {
                             &mut y.as_mut().unwrap().children[1]
