@@ -2,7 +2,7 @@
 use super::xorshift::XorShift;
 use std::collections::HashSet;
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct ZobristHash<T: Eq + std::hash::Hash + Copy> {
     map: std::collections::HashMap<T, u64>,
     rand: XorShift<u64>,
