@@ -21,7 +21,7 @@ mod tests {
     #[test]
     fn a() {
         let (a, b) = (10.0, 1.0);
-        let f = move |x| (x as f64 * b) + a / (x as f64 + 1.0).sqrt();
+        let f = move |x: f64| (x * b) + a / (x + 1.0).sqrt();
         let h = ternary_search(0.0, 1_000_000_000_000_000_000.0, Box::new(f));
 
         assert!((f((h + 0.5) as i64 as f64) - 7.773_502_691_9).abs() < 0.000_001);
@@ -29,7 +29,7 @@ mod tests {
     #[test]
     fn b() {
         let (a, b) = (5.0, 10.0);
-        let f = move |x| (x as f64 * b) + a / (x as f64 + 1.0).sqrt();
+        let f = move |x: f64| (x * b) + a / (x + 1.0).sqrt();
         let h = ternary_search(0.0, 1_000_000_000_000_000_000.0, Box::new(f));
 
         assert!(dbg!((f((h + 0.5) as i64 as f64) - 5.000_000_000_0).abs()) < 0.000_001);
@@ -38,7 +38,7 @@ mod tests {
     #[test]
     fn c() {
         let (a, b) = (1_000_000_000_000_000_000.0, 100.0);
-        let f = move |x| (x as f64 * b) + a / (x as f64 + 1.0).sqrt();
+        let f = move |x: f64| (x * b) + a / (x + 1.0).sqrt();
         let h = ternary_search(0.0, 1_000_000_000_000_000_000.0, Box::new(f));
 
         assert!(dbg!((f((h + 0.4) as i64 as f64) - 8_772_053_214_538.598_f64).abs()) < 0.01);

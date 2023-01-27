@@ -95,8 +95,8 @@ mod tests {
         ];
         let mut e = vec![vec![]; n];
         for (a, b, c) in input {
-            e[a as usize].push((b, c));
-            e[b as usize].push((a, c));
+            e[a].push((b, c));
+            e[b].push((a, c));
         }
 
         let a = tree_diamiter::<WeightedEdge>(&e);
