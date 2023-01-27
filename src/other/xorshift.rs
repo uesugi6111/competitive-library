@@ -1,73 +1,72 @@
 //! Xorshift random number generator
 use std::{
-    fmt::{Debug, Display, Formatter},
+    fmt::{Debug, Display},
     time::SystemTime,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Default, Copy, Debug)]
 pub struct XorShift<T>
 where
-    T: std::fmt::Debug + Sized + Copy + Display,
+    T: std::fmt::Debug + Sized + Copy + Display + Shift,
 {
     seed: T,
-    f: fn(&mut T) -> (),
 }
 
-impl XorShift<u64> {
-    pub fn new() -> XorShift<u64> {
-        XorShift::<u64>::from_seed(
-            SystemTime::now()
-                .duration_since(SystemTime::UNIX_EPOCH)
-                .unwrap()
-                .as_secs(),
-        )
+impl<T> XorShift<T>
+where
+    T: std::fmt::Debug + Sized + Copy + Display + Shift,
+{
+    pub fn new() -> Self {
+        XorShift::from_seed(T::seed())
     }
-    pub fn from_seed(seed: u64) -> XorShift<u64> {
-        XorShift {
-            seed,
-            f: |state: &mut u64| {
-                *state ^= *state << 13;
-                *state ^= *state >> 7;
-                *state ^= *state << 17;
-            },
-        }
-    }
-}
-impl XorShift<u32> {
-    pub fn new() -> XorShift<u32> {
-        XorShift::<u32> {
-            seed: SystemTime::now()
-                .duration_since(SystemTime::UNIX_EPOCH)
-                .unwrap()
-                .as_secs() as u32,
-            f: |state: &mut u32| {
-                *state ^= *state << 13;
-                *state ^= *state >> 17;
-                *state ^= *state << 5;
-            },
-        }
+    pub fn from_seed(seed: T) -> XorShift<T> {
+        XorShift { seed }
     }
 }
 
 impl<T> Iterator for XorShift<T>
 where
-    T: std::fmt::Debug + Sized + Copy + Display,
+    T: std::fmt::Debug + Sized + Copy + Display + Shift,
 {
     type Item = T;
 
     fn next(&mut self) -> Option<Self::Item> {
-        (self.f)(&mut self.seed);
+        T::shift(&mut self.seed);
         Some(self.seed)
     }
 }
 
-impl<T> Debug for XorShift<T>
-where
-    T: std::fmt::Debug + Sized + Copy + Display,
-{
-    fn fmt(&self, f: &mut Formatter) -> Result<(), std::fmt::Error> {
-        writeln!(f, "seed : {}:", self.seed)?;
-        Ok(())
+pub trait Shift {
+    fn seed() -> Self;
+    fn shift(n: &mut Self);
+}
+
+impl Shift for u64 {
+    fn seed() -> Self {
+        SystemTime::now()
+            .duration_since(SystemTime::UNIX_EPOCH)
+            .unwrap()
+            .as_secs()
+    }
+
+    fn shift(state: &mut u64) {
+        *state ^= *state << 13;
+        *state ^= *state >> 7;
+        *state ^= *state << 17;
+    }
+}
+impl Shift for u32 {
+    fn seed() -> Self {
+        SystemTime::now()
+            .duration_since(SystemTime::UNIX_EPOCH)
+            .unwrap()
+            .as_secs() as u32
+    }
+
+    fn shift(state: &mut u32) {
+        *state ^= *state << 13;
+        *state ^= *state >> 17;
+        *state ^= *state << 5;
     }
 }
 
