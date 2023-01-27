@@ -21,12 +21,12 @@ pub fn is_prime(n: i64) -> bool {
         r
     };
 
-    if modpow(r, t, n as i64) == 1 {
+    if modpow(r, t, n) == 1 {
         return true;
     }
 
     for i in 0..s {
-        if modpow(r, 2_i64.pow(i) * t, n as i64) == n - 1 {
+        if modpow(r, 2_i64.pow(i) * t, n) == n - 1 {
             return true;
         }
     }

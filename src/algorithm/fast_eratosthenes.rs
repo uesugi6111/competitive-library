@@ -38,7 +38,7 @@ impl Eratosthenes {
             panic!();
         }
 
-        let size = n / 30 + if n % 30 != 0 { 1 } else { 0 };
+        let size = n / 30 + usize::from(n % 30 != 0);
         let mut flags_ = vec![0xff_u8; size];
         flags_[0] = 0xfe;
 
