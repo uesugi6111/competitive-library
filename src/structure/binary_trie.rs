@@ -296,7 +296,7 @@ mod tests {
     #[test]
     fn q() {
         use crate::other::xorshift::XorShift;
-        let mut xs = XorShift::new();
+        let mut xs = XorShift::<u64>::new();
         let mut b = BinaryTrie::new();
         b.insert(0);
         let mut ans = vec![];
