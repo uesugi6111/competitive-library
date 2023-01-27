@@ -37,7 +37,7 @@ where
 }
 
 use crate::other::xorshift::XorShift;
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Treap<K, V>
 where
     K: Ord,
@@ -109,7 +109,7 @@ where
                     } else if node.as_mut().unwrap().rotate(1) {
                         &mut node.as_mut().unwrap().children[0]
                     } else {
-                        return Some(std::mem::replace(node, None).unwrap().value);
+                        return Some(node.take().unwrap().value);
                     };
 
                     loop {
@@ -118,7 +118,7 @@ where
                         } else if y.as_mut().unwrap().rotate(1) {
                             &mut y.as_mut().unwrap().children[0]
                         } else {
-                            return Some(std::mem::replace(y, None).unwrap().value);
+                            return Some(y.take().unwrap().value);
                         };
                     }
                 }
