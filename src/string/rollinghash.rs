@@ -195,7 +195,10 @@ mod monoid {
         #[test]
         fn m() {
             let mut sg = SegmentTree::<RollingHashMonoid>::new(29);
-            let base = XorShift::new().next().unwrap() as u128 % MOD;
+            let base = XorShift::new()
+                .map(|x: u64| x as u128 % MOD)
+                .next()
+                .unwrap();
 
             for (i, &value) in b"abcdefghijklmnopqrstuvwxyzabc".iter().enumerate() {
                 sg.set(i, (value as u128, base));
