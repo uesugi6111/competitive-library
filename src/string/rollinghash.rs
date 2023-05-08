@@ -16,7 +16,10 @@ pub struct RollingHash {
 }
 impl RollingHash {
     pub fn new<T: Into<u128> + Copy>(text: &[T], length: usize) -> Self {
-        let base = XorShift::new().next().unwrap() as u128 % MOD;
+        let base = XorShift::new()
+            .map(|x: u64| x as u128 % MOD)
+            .next()
+            .unwrap();
         RollingHash::from_base(text, length, base)
     }
     pub fn from_base<T: Into<u128> + Copy>(text: &[T], length: usize, base: u128) -> Self {
@@ -68,7 +71,7 @@ impl RollingHash {
     }
 }
 
-const fn mul_mod(a: u128, b: u128) -> u128 {
+fn mul_mod(a: u128, b: u128) -> u128 {
     let mut t = a * b;
     t = (t >> 61) + (t & MOD);
 
@@ -78,7 +81,7 @@ const fn mul_mod(a: u128, b: u128) -> u128 {
         t
     }
 }
-const fn pow_mod(base: u128, exp: usize) -> u128 {
+fn pow_mod(base: u128, exp: usize) -> u128 {
     let (mut a, mut exp) = (base as u128, exp as u128);
 
     if exp == 0 {
@@ -137,8 +140,8 @@ mod tests {
 
     #[test]
     fn test_mul_mod() {
-        for i in XorShift::new().take(1000).map(|x| x as u128 % MOD) {
-            for j in XorShift::new().take(1000).map(|x| x as u128 % MOD) {
+        for i in XorShift::new().take(1000).map(|x: u64| x as u128 % MOD) {
+            for j in XorShift::new().take(1000).map(|x: u64| x as u128 % MOD) {
                 assert_eq!(mul_mod(i as u128, j as u128), (i as u128 * j as u128) % MOD);
             }
         }
@@ -146,8 +149,8 @@ mod tests {
     #[test]
     fn test_pow_mod() {
         use crate::math::mod_pow::modpow;
-        for i in XorShift::new().take(1000).map(|x| x as u128 % MOD) {
-            for j in XorShift::new().take(1000).map(|x| x as u128 % MOD) {
+        for i in XorShift::new().take(1000).map(|x: u64| x as u128 % MOD) {
+            for j in XorShift::new().take(1000).map(|x: u64| x as u128 % MOD) {
                 assert_eq!(
                     pow_mod(i, j as usize),
                     modpow(i as i64, j as i64, MOD as i64) as u128
