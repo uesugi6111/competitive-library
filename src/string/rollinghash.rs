@@ -82,7 +82,7 @@ fn mul_mod(a: u128, b: u128) -> u128 {
     }
 }
 fn pow_mod(base: u128, exp: usize) -> u128 {
-    let (mut a, mut exp) = (base as u128, exp as u128);
+    let (mut a, mut exp) = (base, exp as u128);
 
     if exp == 0 {
         return 1;
@@ -142,7 +142,7 @@ mod tests {
     fn test_mul_mod() {
         for i in XorShift::new().take(1000).map(|x: u64| x as u128 % MOD) {
             for j in XorShift::new().take(1000).map(|x: u64| x as u128 % MOD) {
-                assert_eq!(mul_mod(i as u128, j as u128), (i as u128 * j as u128) % MOD);
+                assert_eq!(mul_mod(i, j), (i * j) % MOD);
             }
         }
     }
