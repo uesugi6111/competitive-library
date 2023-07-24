@@ -32,6 +32,7 @@ jobs:
           toolchain:
             - 1.42.0
             - 1.66.0
+            - 1.70.0
 
     name: Test (${{ matrix.toolchain }})
 
