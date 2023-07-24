@@ -23,7 +23,7 @@ where
         }
     }
     pub fn rotate(&mut self, child: usize) -> bool {
-        let a = std::mem::replace(&mut self.children[child], None);
+        let a = self.children[child].take();
         if let Some(mut node) = a {
             std::mem::swap(self, &mut node);
             std::mem::swap(&mut self.children[child ^ 1], &mut node.children[child]);
