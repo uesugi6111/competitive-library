@@ -1,26 +1,16 @@
 //! ユークリッドさんありがとう
-pub fn ngcd(m: u64, n: u64) -> u64 {
-    if m == 0 {
-        n
-    } else {
-        ngcd(n % m, m)
-    }
-}
-pub fn lcm(m: u64, n: u64) -> u64 {
-    m * n / gcd(m, n)
-}
-use std::cmp::min;
 use std::mem::swap;
+use std::{cmp::min, num::NonZeroU64};
 pub fn gcd(mut m: u64, mut n: u64) -> u64 {
     if m == 0 || n == 0 {
         return n;
     }
-    let (i, j) = (
-        // unsafe { std::num::NonZeroU64::new_unchecked(m) }.trailing_zeros(),
-        // unsafe { std::num::NonZeroU64::new_unchecked(n) }.trailing_zeros(),
-        m.trailing_zeros(),
-        n.trailing_zeros(),
-    );
+    let (i, j) = unsafe {
+        (
+            NonZeroU64::new_unchecked(m).trailing_zeros(),
+            NonZeroU64::new_unchecked(n).trailing_zeros(),
+        )
+    };
     m >>= i;
     n >>= j;
 
@@ -32,8 +22,17 @@ pub fn gcd(mut m: u64, mut n: u64) -> u64 {
         if n == 0 {
             return m << min(i, j);
         }
-        // n >>= unsafe { std::num::NonZeroU64::new_unchecked(n) }.trailing_zeros();
-        n >>= n.trailing_zeros();
+        n >>= unsafe { NonZeroU64::new_unchecked(n) }.trailing_zeros();
+    }
+}
+pub fn lcm(m: u64, n: u64) -> u64 {
+    m * n / gcd(m, n)
+}
+pub fn ngcd(m: u64, n: u64) -> u64 {
+    if m == 0 {
+        n
+    } else {
+        ngcd(n % m, m)
     }
 }
 #[cfg(test)]
