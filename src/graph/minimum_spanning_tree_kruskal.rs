@@ -1,3 +1,5 @@
+//! Kruskal's minimum spanning tree algorithm.
+
 use crate::structure::disjoint_set_union::DisjointSetUnion;
 pub struct Edge(i64, i64, i64);
 

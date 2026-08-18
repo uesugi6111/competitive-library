@@ -10,11 +10,11 @@ pub fn largest_rectangle(arg: &[i64]) -> i64 {
     let mut ans = 0;
 
     for (right, &h) in histogram.iter().enumerate() {
-        if let Some(&(_, value)) = stack.back() {
-            if value <= h {
-                stack.push_back((right as i64, h));
-                continue;
-            }
+        if let Some(&(_, value)) = stack.back()
+            && value <= h
+        {
+            stack.push_back((right as i64, h));
+            continue;
         }
         let mut most_left = right as i64;
         while !stack.is_empty() && stack[stack.len() - 1].1 > h {

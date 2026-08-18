@@ -89,7 +89,7 @@ mod tests {
     fn test_xor() {
         // https://atcoder.jp/contests/abc185/tasks/abc185_f
         // sample 2
-        let a = vec![0, 5, 3, 4, 7, 0, 0, 0, 1, 0];
+        let a = [0, 5, 3, 4, 7, 0, 0, 0, 1, 0];
         let txy_ans = vec![
             (1, 10, 7, 0),
             (2, 8, 9, 1),

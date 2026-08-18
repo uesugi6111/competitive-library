@@ -1,14 +1,30 @@
-name: Dispatch
+name: Dispatch library update
 
-on: [ workflow_dispatch ]
+on:
+  workflow_dispatch:
+
+permissions: {}
 
 jobs:
-  build:
+  dispatch:
+    name: Notify ${{ matrix.repository }}
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        repository:
+          - uesugi6111/AtCoder-archives-Rust
+          - uesugi6111/codeforces-submission
     steps:
-      - run: |
-          curl -X POST -H "Authorization: token ${{ secrets.AUTO_PR_TOKEN }}" -H "Accept: application/vnd.github.everest-preview+json" -d '{"event_type": "update-submodule"}' -i  https://api.github.com/repos/uesugi6111/AtCoder-archives-Rust/dispatches
-      - run: |
-          curl -X POST -H "Authorization: token ${{ secrets.AUTO_PR_TOKEN }}" -H "Accept: application/vnd.github.everest-preview+json" -d '{"event_type": "update-submodule"}' -i  https://api.github.com/repos/uesugi6111/codeforces-submission/dispatches
-  
+      - name: Send repository dispatch
+        env:
+          GH_TOKEN: ${{ secrets.AUTO_PR_TOKEN }}
+          REPOSITORY: ${{ matrix.repository }}
+        run: |
+          curl --fail-with-body \
+            --request POST \
+            --url "https://api.github.com/repos/${REPOSITORY}/dispatches" \
+            --header "Accept: application/vnd.github+json" \
+            --header "Authorization: Bearer ${GH_TOKEN}" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            --data '{"event_type":"update-submodule"}'

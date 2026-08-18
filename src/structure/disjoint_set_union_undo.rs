@@ -144,7 +144,7 @@ impl DisjointSetUnionRollback {
         for i in 0..self.uf.len() {
             let root = self.root(i);
 
-            map.entry(root).or_insert_with(HashSet::new).insert(i);
+            map.entry(root).or_default().insert(i);
         }
         map
     }

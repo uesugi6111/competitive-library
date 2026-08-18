@@ -1,7 +1,9 @@
+//! Prim's minimum spanning tree algorithms.
+
 /// O(|N|^2)
 pub fn prim(g: &[Vec<i64>]) -> i64 {
     let n = g.len();
-    let mut min_cost = vec![std::i64::MAX; n];
+    let mut min_cost = vec![i64::MAX; n];
     let mut used = vec![false; n];
     let mut sum = 0;
     min_cost[0] = 0;
@@ -46,12 +48,12 @@ impl PartialEq for Vertex {
 }
 impl PartialOrd for Vertex {
     fn partial_cmp(&self, other: &Vertex) -> Option<Ordering> {
-        Some(other.cost.cmp(&(self.cost)))
+        Some(self.cmp(other))
     }
 }
 impl Ord for Vertex {
     fn cmp(&self, other: &Self) -> Ordering {
-        self.cost.cmp(&(other.cost))
+        other.cost.cmp(&self.cost)
     }
 }
 
@@ -109,5 +111,11 @@ mod tests {
         ];
 
         assert_eq!(prim_heap(&g).unwrap(), 5);
+    }
+
+    #[test]
+    fn prim_heap_chooses_the_minimum_edge() {
+        let g = vec![vec![-1, 10, 1], vec![10, -1, 1], vec![1, 1, -1]];
+        assert_eq!(prim_heap(&g), Some(2));
     }
 }

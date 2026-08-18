@@ -70,7 +70,7 @@ mod tests {
     #[test]
     fn test_scc() {
         let n = 6;
-        let v = vec![(1, 4), (5, 2), (3, 0), (5, 5), (4, 1), (0, 3), (4, 2)];
+        let v = [(1, 4), (5, 2), (3, 0), (5, 5), (4, 1), (0, 3), (4, 2)];
         let mut e = vec![vec![]; n];
         for &(v, u) in v.iter() {
             e[v].push(u);
@@ -81,7 +81,7 @@ mod tests {
     #[test]
     fn test_scc2() {
         let n = 7;
-        let v = vec![
+        let v = [
             (0, 2),
             (1, 2),
             (2, 3),
@@ -134,7 +134,7 @@ mod tests {
     #[test]
     fn test_scc4() {
         let n = 5;
-        let v = vec![(0, 1), (0, 2), (2, 3), (3, 4)];
+        let v = [(0, 1), (0, 2), (2, 3), (3, 4)];
         let mut e = vec![vec![]; n];
         for &(v, u) in v.iter() {
             e[v].push(u);
@@ -146,7 +146,7 @@ mod tests {
     #[test]
     fn test_scc5() {
         let n = 5;
-        let v = vec![(0, 1), (1, 2), (2, 3), (3, 4), (4, 0)];
+        let v = [(0, 1), (1, 2), (2, 3), (3, 4), (4, 0)];
         let mut e = vec![vec![]; n];
         for &(v, u) in v.iter() {
             e[v].push(u);
@@ -158,7 +158,7 @@ mod tests {
     #[test]
     fn test_scc6() {
         let n = 6;
-        let v = vec![(0, 1), (1, 2), (2, 0), (0, 3), (3, 4), (4, 0)];
+        let v = [(0, 1), (1, 2), (2, 0), (0, 3), (3, 4), (4, 0)];
         let mut e = vec![vec![]; n];
         for &(v, u) in v.iter() {
             e[v].push(u);

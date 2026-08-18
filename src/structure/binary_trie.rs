@@ -269,14 +269,14 @@ mod tests {
         for i in 0..1000 {
             assert_eq!(b.count_more(i), 999 - i as u64);
         }
-        assert_eq!(b.count_less(std::u32::MAX), 1000);
-        assert_eq!(b.count_more(std::u32::MIN), 999);
+        assert_eq!(b.count_less(u32::MAX), 1000);
+        assert_eq!(b.count_more(u32::MIN), 999);
     }
 
     #[test]
     fn library_checker() {
         let mut b = BinaryTrie::new();
-        let query = vec![(0, 6), (0, 7), (2, 5), (1, 7), (1, 10), (2, 7)];
+        let query = [(0, 6), (0, 7), (2, 5), (1, 7), (1, 10), (2, 7)];
         let mut ans = vec![];
         query.iter().for_each(|&(p, x)| match p {
             0 => {
@@ -303,13 +303,13 @@ mod tests {
         for i in 0..200_000 {
             match xs.next().unwrap() % 3 {
                 0 => {
-                    b.insert(xs.next().unwrap() as u32 % std::u32::MAX);
+                    b.insert(xs.next().unwrap() as u32 % u32::MAX);
                 }
                 1 => {
-                    b.erase_all(xs.next().unwrap() as u32 % std::u32::MAX);
+                    b.erase_all(xs.next().unwrap() as u32 % u32::MAX);
                 }
                 _ => ans.push(
-                    b.xor_min(xs.next().unwrap() as u32 % std::u32::MAX)
+                    b.xor_min(xs.next().unwrap() as u32 % u32::MAX)
                         .unwrap_or_else(|| panic!()),
                 ),
             }
@@ -319,7 +319,7 @@ mod tests {
     }
     #[test]
     fn lower_bound() {
-        let v = vec![
+        let v = [
             1, 1, 4, 7, 8, 9, 11, 64, 98, 641, 1_111, 1_111, 1_111, 6_000, 10_000, 123_456,
             1_111_111, 9_999_999,
         ];
@@ -348,7 +348,7 @@ mod tests {
 
     #[test]
     fn upper_bound() {
-        let v = vec![
+        let v = [
             1, 1, 4, 7, 8, 9, 11, 64, 98, 641, 1_111, 1_111, 1_111, 6_000, 10_000, 123_456,
             1_111_111, 9_999_999,
         ];

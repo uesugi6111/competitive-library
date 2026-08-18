@@ -1,65 +1,46 @@
 # competitive-library
 
-[![library-test](https://github.com/uesugi6111/competitive-library/actions/workflows/rust.yml/badge.svg)](https://github.com/uesugi6111/competitive-library/actions/workflows/rust.yml)  
+[![library-test](https://github.com/uesugi6111/competitive-library/actions/workflows/rust.yml/badge.svg)](https://github.com/uesugi6111/competitive-library/actions/workflows/rust.yml)
+[![documentation](https://github.com/uesugi6111/competitive-library/actions/workflows/doc.yml/badge.svg)](https://github.com/uesugi6111/competitive-library/actions/workflows/doc.yml)
 
-Library of algorithms and data structures for competitive programming written in Rust
+Algorithms and data structures for competitive programming in Rust.
 
-This library does not depend on external crates.
+- Rust 1.89.0
+- Rust edition 2024
+- Compatible with the current AtCoder and Codeforces Rust environments
+- No external crate dependencies
 
-[doc](https://github.uesugi.app/competitive-library/doc/competitive_library/)
+## Categories
 
-## index
-├── [algorithm](https://github.com/uesugi6111/competitive-library/blob/master/src/algorithm/)  
-│   ├── [atkin.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/algorithm/atkin.rs)  
-│   ├── [convex_hull_trick.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/algorithm/convex_hull_trick.rs)  
-│   ├── [cumsum.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/algorithm/cumsum.rs)  
-│   ├── [enum_divisors.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/algorithm/enum_divisors.rs)  
-│   ├── [eratosthenes.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/algorithm/eratosthenes.rs)  
-│   ├── [fast_eratosthenes.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/algorithm/fast_eratosthenes.rs)  
-│   ├── [inversion_number.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/algorithm/inversion_number.rs)  
-│   ├── [largest_rectangle.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/algorithm/largest_rectangle.rs)  
-│   ├── [prime.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/algorithm/prime.rs)  
-│   └── [run_length.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/algorithm/run_length.rs)  
-├── [graph](https://github.com/uesugi6111/competitive-library/blob/master/src/graph/)  
-│   ├── [dijkstra.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/graph/dijkstra.rs)  
-│   ├── [dijkstra_restorepath.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/graph/dijkstra_restorepath.rs)  
-│   ├── [euler_tour.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/graph/euler_tour.rs)  
-│   ├── [floyd_warshall.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/graph/floyd_warshall.rs)  
-│   ├── [heavy_light_decomposition.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/graph/heavy_light_decomposition.rs)  
-│   ├── [lowest_common_ancestor_doubling.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/graph/lowest_common_ancestor_doubling.rs)  
-│   ├── [lowest_common_ancestor_rmq.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/graph/lowest_common_ancestor_rmq.rs)  
-│   ├── [minimun_spanning_tree_kruskal.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/graph/minimun_spanning_tree_kruskal.rs)  
-│   ├── [minimun_spanning_tree_prim.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/graph/minimun_spanning_tree_prim.rs)  
-│   ├── [tree_diamiter.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/graph/tree_diamiter.rs)  
-│   ├── [util.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/graph/util.rs)  
-│   └── [zero_one_bfs.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/graph/zero_one_bfs.rs)  
-├── [lib.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/lib.rs)  
-├── [math](https://github.com/uesugi6111/competitive-library/blob/master/src/math/)  
-│   ├── [euclid.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/math/euclid.rs)  
-│   ├── [miller_rabin.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/math/miller_rabin.rs)  
-│   ├── [mod_pow.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/math/mod_pow.rs)  
-│   └── [permutation.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/math/permutation.rs)  
-├── [other](https://github.com/uesugi6111/competitive-library/blob/master/src/other/)  
-│   ├── [binary_search.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/other/binary_search.rs)  
-│   ├── [ternary_search.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/other/ternary_search.rs)  
-│   ├── [xorshift.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/other/xorshift.rs)  
-│   └── [zobrist_hash.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/other/zobrist_hash.rs)  
-├── [string](https://github.com/uesugi6111/competitive-library/blob/master/src/string/)  
-│   ├── [aho_corasick.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/string/aho_corasick.rs)  
-│   ├── [manachar.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/string/manachar.rs)  
-│   ├── [rollinghash.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/string/rollinghash.rs)  
-│   └── [z_algorithm.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/string/z_algorithm.rs)  
-└── [structure](https://github.com/uesugi6111/competitive-library/blob/master/src/structure/)  
-    ├── [binary_trie.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/structure/binary_trie.rs)  
-    ├── [cumsum_2d.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/structure/cumsum_2d.rs)  
-    ├── [disjoint_set_union.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/structure/disjoint_set_union.rs)  
-    ├── [disjoint_set_union_undo.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/structure/disjoint_set_union_undo.rs)  
-    ├── [disjoint_sparse_table.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/structure/disjoint_sparse_table.rs)  
-    ├── [fenwick_tree.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/structure/fenwick_tree.rs)  
-    ├── [quaternary_trie.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/structure/quaternary_trie.rs)  
-    ├── [segment_tree.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/structure/segment_tree.rs)  
-    ├── [skew_heap.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/structure/skew_heap.rs)  
-    ├── [skew_heap_lazy.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/structure/skew_heap_lazy.rs)  
-    ├── [sparse_table.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/structure/sparse_table.rs)  
-    ├── [treap.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/structure/treap.rs)  
-    └── [weighted_disjoint_set_union.rs](https://github.com/uesugi6111/competitive-library/blob/master/src/structure/weighted_disjoint_set_union.rs)
+| Module | Contents |
+| --- | --- |
+| [`algorithm`](src/algorithm) | Sequence algorithms, prime sieves, cumulative sums, and convex hull trick |
+| [`graph`](src/graph) | Shortest paths, spanning trees, LCA, SCC, and tree algorithms |
+| [`math`](src/math) | GCD/LCM, modular arithmetic, primality testing, and permutations |
+| [`other`](src/other) | Search utilities, random number generation, and Zobrist hashing |
+| [`string`](src/string) | Aho-Corasick, Manacher, rolling hash, and Z algorithm |
+| [`structure`](src/structure) | Union-find, tries, heaps, Fenwick/segment/sparse trees, and treap |
+
+Generated API documentation is available at
+[github.uesugi.app/competitive-library](https://github.uesugi.app/competitive-library/doc/competitive_library/).
+
+## Verification
+
+The repository pins the judge-compatible toolchain in `rust-toolchain.toml`.
+
+```console
+cargo fmt --all -- --check
+cargo clippy --workspace --all-targets -- -D warnings
+cargo test --workspace --all-targets --release --offline
+```
+
+CI checks two judge profiles separately:
+
+- AtCoder: Cargo release build in offline mode
+- Codeforces: direct `rustc --edition=2024 -O` compilation
+
+## Compatibility aliases
+
+Previously published misspelled module paths remain available as deprecated aliases.
+New code should use the corrected paths, such as `tree_diameter`, `manacher`,
+`rolling_hash`, and `minimum_spanning_tree_*`.

@@ -76,11 +76,11 @@ impl WeightedDisjointSetUnion {
         g
     }
     pub fn get_all_groups(&mut self) -> HashMap<usize, HashSet<(usize, i64)>> {
-        let mut map = HashMap::new();
+        let mut map: HashMap<usize, HashSet<(usize, i64)>> = HashMap::new();
         for i in 0..self.uf.len() {
             let (root, w) = self.root(i);
 
-            map.entry(root).or_insert_with(HashSet::new).insert((i, w));
+            map.entry(root).or_default().insert((i, w));
         }
         map
     }
@@ -129,7 +129,7 @@ mod tests {
 
         dsu.unite(3, 4, 853);
 
-        let ans = vec![
+        let ans = [
             0, 2, 7, 11, 864, 869, 917, 922, 928, 936, 940, 945, 949, 957, 966, 973,
         ];
         for (i, &v) in ans.iter().enumerate() {

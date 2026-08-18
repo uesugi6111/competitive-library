@@ -13,7 +13,7 @@ pub fn adjacency_list(matrix: &[Vec<i64>]) -> Vec<Vec<i64>> {
         .map(|v| {
             v.iter()
                 .enumerate()
-                .filter(|(_, &v)| v > 0)
+                .filter(|&(_, &v)| v > 0)
                 .map(|(j, _)| j as i64)
                 .collect()
         })
@@ -33,7 +33,7 @@ mod tests {
             vec![0, 2, 3],
         ]);
 
-        let ans = vec![
+        let ans = [
             vec![0, 1, 1, 0, 1],
             vec![1, 0, 1, 1, 0],
             vec![1, 1, 0, 1, 1],

@@ -11,11 +11,7 @@ impl Band for MinDepth {
 
     /// Min depth
     fn operate(a: &Self::T, b: &Self::T) -> Self::T {
-        if a.1 < b.1 {
-            *a
-        } else {
-            *b
-        }
+        if a.1 < b.1 { *a } else { *b }
     }
 }
 /// LCA

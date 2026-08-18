@@ -30,7 +30,7 @@ impl<S: SemiGroup> DisjointSparseTable<S> {
 
             let span = 2i64.pow(i as u32) as usize;
 
-            (0..(v.len() + (span * 2) - 1) / (span * 2)).for_each(|j| {
+            (0..v.len().div_ceil(span * 2)).for_each(|j| {
                 let start = span * 2 * j + span;
 
                 (0..span - 1)

@@ -68,9 +68,10 @@ where
             self.init = true;
             return Some(self.p.clone());
         }
-        let Some(i) = (0..&self.p.len() - 1).rfind(|&i| self.p[i] < self.p[i + 1]) else {
+        if self.p.len() < 2 {
             return None;
-        };
+        }
+        let i = (0..self.p.len() - 1).rfind(|&i| self.p[i] < self.p[i + 1])?;
         let j = self.p.iter().rposition(|x| x > &self.p[i]).unwrap();
         self.p.swap(i, j);
         self.p[i + 1..].reverse();

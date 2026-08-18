@@ -2,7 +2,13 @@
 name = "competitive-library"
 version = "0.1.0"
 authors = ["aburaya6111 <59960488+aburaya6111@users.noreply.github.com>"]
-edition = "2018"
+edition = "2024"
+rust-version = "1.89"
+description = "Algorithms and data structures for competitive programming in Rust"
+license = "CC0-1.0"
+repository = "https://github.com/uesugi6111/competitive-library"
+readme = "README.md"
+publish = false
 
 [package.metadata.cargo-compete]
 config = "../compete.toml"

@@ -1,4 +1,4 @@
-pub fn manachar(s: &[char]) -> Vec<usize> {
+pub fn manacher(s: &[char]) -> Vec<usize> {
     let (mut radius, mut i, mut j) = (vec![0; s.len()], 0, 0);
     while i < s.len() {
         while i >= j && i + j < s.len() && s[i - j] == s[i + j] {
@@ -16,26 +16,29 @@ pub fn manachar(s: &[char]) -> Vec<usize> {
     radius
 }
 
+#[deprecated(since = "0.1.0", note = "use `manacher` instead")]
+pub use manacher as manachar;
+
 #[cfg(test)]
 mod tests {
     use super::*;
     #[test]
     fn a() {
         assert_eq!(
-            manachar(&to_v("qwertyuiop")),
+            manacher(&to_v("qwertyuiop")),
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         );
         assert_eq!(
-            manachar(&to_v("qwertyuiopoiuytrewq")),
+            manacher(&to_v("qwertyuiopoiuytrewq")),
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         );
         assert_eq!(
-            manachar(&to_v("qwqwqwqwqwqwq")),
+            manacher(&to_v("qwqwqwqwqwqwq")),
             [1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1]
         );
-        assert_eq!(manachar(&to_v("abaaababa")), [1, 2, 1, 4, 1, 2, 3, 2, 1]);
+        assert_eq!(manacher(&to_v("abaaababa")), [1, 2, 1, 4, 1, 2, 3, 2, 1]);
         assert_eq!(
-            manachar(&to_v("aaaaaaaaaa")),
+            manacher(&to_v("aaaaaaaaaa")),
             [1, 2, 3, 4, 5, 5, 4, 3, 2, 1]
         );
     }

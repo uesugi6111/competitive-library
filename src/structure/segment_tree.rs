@@ -12,7 +12,7 @@ impl Monoid for Min {
     type T = i64;
     #[inline]
     fn identity_element() -> Self::T {
-        std::i32::MAX as i64
+        i32::MAX as i64
     }
     #[inline]
     fn binary_operation(a: &Self::T, b: &Self::T) -> Self::T {
@@ -24,7 +24,7 @@ impl Monoid for Max {
     type T = i64;
     #[inline]
     fn identity_element() -> Self::T {
-        std::i64::MIN
+        i64::MIN
     }
     #[inline]
     fn binary_operation(a: &Self::T, b: &Self::T) -> Self::T {

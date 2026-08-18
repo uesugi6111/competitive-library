@@ -1,39 +1,48 @@
-name: Update doc
+name: Deploy documentation
 
-on: [ workflow_dispatch ]
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
 
 jobs:
-  patch:
+  deploy:
+    name: Build and deploy rustdoc
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-
     steps:
+      - name: Checkout
+        uses: actions/checkout@v7
 
-      - uses: actions/checkout@v2
+      - name: Install Rust
+        run: rustup toolchain install 1.89.0 --profile minimal
+
+      - name: Build documentation
+        run: cargo +1.89.0 doc --workspace --no-deps
+        env:
+          CARGO_TARGET_DIR: pages
+          RUSTDOCFLAGS: -D warnings
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
         with:
-          ref: master
+          path: pages
 
-      - name: Create doc
-        run: cargo doc 
-
-      - name: Move doc
-        run: |
-          rm -rf ./doc
-          mv ./target/doc ./
-
-      - name: Create Pull Request 
-        id: cpr
-        uses: peter-evans/create-pull-request@v3
-        with:
-          title: Update doc
-          labels: Auto PR
-          base: doc
-          branch: auto-pr/update-doc 
-          branch-suffix : timestamp 
-          commit-message: update doc
-          delete-branch: true
-          token: ${{ secrets.AUTO_PR_TOKEN }}
-
-      - name: Check outputs
-        run: |
-          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
-          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

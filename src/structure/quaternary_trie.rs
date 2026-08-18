@@ -174,7 +174,7 @@ mod tests {
     #[test]
     fn library_checker() {
         let mut b = QuaternaryTrie::new();
-        let query = vec![(0, 6), (0, 7), (2, 5), (1, 7), (1, 10), (2, 7)];
+        let query = [(0, 6), (0, 7), (2, 5), (1, 7), (1, 10), (2, 7)];
         let mut ans = vec![];
         query.iter().for_each(|&(p, x)| match p {
             0 => {

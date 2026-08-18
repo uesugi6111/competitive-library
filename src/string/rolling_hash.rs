@@ -1,4 +1,4 @@
-//! ロリハ
+//! Rolling hash utilities.
 use crate::other::xorshift::XorShift;
 
 const MOD: u128 = (1 << 61) - 1;
@@ -75,11 +75,7 @@ fn mul_mod(a: u128, b: u128) -> u128 {
     let mut t = a * b;
     t = (t >> 61) + (t & MOD);
 
-    if t >= MOD {
-        t - MOD
-    } else {
-        t
-    }
+    if t >= MOD { t - MOD } else { t }
 }
 fn pow_mod(base: u128, exp: usize) -> u128 {
     let (mut a, mut exp) = (base, exp as u128);
@@ -160,6 +156,7 @@ mod tests {
     }
 }
 
+#[cfg(test)]
 mod monoid {
 
     use super::*;
@@ -176,11 +173,7 @@ mod monoid {
             (
                 {
                     let buff = mul_mod(a.0, b.1) + b.0;
-                    if buff >= MOD {
-                        buff - MOD
-                    } else {
-                        buff
-                    }
+                    if buff >= MOD { buff - MOD } else { buff }
                 },
                 mul_mod(a.1, b.1),
             )

@@ -1,4 +1,4 @@
-//! ダイクストラ
+//! Dijkstra's algorithm with path restoration.
 use std::{cmp::Ordering, collections::BinaryHeap};
 
 #[derive(Debug, Clone, Eq)]
@@ -24,12 +24,12 @@ impl PartialEq for Node {
 }
 impl PartialOrd for Node {
     fn partial_cmp(&self, other: &Node) -> Option<Ordering> {
-        Some(other.cost.cmp(&(self.cost)))
+        Some(self.cmp(other))
     }
 }
 impl Ord for Node {
     fn cmp(&self, other: &Self) -> Ordering {
-        self.cost.cmp(&(other.cost))
+        other.cost.cmp(&self.cost)
     }
 }
 
@@ -110,5 +110,14 @@ mod tests {
                 None => assert!(ans.is_none()),
             }
         }
+    }
+
+    #[test]
+    fn chooses_the_shorter_indirect_path() {
+        let graph = vec![vec![(1, 10), (2, 1)], vec![], vec![(1, 1)]];
+        assert_eq!(
+            dijkstra(&graph, 0, 1, graph.len()),
+            Some((2, vec![0, 2, 1]))
+        );
     }
 }

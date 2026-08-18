@@ -1,10 +1,6 @@
 //! ユークリッドさんありがとう
 pub fn ngcd(m: u64, n: u64) -> u64 {
-    if m == 0 {
-        n
-    } else {
-        ngcd(n % m, m)
-    }
+    if m == 0 { n } else { ngcd(n % m, m) }
 }
 pub fn lcm(m: u64, n: u64) -> u64 {
     m * n / gcd(m, n)

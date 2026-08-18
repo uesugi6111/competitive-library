@@ -30,10 +30,13 @@ impl Edge for WeightedEdge {
     }
 }
 
-pub fn tree_diamiter<E: Edge>(e: &[Vec<E::T>]) -> (i64, Vec<usize>) {
+pub fn tree_diameter<E: Edge>(e: &[Vec<E::T>]) -> (i64, Vec<usize>) {
     let (_, path_1) = bfs::<E>(e, 0);
     bfs::<E>(e, path_1[path_1.len() - 1])
 }
+
+#[deprecated(since = "0.1.0", note = "use `tree_diameter` instead")]
+pub use tree_diameter as tree_diamiter;
 
 #[inline]
 fn bfs<E: Edge>(e: &[Vec<E::T>], start: usize) -> (i64, Vec<usize>) {
@@ -81,7 +84,7 @@ fn restore_path(end: usize, previous: &[Option<usize>]) -> Vec<usize> {
 mod tests {
     use super::*;
     #[test]
-    fn test_tree_diamiter() {
+    fn test_tree_diameter() {
         let n = 8;
 
         let input = vec![
@@ -99,7 +102,7 @@ mod tests {
             e[b].push((a, c));
         }
 
-        let a = tree_diamiter::<WeightedEdge>(&e);
+        let a = tree_diameter::<WeightedEdge>(&e);
         assert_eq!(&a.1, &[6, 2, 1, 5]);
         assert_eq!(a.0, 15);
     }

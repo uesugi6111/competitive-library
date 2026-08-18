@@ -64,11 +64,9 @@ impl DisjointSetUnion {
         g
     }
     pub fn get_all_groups(&mut self) -> HashMap<usize, HashSet<usize>> {
-        let mut map = HashMap::new();
+        let mut map: HashMap<usize, HashSet<usize>> = HashMap::new();
         for i in 0..self.nodes.len() {
-            map.entry(self.find_root(i))
-                .or_insert_with(HashSet::new)
-                .insert(i);
+            map.entry(self.find_root(i)).or_default().insert(i);
         }
         map
     }

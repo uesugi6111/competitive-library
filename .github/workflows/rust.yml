@@ -1,66 +1,92 @@
 name: library-test
 
 on:
-  schedule:
-    - cron: '0 0 * * 6'
   push:
-    branches:
-      - '*'
   pull_request:
+  schedule:
+    - cron: "0 0 * * 6"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: library-test-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   CARGO_TERM_COLOR: always
+  RUST_VERSION: 1.89.0
 
 jobs:
-  rustfmt:
-    name: Rustfmt
+  quality:
+    name: Format, Clippy, and docs
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
+
+      - name: Install Rust
+        run: >-
+          rustup toolchain install "$RUST_VERSION"
+          --profile minimal
+          --component clippy
+          --component rustfmt
 
       - name: Format
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
-  Test:
-    strategy:
-        fail-fast: false
-        matrix:
-          toolchain:
-            - 1.66.0
-            - 1.70.0
-
-    name: Test (${{ matrix.toolchain }})
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: ${{ matrix.toolchain }}
-          override: true
-          components: clippy
+        run: cargo +${RUST_VERSION} fmt --all -- --check
 
       - name: Clippy
-        uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: --workspace --all-targets -- -D warnings
+        run: cargo +${RUST_VERSION} clippy --workspace --all-targets -- -D warnings
 
-      - name: Build
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --workspace --all-targets
+      - name: Documentation
+        run: cargo +${RUST_VERSION} doc --workspace --no-deps
+        env:
+          RUSTDOCFLAGS: -D warnings
 
-      - name: Run tests
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --workspace --no-fail-fast --verbose
+  atcoder:
+    name: AtCoder (Rust 1.89.0, edition 2024)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install Rust
+        run: rustup toolchain install "$RUST_VERSION" --profile minimal
+
+      - name: Build as AtCoder does
+        run: cargo +${RUST_VERSION} build --workspace --all-targets --release --offline
+
+      - name: Test release build
+        run: >-
+          cargo +${RUST_VERSION} test
+          --workspace
+          --all-targets
+          --release
+          --offline
+          --no-fail-fast
         env:
           RUST_BACKTRACE: full
+
+  codeforces:
+    name: Codeforces (Rust 1.89.0, edition 2024)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install Rust
+        run: rustup toolchain install "$RUST_VERSION" --profile minimal
+
+      - name: Prepare output directory
+        run: mkdir -p target/codeforces
+
+      - name: Compile with rustc
+        run: >-
+          rustc +${RUST_VERSION}
+          --edition=2024
+          --crate-name competitive_library
+          --crate-type lib
+          -O
+          --cfg ONLINE_JUDGE
+          src/lib.rs
+          --out-dir target/codeforces
